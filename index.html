@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Learning Check Quiz</title>
 
-  <!-- Mammoth (DOCX -> raw text) -->
+  <!-- DOCX -> raw text -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
 
   <style>
@@ -13,24 +13,81 @@
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 50% -200px, #2a2f55 0%, #0b0d16 55%, #070812 100%);
+      background: #070812;
       color: #e8e8ef;
     }
-    .wrap { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
-    .card {
+
+    /* ===== Banner (FIXED) ===== */
+    .banner {
+      width: 100%;
+      height: clamp(140px, 22vh, 240px);
+      position: relative;
+      overflow: hidden;
+      background: #0b0d16; /* fallback while image loads */
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.05);
+      opacity: 0.98;
+    }
+    .banner .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.10),
+        rgba(0,0,0,0.55)
+      );
+      pointer-events: none;
+    }
+    .banner .title {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .banner .title h1 {
+      margin: 0;
+      font-size: clamp(18px, 3vw, 28px);
+      letter-spacing: 0.3px;
+    }
+    .banner .title .sub {
+      font-size: clamp(12px, 1.8vw, 14px);
+      opacity: 0.85;
+    }
+
+    /* ===== Main layout ===== */
+    .wrap {
+      max-width: 1100px;
+      margin: 18px auto 36px;
+      padding: 0 16px;
+    }
+
+    /* Cleaner card (less “black box”) */
+    .panel {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-      padding: 18px;
+      border-radius: 16px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+      padding: 16px;
       backdrop-filter: blur(8px);
     }
+
     .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .spacer { flex: 1; }
+
     label { font-size: 13px; opacity: .9; }
-    select, input[type="text"], button {
+    select, input[type="text"], input[type="file"], button {
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(0,0,0,0.25);
+      background: rgba(0,0,0,0.22);
       color: #e8e8ef;
       padding: 10px 12px;
       font-size: 14px;
@@ -41,17 +98,18 @@
       background: linear-gradient(180deg, rgba(125,94,255,.95), rgba(84,66,185,.95));
       border: 0;
       padding: 10px 14px;
-      font-weight: 600;
+      font-weight: 650;
     }
     button.secondary {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.14);
-      font-weight: 600;
+      font-weight: 650;
     }
     button.danger {
       background: linear-gradient(180deg, rgba(255,96,96,.95), rgba(170,38,38,.95));
       border: 0;
     }
+
     .pill {
       display:inline-flex; align-items:center; gap:8px;
       padding: 8px 12px;
@@ -60,21 +118,30 @@
       border: 1px solid rgba(255,255,255,0.12);
       font-size: 13px;
     }
-    .status { margin-top: 12px; padding: 10px 12px; border-radius: 12px; }
+
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      line-height: 1.35;
+    }
     .status.ok { background: rgba(80,200,120,0.10); border: 1px solid rgba(80,200,120,0.25); }
     .status.err { background: rgba(255,90,90,0.10); border: 1px solid rgba(255,90,90,0.25); }
     .status.warn { background: rgba(255,200,80,0.10); border: 1px solid rgba(255,200,80,0.25); }
 
-    .quiz { margin-top: 18px; display:none; }
+    .quiz { margin-top: 16px; display:none; }
     .qbox {
-      margin-top: 14px;
+      margin-top: 12px;
       padding: 14px;
       border-radius: 16px;
-      background: rgba(0,0,0,0.22);
+      background: rgba(0,0,0,0.18);
       border: 1px solid rgba(255,255,255,0.10);
     }
     .qmeta { font-size: 13px; opacity: 0.85; margin-bottom: 6px; }
     .qtext { font-size: 16px; font-weight: 650; line-height: 1.35; }
+    .qsrc { margin-top: 6px; font-size: 12px; opacity: 0.70; }
+
     .opt { margin-top: 10px; display: grid; gap: 8px; }
     .opt label {
       display:flex; gap:10px; align-items:flex-start;
@@ -84,19 +151,26 @@
       cursor: pointer;
     }
     .opt input { margin-top: 3px; }
-    .footer { margin-top: 14px; display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
-    .spacer { flex: 1; }
-    .tiny { font-size: 12px; opacity: 0.75; }
 
-    .hidden { display:none !important; }
-    a { color: #cfc7ff; }
+    .footer { margin-top: 14px; display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
+    .tiny { font-size: 12px; opacity: 0.75; }
     code { background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 8px; }
   </style>
 </head>
 
 <body>
+  <!-- Banner: use your banner image path -->
+  <div class="banner">
+    <img id="bannerImg" src="./assets/banner.png" alt="Banner" />
+    <div class="overlay"></div>
+    <div class="title">
+      <h1>LEARNING CHECK QUIZ (Multiple Choice)</h1>
+      <div class="sub">Loads questions directly from your DOCX format</div>
+    </div>
+  </div>
+
   <div class="wrap">
-    <div class="card">
+    <div class="panel">
       <div class="row" style="justify-content: space-between;">
         <div class="row">
           <span class="pill"><strong>Podcast</strong></span>
@@ -107,9 +181,13 @@
         </div>
 
         <div class="row">
-          <button class="secondary" id="reloadBtn">Reload DOCX</button>
+          <button class="secondary" id="reloadBtn">Load from Site</button>
+          <label class="secondary" style="display:inline-flex; gap:10px; align-items:center; padding: 8px 12px; border-radius: 12px; cursor:pointer;">
+            <span style="font-weight:650;">Load DOCX</span>
+            <input id="docxFileInput" type="file" accept=".docx" style="display:none;" />
+          </label>
           <button id="startBtn">Start</button>
-          <button class="danger" id="finishBtn">Finish Quiz</button>
+          <button class="danger" id="finishBtn">Finish</button>
         </div>
       </div>
 
@@ -117,17 +195,18 @@
         <div class="pill">Correct: <span id="statCorrect">0</span></div>
         <div class="pill">Attempted: <span id="statAttempted">0</span></div>
         <div class="pill">First-try: <span id="statFirstTry">0</span></div>
-        <div class="pill">In Review Missed: <span id="statReviewPool">0</span></div>
+        <div class="pill">Review Missed: <span id="statReviewPool">0</span></div>
       </div>
 
-      <div id="statusBox" class="status warn" style="margin-top: 12px;">
-        Choose a podcast + set, then click <strong>Reload DOCX</strong>.
+      <div id="statusBox" class="status warn">
+        Click <strong>Load from Site</strong> (fetches the DOCX from <code>/quizzes/</code>) or use <strong>Load DOCX</strong> to test locally.
       </div>
 
       <div class="quiz" id="quizArea">
         <div class="qbox">
           <div class="qmeta" id="qMeta"></div>
           <div class="qtext" id="qText"></div>
+          <div class="qsrc" id="qSource"></div>
           <div class="opt" id="qOptions"></div>
 
           <div class="footer">
@@ -135,7 +214,7 @@
             <button class="secondary" id="nextBtn">Next</button>
             <div class="spacer"></div>
             <button id="checkBtn">Check</button>
-            <button class="secondary" id="revealBtn">Reveal Answer (for debug)</button>
+            <button class="secondary" id="revealBtn">Reveal (debug)</button>
           </div>
 
           <div class="tiny" style="margin-top:10px;">
@@ -145,7 +224,7 @@
       </div>
 
       <div class="tiny" style="margin-top: 12px;">
-        Tip: Put files under <code>/quizzes/</code>. Example: <code>/quizzes/102_Intro_2_quiz.docx</code>
+        Put files here for site-loading: <code>/quizzes/101_Intro_1_quiz.docx</code> etc.
       </div>
     </div>
   </div>
