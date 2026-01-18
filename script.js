@@ -1,13 +1,26 @@
-// Veda Podcast Quiz - Complete Rewrite
-// GitHub Configuration
-const CONFIG = {
-  owner: 'esbalabhakti-arch',
-  repo: 'PdxVedaMantraPadarthaAnvaya_QUIZ',
-  branch: 'main',
-  folder: 'Images'
-};
+// Veda Podcast Quiz - Fixed Implementation
+console.log('=== Quiz Application Starting ===');
 
-// State Management
+// Configuration - HARDCODED FILE LIST
+const QUIZ_FILES = [
+  {
+    name: '101_Intro_1_quiz.docx',
+    title: '101 — Introduction (Part 1)',
+    url: 'https://raw.githubusercontent.com/esbalabhakti-arch/PdxVedaMantraPadarthaAnvaya_QUIZ/main/Images/101_Intro_1_quiz.docx'
+  },
+  {
+    name: '102_Intro_2_quiz.docx',
+    title: '102 — Introduction (Part 2)',
+    url: 'https://raw.githubusercontent.com/esbalabhakti-arch/PdxVedaMantraPadarthaAnvaya_QUIZ/main/Images/102_Intro_2_quiz.docx'
+  },
+  {
+    name: '103_1st_Panchadi_quiz.docx',
+    title: '103 — First Pañcati of Aruṇam',
+    url: 'https://raw.githubusercontent.com/esbalabhakti-arch/PdxVedaMantraPadarthaAnvaya_QUIZ/main/Images/103_1st_Panchadi_quiz.docx'
+  }
+];
+
+// State
 const state = {
   allQuestions: [],
   currentSet: 1,
@@ -42,11 +55,8 @@ const elements = {
 };
 
 // Utility Functions
-function log(message, data = '') {
-  console.log(`[QUIZ] ${message}`, data);
-}
-
 function showMessage(text) {
+  console.log('Message:', text);
   elements.messageArea.textContent = text;
   elements.messageArea.style.display = 'block';
   elements.questionContainer.classList.remove('active');
@@ -62,164 +72,168 @@ function updateStats() {
   elements.statFirstTry.textContent = `First-try: ${state.stats.firstTry}`;
 }
 
-// GitHub API Functions
-async function fetchQuizFiles() {
-  const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.folder}?ref=${CONFIG.branch}`;
-  log('Fetching file list from:', url);
-  
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
-    }
-    
-    const files = await response.json();
-    const quizFiles = files
-      .filter(file => file.name.toLowerCase().endsWith('_quiz.docx'))
-      .map(file => ({
-        name: file.name,
-        downloadUrl: file.download_url,
-        displayName: formatFileName(file.name)
-      }));
-    
-    log('Found quiz files:', quizFiles);
-    return quizFiles;
-  } catch (error) {
-    log('Error fetching files:', error);
-    throw error;
-  }
-}
-
-function formatFileName(filename) {
-  // Remove _quiz.docx and format nicely
-  const base = filename.replace(/_quiz\.docx$/i, '');
-  const parts = base.split('_');
-  
-  // Check if starts with number
-  if (/^\d+$/.test(parts[0])) {
-    const num = parts[0];
-    const rest = parts.slice(1).join(' ');
-    return `${num} — ${titleCase(rest)}`;
-  }
-  
-  return titleCase(base.replace(/_/g, ' '));
-}
-
-function titleCase(str) {
-  return str.split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
-}
-
-// DOCX Parsing Functions
+// DOCX Loading and Parsing
 async function loadDocxFile(url) {
-  log('Loading DOCX from:', url);
+  console.log('Loading DOCX from:', url);
   
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: 'GET',
+      cache: 'no-cache'
+    });
+    
+    console.log('Fetch response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch DOCX: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const arrayBuffer = await response.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
+    console.log('ArrayBuffer size:', arrayBuffer.byteLength);
     
-    log('DOCX loaded, text length:', result.value.length);
+    if (!window.mammoth) {
+      throw new Error('Mammoth library not loaded');
+    }
+    
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    console.log('Text extracted, length:', result.value.length);
+    console.log('First 500 chars:', result.value.substring(0, 500));
+    
     return result.value;
   } catch (error) {
-    log('Error loading DOCX:', error);
+    console.error('Error loading DOCX:', error);
     throw error;
   }
 }
 
 function parseQuestions(text) {
-  log('Parsing questions from text...');
+  console.log('=== Starting to parse questions ===');
+  console.log('Text length:', text.length);
+  
   const questions = [];
   
-  // Split by question numbers (e.g., "1.", "2.", etc.)
-  const questionBlocks = text.split(/\n\s*(\d+)\.\s*\n/);
+  // Split text by question numbers
+  const lines = text.split('\n');
+  let currentQuestion = null;
+  let currentSection = 'question'; // question, options, answer, check
   
-  for (let i = 1; i < questionBlocks.length; i += 2) {
-    const questionNum = parseInt(questionBlocks[i]);
-    const questionText = questionBlocks[i + 1];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
     
-    if (!questionText) continue;
-    
-    try {
-      const question = parseQuestionBlock(questionNum, questionText);
-      if (question) {
-        questions.push(question);
+    // Detect question number (e.g., "1." at start of line)
+    const questionMatch = line.match(/^(\d+)\.\s*$/);
+    if (questionMatch) {
+      // Save previous question if exists
+      if (currentQuestion && currentQuestion.correctAnswer) {
+        questions.push(currentQuestion);
       }
-    } catch (error) {
-      log(`Error parsing question ${questionNum}:`, error);
+      
+      // Start new question
+      currentQuestion = {
+        number: parseInt(questionMatch[1]),
+        question: '',
+        options: {},
+        correctAnswer: null,
+        explanation: '',
+        attempts: 0
+      };
+      currentSection = 'question';
+      continue;
+    }
+    
+    if (!currentQuestion) continue;
+    
+    // Detect options (A., B., C., D.)
+    const optionMatch = line.match(/^([A-D])\.\s*(.+)$/);
+    if (optionMatch) {
+      currentQuestion.options[optionMatch[1]] = optionMatch[2].trim();
+      currentSection = 'options';
+      continue;
+    }
+    
+    // Detect correct answer
+    const answerMatch = line.match(/^Correct Answer:\s*([A-D])/i);
+    if (answerMatch) {
+      currentQuestion.correctAnswer = answerMatch[1].toUpperCase();
+      currentSection = 'answer';
+      continue;
+    }
+    
+    // Detect explanation
+    const checkMatch = line.match(/^Check:\s*(.+)$/i);
+    if (checkMatch) {
+      currentQuestion.explanation = checkMatch[1].trim();
+      currentSection = 'check';
+      continue;
+    }
+    
+    // Append to current section
+    if (line.length > 0) {
+      if (currentSection === 'question') {
+        currentQuestion.question += (currentQuestion.question ? ' ' : '') + line;
+      } else if (currentSection === 'check') {
+        currentQuestion.explanation += ' ' + line;
+      }
     }
   }
   
-  log('Parsed questions:', questions.length);
+  // Save last question
+  if (currentQuestion && currentQuestion.correctAnswer) {
+    questions.push(currentQuestion);
+  }
+  
+  // Clean up questions
+  questions.forEach(q => {
+    q.question = q.question.replace(/\[\(Source:[^\]]+\)\]/g, '').trim();
+    q.explanation = q.explanation.trim();
+  });
+  
+  console.log(`Parsed ${questions.length} questions`);
+  if (questions.length > 0) {
+    console.log('First question:', questions[0]);
+  }
+  
   return questions;
 }
 
-function parseQuestionBlock(num, text) {
-  // Extract question stem (before option A)
-  const optionAMatch = text.match(/\n\s*A\.\s/);
-  if (!optionAMatch) return null;
-  
-  const questionStem = text.substring(0, optionAMatch.index).trim();
-  const optionsText = text.substring(optionAMatch.index);
-  
-  // Extract options A, B, C, D
-  const options = {};
-  const optionPattern = /\n\s*([A-D])\.\s*([^\n]+)/g;
-  let match;
-  
-  while ((match = optionPattern.exec(optionsText)) !== null) {
-    options[match[1]] = match[2].trim();
-  }
-  
-  // Must have at least 2 options
-  if (Object.keys(options).length < 2) return null;
-  
-  // Extract correct answer
-  const answerMatch = text.match(/Correct Answer:\s*([A-D])/i);
-  if (!answerMatch) return null;
-  
-  const correctAnswer = answerMatch[1].toUpperCase();
-  
-  // Extract explanation (optional)
-  const checkMatch = text.match(/Check:\s*(.+?)(?:\n\n|\n\d+\.|$)/s);
-  const explanation = checkMatch ? checkMatch[1].trim() : '';
-  
-  return {
-    number: num,
-    question: cleanText(questionStem),
-    options: options,
-    correctAnswer: correctAnswer,
-    explanation: explanation,
-    attempts: 0
-  };
-}
-
-function cleanText(text) {
-  return text
-    .replace(/\[\(Source:[^\]]+\)\]/g, '') // Remove source citations
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-// Quiz Logic Functions
+// Set Management
 function getQuestionsForSet(setNum) {
   const start = (setNum - 1) * 10;
   const end = start + 10;
   return state.allQuestions.slice(start, end);
 }
 
+function updateSetButtons() {
+  const buttons = document.querySelectorAll('.set-btn');
+  buttons.forEach((btn, index) => {
+    const setNum = index + 1;
+    const setQuestions = getQuestionsForSet(setNum);
+    
+    if (setQuestions.length > 0) {
+      const start = (setNum - 1) * 10 + 1;
+      const end = start + setQuestions.length - 1;
+      btn.textContent = `Set ${setNum} (Q${start}-${end})`;
+      btn.disabled = false;
+    } else {
+      btn.textContent = `Set ${setNum}`;
+      btn.disabled = true;
+    }
+  });
+}
+
+// Quiz Logic
 function startQuiz() {
+  console.log('Starting quiz...');
+  console.log('Total questions loaded:', state.allQuestions.length);
+  
   if (state.allQuestions.length === 0) {
     showMessage('⚠️ No questions loaded. Please select a podcast first.');
     return;
   }
   
   const setQuestions = getQuestionsForSet(state.currentSet);
+  console.log('Questions in current set:', setQuestions.length);
+  
   if (setQuestions.length === 0) {
     showMessage(`⚠️ Set ${state.currentSet} has no questions.`);
     return;
@@ -240,14 +254,12 @@ function displayQuestion() {
     return;
   }
   
-  // Reset state
+  console.log('Displaying question:', question.number);
+  
   state.selectedAnswer = null;
   state.isAnswered = false;
   
-  // Show question container
   elements.questionContainer.classList.add('active');
-  
-  // Update question info
   elements.questionNumber.textContent = `Set ${state.currentSet} - Question ${state.currentQuestionIndex + 1} of ${setQuestions.length}`;
   elements.questionText.textContent = question.question;
   
@@ -269,11 +281,8 @@ function displayQuestion() {
     elements.optionsContainer.appendChild(option);
   });
   
-  // Reset buttons
   elements.checkBtn.disabled = true;
   elements.nextBtn.disabled = true;
-  
-  // Hide feedback
   elements.feedbackArea.classList.remove('show', 'correct', 'incorrect');
   elements.feedbackArea.textContent = '';
 }
@@ -281,12 +290,10 @@ function displayQuestion() {
 function selectOption(letter) {
   if (state.isAnswered) return;
   
-  // Remove previous selection
   document.querySelectorAll('.option').forEach(opt => {
     opt.classList.remove('selected');
   });
   
-  // Add new selection
   const selectedOption = document.querySelector(`.option[data-letter="${letter}"]`);
   if (selectedOption) {
     selectedOption.classList.add('selected');
@@ -306,6 +313,8 @@ function checkAnswer() {
   
   const isCorrect = state.selectedAnswer === question.correctAnswer;
   
+  console.log('Checking answer:', state.selectedAnswer, 'Correct:', question.correctAnswer, 'Result:', isCorrect);
+  
   if (isCorrect) {
     state.stats.correct++;
     if (question.attempts === 1) {
@@ -316,7 +325,6 @@ function checkAnswer() {
     elements.checkBtn.disabled = true;
     elements.nextBtn.disabled = false;
     
-    // Show success feedback
     elements.feedbackArea.className = 'feedback show correct';
     let feedbackText = `✅ Correct! The answer is ${question.correctAnswer}.`;
     if (question.explanation) {
@@ -324,7 +332,6 @@ function checkAnswer() {
     }
     elements.feedbackArea.textContent = feedbackText;
   } else {
-    // Show error feedback
     elements.feedbackArea.className = 'feedback show incorrect';
     elements.feedbackArea.textContent = '❌ Not quite. Try again!\n\nTip: Re-read the question carefully and pick the best match.';
   }
@@ -348,15 +355,12 @@ function nextQuestion() {
 function endSet() {
   elements.questionContainer.classList.remove('active');
   
-  // Check if all 50 questions are done
   const totalQuestions = state.allQuestions.length;
   const questionsAnswered = state.currentSet * 10;
   
   if (questionsAnswered >= totalQuestions) {
-    // All questions done
     showMessage(`🎉 All questions done!\n\nFinal Statistics:\n• Total Correct: ${state.stats.correct}\n• Total Attempted: ${state.stats.attempted}\n• First-try Correct: ${state.stats.firstTry}\n\nNow click the Finish button.`);
   } else {
-    // Set complete, more sets available
     showMessage(`✅ Congratulations, 10 question set complete!\n\nMove to the next set to continue.`);
   }
   
@@ -366,37 +370,37 @@ function endSet() {
 function finishQuiz() {
   state.quizActive = false;
   elements.questionContainer.classList.remove('active');
-  
   showMessage(`✅ Quiz finished!\n\nFinal Statistics:\n• Correct: ${state.stats.correct}\n• Attempted: ${state.stats.attempted}\n• First-try Correct: ${state.stats.firstTry}\n\nKeep going — consistency beats intensity! 🌟`);
 }
 
 // Event Listeners
 elements.podcastSelect.addEventListener('change', async (e) => {
-  const selectedFile = e.target.value;
-  if (!selectedFile) return;
+  const selectedUrl = e.target.value;
+  if (!selectedUrl) return;
   
+  console.log('Selected podcast URL:', selectedUrl);
   showMessage('⏳ Loading questions...');
   
   try {
-    const text = await loadDocxFile(selectedFile);
+    const text = await loadDocxFile(selectedUrl);
     state.allQuestions = parseQuestions(text);
     
+    console.log('Questions loaded:', state.allQuestions.length);
+    
     if (state.allQuestions.length === 0) {
-      showMessage('⚠️ No questions found in this file.');
+      showMessage('⚠️ No questions found in this file. Check console for details.');
       return;
     }
     
     // Reset stats
     state.stats = { correct: 0, attempted: 0, firstTry: 0 };
     updateStats();
-    
-    // Update set buttons
     updateSetButtons();
     
     showMessage(`✅ Loaded ${state.allQuestions.length} questions.\n\nSelect a set and click Start Quiz.`);
   } catch (error) {
-    showMessage(`❌ Error loading file: ${error.message}`);
-    log('Load error:', error);
+    console.error('Error:', error);
+    showMessage(`❌ Error loading file:\n${error.message}\n\nCheck browser console for details.`);
   }
 });
 
@@ -405,7 +409,6 @@ elements.setsContainer.addEventListener('click', (e) => {
     const setNum = parseInt(e.target.dataset.set);
     state.currentSet = setNum;
     
-    // Update active button
     document.querySelectorAll('.set-btn').forEach(btn => {
       btn.classList.remove('active');
     });
@@ -418,60 +421,34 @@ elements.finishBtn.addEventListener('click', finishQuiz);
 elements.checkBtn.addEventListener('click', checkAnswer);
 elements.nextBtn.addEventListener('click', nextQuestion);
 
-function updateSetButtons() {
-  const buttons = document.querySelectorAll('.set-btn');
-  buttons.forEach((btn, index) => {
-    const setNum = index + 1;
-    const setQuestions = getQuestionsForSet(setNum);
-    
-    if (setQuestions.length > 0) {
-      const start = (setNum - 1) * 10 + 1;
-      const end = start + setQuestions.length - 1;
-      btn.textContent = `Set ${setNum} (Q${start}-${end})`;
-      btn.disabled = false;
-    } else {
-      btn.textContent = `Set ${setNum}`;
-      btn.disabled = true;
-    }
-  });
-}
-
 // Initialize
-async function init() {
-  log('Initializing quiz application...');
-  showMessage('⏳ Loading available podcasts...');
+function init() {
+  console.log('Initializing quiz application...');
   
-  try {
-    const files = await fetchQuizFiles();
-    
-    elements.podcastSelect.innerHTML = '';
-    
-    if (files.length === 0) {
-      elements.podcastSelect.innerHTML = '<option value="">No quiz files found</option>';
-      showMessage('❌ No quiz files found in the repository.');
-      return;
-    }
-    
-    // Populate dropdown
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- Select a Podcast --';
-    elements.podcastSelect.appendChild(defaultOption);
-    
-    files.forEach(file => {
-      const option = document.createElement('option');
-      option.value = file.downloadUrl;
-      option.textContent = file.displayName;
-      elements.podcastSelect.appendChild(option);
-    });
-    
-    showMessage('✅ Ready! Select a podcast to begin.');
-    log('Initialization complete');
-  } catch (error) {
-    showMessage(`❌ Failed to load: ${error.message}`);
-    log('Init error:', error);
-  }
+  elements.podcastSelect.innerHTML = '';
+  
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = '-- Select a Podcast --';
+  elements.podcastSelect.appendChild(defaultOption);
+  
+  QUIZ_FILES.forEach(file => {
+    const option = document.createElement('option');
+    option.value = file.url;
+    option.textContent = file.title;
+    elements.podcastSelect.appendChild(option);
+  });
+  
+  showMessage('✅ Ready! Select a podcast to begin.');
+  updateStats();
+  console.log('Initialization complete');
 }
 
-// Start the application
-init();
+// Check if mammoth is loaded
+if (window.mammoth) {
+  console.log('Mammoth library loaded successfully');
+  init();
+} else {
+  console.error('Mammoth library not loaded!');
+  showMessage('❌ Error: Required library not loaded. Please refresh the page.');
+}
