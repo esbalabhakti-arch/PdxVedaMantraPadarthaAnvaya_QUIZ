@@ -1,412 +1,155 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Veda Podcast Learning Check Quiz</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Learning Check Quiz</title>
 
-  <!-- Mammoth (DOCX -> raw text in browser) -->
+  <!-- Mammoth (DOCX -> raw text) -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
 
   <style>
-    :root{
-      --bg1:#070a14;
-      --bg2:#0a1022;
-      --card: rgba(255,255,255,0.06);
-      --card2: rgba(255,255,255,0.08);
-      --stroke: rgba(255,255,255,0.10);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.70);
-      --muted2: rgba(255,255,255,0.55);
-      --purple:#7b5cff;
-      --purple2:#5a3dff;
-      --danger:#ff5a5a;
-      --ok:#30d158;
-      --shadow: 0 18px 60px rgba(0,0,0,0.45);
-      --round: 22px;
-      --pill: 999px;
-    }
-
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 20% 25%, rgba(123,92,255,0.25), transparent 60%),
-        radial-gradient(900px 600px at 80% 30%, rgba(0,210,255,0.12), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      padding: 34px 16px 46px;
+      background: radial-gradient(1200px 800px at 50% -200px, #2a2f55 0%, #0b0d16 55%, #070812 100%);
+      color: #e8e8ef;
     }
-
-    .wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .bannerCard{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: var(--round);
-      box-shadow: var(--shadow);
-      padding: 12px;
-      overflow:hidden;
-    }
-
-    .banner{
-      width:100%;
-      display:block;
+    .wrap { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
       border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .panel{
-      margin-top: 18px;
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: var(--round);
-      box-shadow: var(--shadow);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
       padding: 18px;
+      backdrop-filter: blur(8px);
     }
-
-    .row{
-      display:flex;
-      gap: 14px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:center;
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    label { font-size: 13px; opacity: .9; }
+    select, input[type="text"], button {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.25);
+      color: #e8e8ef;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
     }
-
-    .selectShell{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: var(--pill);
-      border: 1px solid var(--stroke);
-      background: rgba(0,0,0,0.18);
-      min-width: min(950px, 100%);
-    }
-
-    .selectLabel{
-      font-size: 13px;
-      color: var(--muted2);
-      padding-left: 6px;
-      min-width: 70px;
-    }
-
-    select{
-      flex:1;
-      min-width: 260px;
-      font-size: 16px;
-      color: var(--text);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: var(--pill);
-      padding: 12px 14px;
-      outline:none;
-    }
-
-    .titlePill{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 16px;
-      border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
-      letter-spacing: 0.6px;
-      text-transform: none;
-      font-weight: 700;
-    }
-
-    .toggleBar{
-      margin-top: 14px;
-      display:flex;
-      justify-content:center;
-    }
-
-    .toggle{
-      display:inline-flex;
-      gap:10px;
-      padding: 10px;
-      border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.18);
-    }
-
-    .tbtn{
-      border:none;
-      cursor:pointer;
-      color: var(--muted);
+    button {
+      cursor: pointer;
+      background: linear-gradient(180deg, rgba(125,94,255,.95), rgba(84,66,185,.95));
+      border: 0;
       padding: 10px 14px;
-      border-radius: var(--pill);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      font-weight: 650;
-      transition: 0.15s ease;
-      white-space:nowrap;
+      font-weight: 600;
     }
-    .tbtn:hover{ transform: translateY(-1px); }
-    .tbtn.active{
-      background: linear-gradient(180deg, rgba(123,92,255,0.55), rgba(123,92,255,0.25));
-      border: 1px solid rgba(123,92,255,0.65);
-      color: rgba(255,255,255,0.95);
-      box-shadow: 0 10px 30px rgba(123,92,255,0.18);
-    }
-
-    .game{
-      margin-top: 18px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: var(--round);
-      padding: 18px;
-    }
-
-    .gameTop{
-      display:flex;
-      justify-content:space-between;
-      gap: 14px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .statusPill{
-      display:inline-flex;
-      gap: 10px;
-      align-items:center;
-      padding: 10px 14px;
-      border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.16);
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .btn{
-      border:none;
-      cursor:pointer;
-      padding: 11px 16px;
-      border-radius: var(--pill);
-      font-weight: 750;
-      color: rgba(255,255,255,0.95);
-      border: 1px solid rgba(255,255,255,0.12);
+    button.secondary {
       background: rgba(255,255,255,0.08);
-      transition: 0.15s ease;
+      border: 1px solid rgba(255,255,255,0.14);
+      font-weight: 600;
     }
-    .btn:hover{ transform: translateY(-1px); }
-    .btn.primary{
-      background: linear-gradient(180deg, rgba(123,92,255,0.55), rgba(123,92,255,0.25));
-      border: 1px solid rgba(123,92,255,0.65);
+    button.danger {
+      background: linear-gradient(180deg, rgba(255,96,96,.95), rgba(170,38,38,.95));
+      border: 0;
     }
-    .btn.danger{
-      background: linear-gradient(180deg, rgba(255,90,90,0.35), rgba(255,90,90,0.18));
-      border: 1px solid rgba(255,90,90,0.45);
-    }
-    .btn:disabled{
-      opacity: 0.45;
-      cursor:not-allowed;
-      transform:none;
-    }
-
-    .scoreRow{
-      margin-top: 14px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .scoreChip{
+    .pill {
+      display:inline-flex; align-items:center; gap:8px;
       padding: 8px 12px;
-      border-radius: var(--pill);
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.16);
-    }
-
-    .msg{
-      margin-top: 14px;
-      padding: 14px 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.16);
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .qbox{
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 18px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
-      display:none;
-    }
-
-    .qtitle{
-      font-weight: 800;
-      margin: 0 0 8px 0;
-      font-size: 18px;
-    }
-    .qmeta{
-      color: var(--muted2);
-      font-size: 13px;
-      margin-bottom: 12px;
-    }
-
-    .options{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .opt{
-      display:flex;
-      gap: 10px;
-      align-items:flex-start;
-      padding: 12px 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      cursor:pointer;
-      transition: 0.12s ease;
-      user-select:none;
-    }
-    .opt:hover{ transform: translateY(-1px); }
-    .opt input{ margin-top: 3px; }
-    .opt .txt{ color: rgba(255,255,255,0.90); }
-    .opt.selected{
-      border-color: rgba(123,92,255,0.65);
-      box-shadow: 0 10px 30px rgba(123,92,255,0.14);
-      background: rgba(123,92,255,0.12);
-    }
-
-    .result{
-      margin-top: 12px;
-      padding: 12px 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.16);
-      color: var(--muted);
-      display:none;
-    }
-
-    .result.ok{
-      border-color: rgba(48,209,88,0.35);
-      background: rgba(48,209,88,0.10);
-      color: rgba(255,255,255,0.90);
-    }
-
-    .result.bad{
-      border-color: rgba(255,90,90,0.35);
-      background: rgba(255,90,90,0.10);
-      color: rgba(255,255,255,0.90);
-    }
-
-    .foot{
-      margin-top: 18px;
-      text-align:center;
-      color: var(--muted2);
       font-size: 13px;
     }
-    .foot a{ color: rgba(255,255,255,0.75); }
+    .status { margin-top: 12px; padding: 10px 12px; border-radius: 12px; }
+    .status.ok { background: rgba(80,200,120,0.10); border: 1px solid rgba(80,200,120,0.25); }
+    .status.err { background: rgba(255,90,90,0.10); border: 1px solid rgba(255,90,90,0.25); }
+    .status.warn { background: rgba(255,200,80,0.10); border: 1px solid rgba(255,200,80,0.25); }
 
-    .thinHr{
+    .quiz { margin-top: 18px; display:none; }
+    .qbox {
       margin-top: 14px;
-      border:none;
-      height: 1px;
-      background: rgba(255,255,255,0.10);
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.10);
     }
+    .qmeta { font-size: 13px; opacity: 0.85; margin-bottom: 6px; }
+    .qtext { font-size: 16px; font-weight: 650; line-height: 1.35; }
+    .opt { margin-top: 10px; display: grid; gap: 8px; }
+    .opt label {
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 10px 12px; border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      cursor: pointer;
+    }
+    .opt input { margin-top: 3px; }
+    .footer { margin-top: 14px; display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
+    .spacer { flex: 1; }
+    .tiny { font-size: 12px; opacity: 0.75; }
+
+    .hidden { display:none !important; }
+    a { color: #cfc7ff; }
+    code { background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 8px; }
   </style>
 </head>
 
 <body>
   <div class="wrap">
+    <div class="card">
+      <div class="row" style="justify-content: space-between;">
+        <div class="row">
+          <span class="pill"><strong>Podcast</strong></span>
+          <select id="podcastSelect"></select>
 
-    <div class="bannerCard">
-      <img
-        class="banner"
-        id="bannerImg"
-        src="Images/Vedic_podcast_banner_2.png"
-        alt="Veda Podcast Banner"
-        onerror="this.onerror=null; this.src='Vedic_podcast_banner_2.png';"
-      />
-    </div>
+          <span class="pill"><strong>Set</strong></span>
+          <select id="setSelect"></select>
+        </div>
 
-    <div class="panel">
-
-      <div class="row">
-        <div class="selectShell">
-          <div class="selectLabel">Podcast</div>
-          <select id="podcastSelect">
-            <option value="">Loading…</option>
-          </select>
+        <div class="row">
+          <button class="secondary" id="reloadBtn">Reload DOCX</button>
+          <button id="startBtn">Start</button>
+          <button class="danger" id="finishBtn">Finish Quiz</button>
         </div>
       </div>
 
-      <div class="row" style="margin-top:12px;">
-        <div class="titlePill">LEARNING CHECK QUIZ (Multiple Choice)</div>
+      <div class="row" style="margin-top: 12px;">
+        <div class="pill">Correct: <span id="statCorrect">0</span></div>
+        <div class="pill">Attempted: <span id="statAttempted">0</span></div>
+        <div class="pill">First-try: <span id="statFirstTry">0</span></div>
+        <div class="pill">In Review Missed: <span id="statReviewPool">0</span></div>
       </div>
 
-      <div class="toggleBar">
-        <div class="toggle" id="setToggle">
-          <button class="tbtn active" data-set="1">Set 1</button>
-          <button class="tbtn" data-set="2">Set 2</button>
-          <button class="tbtn" data-set="3">Set 3</button>
-          <button class="tbtn" data-set="4">Set 4</button>
-          <button class="tbtn" data-set="5">Set 5</button>
-          <button class="tbtn" data-set="missed" id="missedBtn">Review Missed (0)</button>
-        </div>
+      <div id="statusBox" class="status warn" style="margin-top: 12px;">
+        Choose a podcast + set, then click <strong>Reload DOCX</strong>.
       </div>
 
-      <div class="game">
-        <div class="gameTop">
-          <div class="statusPill" id="modePill">Set 1 • Ready</div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <button class="btn primary" id="startBtn">Start</button>
-            <button class="btn danger" id="finishBtn">Finish Quiz</button>
-          </div>
-        </div>
-
-        <div class="msg" id="mainMsg">
-          Select a podcast, pick a set, then press <b>Start</b>.
-        </div>
-
-        <div class="scoreRow">
-          <div class="scoreChip" id="scoreCorrect">Correct: 0</div>
-          <div class="scoreChip" id="scoreAttempted">Attempted: 0</div>
-          <div class="scoreChip" id="scoreFirstTry">First-try: 0</div>
-          <div class="scoreChip" id="scoreMissedPool">In Review Missed pool: 0</div>
-        </div>
-
-        <div class="qbox" id="qBox">
-          <div class="qtitle" id="qTitle">Question</div>
+      <div class="quiz" id="quizArea">
+        <div class="qbox">
           <div class="qmeta" id="qMeta"></div>
-          <div class="options" id="options"></div>
+          <div class="qtext" id="qText"></div>
+          <div class="opt" id="qOptions"></div>
 
-          <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
-            <button class="btn" id="checkBtn">Check Answer</button>
-            <button class="btn" id="nextBtn">Next</button>
+          <div class="footer">
+            <button class="secondary" id="prevBtn">Prev</button>
+            <button class="secondary" id="nextBtn">Next</button>
+            <div class="spacer"></div>
+            <button id="checkBtn">Check</button>
+            <button class="secondary" id="revealBtn">Reveal Answer (for debug)</button>
           </div>
 
-          <div class="result" id="resultBox"></div>
-        </div>
-
-        <hr class="thinHr"/>
-
-        <div class="foot">
-          Acknowledgements: Shri Ram kumar Vaidyanathan, Portland, OR, USA<br/>
-          Contact: <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a>
+          <div class="tiny" style="margin-top:10px;">
+            DOCX path: <code id="docxPath"></code>
+          </div>
         </div>
       </div>
 
+      <div class="tiny" style="margin-top: 12px;">
+        Tip: Put files under <code>/quizzes/</code>. Example: <code>/quizzes/102_Intro_2_quiz.docx</code>
+      </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
