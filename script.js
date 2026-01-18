@@ -1,37 +1,18 @@
 // ---------------------------------------------------------
 // Veda Podcast Learning Check Quiz
-// - Loads quiz questions from DOCX using mammoth.extractRawText
-// - Splits into 5 sets of 10 questions + Review Missed
-// - Shows ONE question at a time
-// - Does NOT reveal long document text; only "Check:" explanation
+// ---------------------------------------------------------
+// IMPORTANT: GitHub Pages is case-sensitive.
+// Your folder is: images/   (lowercase)
+// So docx paths MUST be: images/<file>.docx
 // ---------------------------------------------------------
 
-// ------------------------------
-// CONFIG: update when you add podcasts
-// Folder structure expected (case-sensitive on GitHub Pages):
-//  - Images/<id>_quiz.docx
-// ------------------------------
 const PODCASTS = [
-  {
-    id: "101",
-    label: "101 — Introduction (Part 1)",
-    quizDocx: "Images/101_Intro_1_quiz.docx"
-  },
-  {
-    id: "102",
-    label: "102 — Introduction (Part 2)",
-    quizDocx: "Images/102_Intro_2_quiz.docx"
-  },
-  {
-    id: "103",
-    label: "103 — First Pañcati of Aruṇam",
-    quizDocx: "Images/103_1st_Panchadi_quiz.docx"
-  }
+  { id: "101", label: "101 — Introduction (Part 1)", quizDocx: "images/101_Intro_1_quiz.docx" },
+  { id: "102", label: "102 — Introduction (Part 2)", quizDocx: "images/102_Intro_2_quiz.docx" },
+  { id: "103", label: "103 — First Pañcati of Aruṇam", quizDocx: "images/103_1st_Panchadi_quiz.docx" }
 ];
 
-// ------------------------------
 // Elements
-// ------------------------------
 const $ = (id) => document.getElementById(id);
 
 const podcastSelect = $("podcastSelect");
@@ -60,26 +41,22 @@ const setBtns = {
   missed: $("missed")
 };
 
-// ------------------------------
 // State
-// ------------------------------
-let allQuestions = [];         // full parsed list (usually 50)
+let allQuestions = [];
 let currentPodcast = null;
 
-let activeMode = "set1";       // set1..set5 | missed
-let sessionActive = false;
-
-let queue = [];                // questions left in current run
+let activeMode = "set1";
+let queue = [];
 let currentQ = null;
 
-let selectedChoice = null;     // "A" | "B" | "C" | "D"
+let selectedChoice = null;
 let attemptsForCurrent = 0;
 
 let attempted = 0;
 let correct = 0;
 let firstTryCorrect = 0;
 
-let missedPool = [];           // question objects user missed at least once (unique by qNum)
+let missedPool = [];
 
 const encouragements = [
   "Nice work! ✅",
@@ -90,9 +67,7 @@ const encouragements = [
   "Well done! 👏"
 ];
 
-// ------------------------------
 // Helpers
-// ------------------------------
 function setMessage(msg) {
   if (messageLine) messageLine.textContent = msg;
 }
@@ -136,19 +111,14 @@ function modeLabel(mode) {
   return mode;
 }
 
-// ------------------------------
-// DOCX parsing (robust for your format)
-// Expected pattern in DOCX raw text:
-//   1.
-//   Question...
-//   [(Source: ...)]
-//   A. ...
-//   B. ...
-//   C. ...
-//   D. ...
-//   Correct Answer: B
-//   Check: ...
-// ------------------------------
+// ---------------------------------------------------------
+// DOCX parsing (more flexible)
+// Accepts:
+//  - question start: "1." OR "1)" OR "1"
+//  - options: "A." OR "A)" OR "A:" (and same for B/C/D)
+//  - correct: "Correct Answer: B" (case-insensitive)
+//  - check: "Check:" (case-insensitive)
+// ---------------------------------------------------------
 function parseQuizRawText(raw) {
   const lines = raw
     .split(/\r?\n/)
@@ -158,36 +128,43 @@ function parseQuizRawText(raw) {
   const questions = [];
   let i = 0;
 
-  const isQNum = (s) => /^\d+\.$/.test(s);
-  const isOpt = (s) => /^[A-D]\.\s*/.test(s);
-  const isCorrect = (s) => /^Correct Answer:\s*[A-D]\b/i.test(s);
-  const isCheck = (s) => /^Check:\s*/i.test(s);
-  const isSource = (s) => /^\[\(Source:/i.test(s);
+  const isQNum = (s) => /^\d+(\.|\\)|\))?$/.test(s); // handles "1", "1.", "1)"
+  const qNumValue = (s) => parseInt((s.match(/^\d+/) || ["0"])[0], 10);
+
+  const isOpt = (s) => /^[A-D](\.|\)|:)\s*/.test(s);
+  const optKey = (s) => s.slice(0,1).toUpperCase();
+  const optText = (s) => s.replace(/^[A-D](\.|\)|:)\s*/, "").trim();
+
+  const isCorrect = (s) => /^Correct\s*Answer\s*:\s*[A-D]\b/i.test(s);
+  const correctKey = (s) => {
+    const m = s.match(/Correct\s*Answer\s*:\s*([A-D])/i);
+    return m ? m[1].toUpperCase() : null;
+  };
+
+  const isCheck = (s) => /^Check\s*:\s*/i.test(s);
+  const checkText = (s) => s.replace(/^Check\s*:\s*/i, "").trim();
 
   while (i < lines.length) {
     if (!isQNum(lines[i])) { i++; continue; }
 
-    const qNum = parseInt(lines[i].replace(".", ""), 10);
+    const qNum = qNumValue(lines[i]);
     i++;
 
-    // question text
+    // Collect question text until options start
     let q = "";
-    while (i < lines.length && !isSource(lines[i]) && !isOpt(lines[i]) && !isCorrect(lines[i]) && !isQNum(lines[i])) {
+    while (i < lines.length && !isOpt(lines[i]) && !isCorrect(lines[i]) && !isQNum(lines[i])) {
       q = q ? (q + " " + lines[i]) : lines[i];
       i++;
     }
 
-    // optional source line
-    if (i < lines.length && isSource(lines[i])) i++;
-
-    // options
+    // Options
     const opts = [];
     while (i < lines.length && !isCorrect(lines[i]) && !isQNum(lines[i])) {
       const line = lines[i];
 
       if (isOpt(line)) {
-        const key = line.slice(0, 1).toUpperCase();
-        const text = line.replace(/^[A-D]\.\s*/, "").trim();
+        const key = optKey(line);
+        const text = optText(line);
         opts.push({ key, text });
       } else if (opts.length > 0) {
         // continuation line for previous option
@@ -196,21 +173,20 @@ function parseQuizRawText(raw) {
       i++;
     }
 
-    // correct answer
-    let correctKey = null;
+    // Correct Answer
+    let ck = null;
     if (i < lines.length && isCorrect(lines[i])) {
-      const m = lines[i].match(/Correct Answer:\s*([A-D])/i);
-      correctKey = m ? m[1].toUpperCase() : null;
+      ck = correctKey(lines[i]);
       i++;
     }
 
-    // check explanation (may be 1+ lines until next qNum)
+    // Check explanation
     let check = "";
     if (i < lines.length && isCheck(lines[i])) {
-      check = lines[i].replace(/^Check:\s*/i, "").trim();
+      check = checkText(lines[i]);
       i++;
       while (i < lines.length && !isQNum(lines[i])) {
-        // stop if we accidentally hit another Correct Answer line or options (rare)
+        // stop if next block accidentally begins
         if (isCorrect(lines[i])) break;
         if (isOpt(lines[i])) break;
         check += (check ? " " : "") + lines[i];
@@ -218,26 +194,24 @@ function parseQuizRawText(raw) {
       }
     }
 
-    // only accept valid MCQ blocks
-    if (q && opts.length >= 4 && correctKey) {
-      // ensure 4 options A-D order
-      const byKey = new Map(opts.map(o => [o.key, o.text]));
-      const normalized = ["A", "B", "C", "D"].map(k => ({
-        key: k,
-        text: (byKey.get(k) || "").trim()
-      })).filter(o => o.text);
+    // Normalize options A-D
+    const byKey = new Map(opts.map(o => [o.key, o.text.trim()]));
+    const normalized = ["A","B","C","D"]
+      .map(k => ({ key:k, text:(byKey.get(k) || "").trim() }))
+      .filter(o => o.text);
 
+    // Only accept MCQ blocks with 4 options + correct key
+    if (q && normalized.length >= 4 && ck) {
       questions.push({
         qNum,
         question: q.trim(),
-        options: normalized,
-        correct: correctKey,
-        check: check.trim()
+        options: normalized.slice(0,4),
+        correct: ck,
+        check: (check || "").trim()
       });
     }
   }
 
-  // sort by qNum to keep stable ordering
   questions.sort((a,b) => a.qNum - b.qNum);
   return questions;
 }
@@ -249,7 +223,14 @@ async function loadDocxQuestions(docxPath) {
 
   const res = await fetch(docxPath, { cache: "no-cache" });
   if (!res.ok) {
-    throw new Error(`Could not fetch: ${docxPath} (HTTP ${res.status}). Check file path + case sensitivity.`);
+    throw new Error(
+      `Could not fetch: ${docxPath}\n` +
+      `HTTP ${res.status} ${res.statusText}\n\n` +
+      `✅ Check:\n` +
+      `- Folder name is "images" (lowercase)\n` +
+      `- File is committed/pushed to GitHub\n` +
+      `- Path matches exactly (case-sensitive)`
+    );
   }
 
   const arrayBuffer = await res.arrayBuffer();
@@ -257,22 +238,26 @@ async function loadDocxQuestions(docxPath) {
   const parsed = parseQuizRawText(raw.value || "");
 
   if (!parsed.length) {
-    throw new Error("No questions parsed. The DOCX format may have changed.");
+    // Provide a helpful hint without dumping the whole doc
+    const preview = (raw.value || "").split(/\r?\n/).slice(0, 20).join("\n");
+    throw new Error(
+      "No questions parsed. The DOCX format may not match the expected pattern.\n\n" +
+      "Expected patterns:\n" +
+      "- Question numbers: 1.  or 1) or 1\n" +
+      "- Options: A. or A) or A:\n" +
+      "- Correct Answer: B\n" +
+      "- Check: ...\n\n" +
+      "First 20 lines seen by parser:\n" + preview
+    );
   }
 
   return parsed;
 }
 
-// ------------------------------
 // Set slicing
-// ------------------------------
 function getQuestionsForMode(mode) {
-  if (mode === "missed") {
-    // Review missed uses current pool (unique)
-    return missedPool.slice().sort((a,b) => a.qNum - b.qNum);
-  }
+  if (mode === "missed") return missedPool.slice().sort((a,b)=>a.qNum-b.qNum);
 
-  // Normal sets assume 50 questions; slice by qNum order:
   const idx = {
     set1: [0, 10],
     set2: [10, 20],
@@ -282,13 +267,10 @@ function getQuestionsForMode(mode) {
   }[mode];
 
   if (!idx) return [];
-
   return allQuestions.slice(idx[0], idx[1]);
 }
 
-// ------------------------------
 // Render question
-// ------------------------------
 function renderQuestion(q) {
   currentQ = q;
   selectedChoice = null;
@@ -330,59 +312,23 @@ function renderQuestion(q) {
   updateScore();
 }
 
-// ------------------------------
-// Quiz flow
-// ------------------------------
-function startMode(mode) {
-  if (!allQuestions.length && mode !== "missed") {
-    setMessage("Load a podcast first, then press Start.");
-    return;
-  }
-
-  activeMode = mode;
-  setActiveButton(mode);
-
-  const list = getQuestionsForMode(mode);
-
-  // If user chooses Review Missed but nothing there
-  if (mode === "missed" && list.length === 0) {
-    sessionActive = true;
-    setBadge(`${modeLabel(mode)} • Ready`);
-    setMessage("No missed questions yet 😊 Try a Set first, then come back to Review Missed.");
-    questionBox.style.display = "none";
-    return;
-  }
-
-  // Queue is ordered; no shuffle (so Set 4 really is Q31–40, etc.)
-  queue = list.slice();
-  sessionActive = true;
-
-  setBadge(`${modeLabel(mode)} • In progress`);
-  setMessage(`Go! ${modeLabel(mode)} loaded (${queue.length} questions).`);
-
-  nextQuestion();
-}
-
+// Flow
 function nextQuestion() {
   resetFeedback();
   btnNext.disabled = true;
 
   if (!queue.length) {
-    // finished this mode
     setBadge(`${modeLabel(activeMode)} • Finished`);
     setMessage("Finished. You can pick another set, or Review Missed.");
     questionBox.style.display = "none";
     return;
   }
 
-  const q = queue.shift();
-  renderQuestion(q);
+  renderQuestion(queue.shift());
 }
 
 function ensureMissedPool(q) {
-  if (!missedPool.some(x => x.qNum === q.qNum)) {
-    missedPool.push(q);
-  }
+  if (!missedPool.some(x => x.qNum === q.qNum)) missedPool.push(q);
 }
 
 function checkAnswer() {
@@ -395,15 +341,11 @@ function checkAnswer() {
     correct += 1;
     if (attemptsForCurrent === 1) firstTryCorrect += 1;
 
-    // remove from missed pool if it was later solved? (keep it there; user asked to review again at end)
-    // We'll keep it there to encourage re-checking.
-
     const checkText = currentQ.check ? `\n\nCheck: ${currentQ.check}` : "";
     showGood(`${randPick(encouragements)}\nCorrect: ${currentQ.correct}.${checkText}`);
 
     btnNext.disabled = false;
     btnCheck.disabled = true;
-
   } else {
     ensureMissedPool(currentQ);
     showBad("Not quite — try again 🙂");
@@ -413,9 +355,34 @@ function checkAnswer() {
   updateScore();
 }
 
-// ------------------------------
+function startMode(mode) {
+  activeMode = mode;
+  setActiveButton(mode);
+
+  const list = getQuestionsForMode(mode);
+
+  if (mode === "missed" && list.length === 0) {
+    setBadge(`${modeLabel(mode)} • Ready`);
+    setMessage("No missed questions yet 😊 Try a Set first, then Review Missed.");
+    questionBox.style.display = "none";
+    return;
+  }
+
+  if (!list.length) {
+    setBadge(`${modeLabel(mode)} • Ready`);
+    setMessage("No questions found for this set. (Is the DOCX parsed and 50 questions present?)");
+    questionBox.style.display = "none";
+    return;
+  }
+
+  queue = list.slice(); // ordered, not shuffled
+  setBadge(`${modeLabel(mode)} • In progress`);
+  setMessage(`Go! ${modeLabel(mode)} loaded (${queue.length} questions).`);
+
+  nextQuestion();
+}
+
 // Podcast loading
-// ------------------------------
 function populatePodcasts() {
   podcastSelect.innerHTML = "";
   PODCASTS.forEach(p => {
@@ -431,10 +398,10 @@ async function loadSelectedPodcast() {
   const p = PODCASTS.find(x => x.id === id);
   currentPodcast = p;
 
-  // reset state for new podcast
   allQuestions = [];
   queue = [];
   currentQ = null;
+
   selectedChoice = null;
   attemptsForCurrent = 0;
 
@@ -448,22 +415,19 @@ async function loadSelectedPodcast() {
   updateScore();
 
   setBadge(`${modeLabel(activeMode)} • Loading…`);
-  setMessage("Loading quiz questions…");
+  setMessage(`Loading quiz from: ${p.quizDocx}`);
 
   try {
     allQuestions = await loadDocxQuestions(p.quizDocx);
-
-    setMessage(`Loaded ${allQuestions.length} questions. Pick a Set, then press Start.`);
     setBadge(`${modeLabel(activeMode)} • Ready`);
+    setMessage(`Loaded ${allQuestions.length} questions. Pick a Set, then press Start.`);
   } catch (e) {
-    setMessage(String(e));
     setBadge(`${modeLabel(activeMode)} • Error`);
+    setMessage(String(e));
   }
 }
 
-// ------------------------------
-// Wire up events
-// ------------------------------
+// Events
 podcastSelect.addEventListener("change", async () => {
   await loadSelectedPodcast();
 });
@@ -479,19 +443,13 @@ Object.keys(setBtns).forEach(k => {
   });
 });
 
-btnStart.addEventListener("click", () => {
-  // Start the currently selected mode
-  startMode(activeMode);
-});
+btnStart.addEventListener("click", () => startMode(activeMode));
 
 btnFinish.addEventListener("click", () => {
-  // End current run (does not clear missed pool)
-  sessionActive = false;
   queue = [];
   currentQ = null;
   questionBox.style.display = "none";
   resetFeedback();
-
   setBadge(`${modeLabel(activeMode)} • Finished`);
   setMessage(`Session summary — Attempted: ${attempted}, Correct: ${correct}, First-try: ${firstTryCorrect}. Great effort 🙌`);
 });
@@ -499,9 +457,7 @@ btnFinish.addEventListener("click", () => {
 btnCheck.addEventListener("click", () => checkAnswer());
 btnNext.addEventListener("click", () => nextQuestion());
 
-// ------------------------------
 // Init
-// ------------------------------
 (function init() {
   populatePodcasts();
   setActiveButton("set1");
