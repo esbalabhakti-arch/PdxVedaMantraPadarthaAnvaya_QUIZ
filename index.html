@@ -3,377 +3,372 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Veda Padārtha Anvaya Podcasts — Learning Check Quiz</title>
-
-  <!-- Mammoth.js (DOCX -> HTML) -->
-  <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <title>Veda Podcast Learning Check Quiz</title>
 
   <style>
     :root{
-      --bg0:#05070d;
-      --bg1:#070b14;
-      --panel:#0f1524cc;
-      --panel2:#111a2bd6;
-      --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.14);
-      --txt:#e9eefc;
-      --muted:rgba(233,238,252,.70);
-
-      --gold:#d8b46a;
-      --gold2:#a88438;
-
-      --purple:#7c49c9;
-      --purple2:#b694ff;
-      --yellow:#ffd34d;
-      --yellow2:#ffea98;
-
-      --good:#3de08c;
-      --bad:#ff6b6b;
+      --bg0:#070a12;
+      --bg1:#0b1222;
+      --card:#121a2a;
+      --card2:#0f1726;
+      --text:#e7ecff;
+      --muted:rgba(231,236,255,.70);
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:22px;
+      --gold: #f3d37a;
+      --purple:#7a4bd6;
+      --yellow:#ffe07a;
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--txt);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
       background:
-        radial-gradient(900px 500px at 20% 15%, rgba(82,160,255,.20), transparent 60%),
-        radial-gradient(700px 450px at 80% 10%, rgba(255,190,80,.14), transparent 55%),
+        radial-gradient(1200px 800px at 50% 0%, rgba(64,92,180,.22), transparent 55%),
+        radial-gradient(900px 700px at 10% 20%, rgba(140,90,200,.18), transparent 50%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
     }
 
     .wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 18px 14px 30px;
+      max-width:1100px;
+      margin:22px auto 28px;
+      padding:0 16px;
     }
 
-    /* Banner: clean on phone (no weird black overlay) */
-    .banner{
-      width:100%;
-      border-radius:18px;
+    /* Banner */
+    .bannerCard{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.08);
-      background:transparent;
-      box-shadow: 0 14px 50px rgba(0,0,0,.55);
     }
-    .banner img{
+    .bannerImg{
       width:100%;
-      height:auto;
+      height:170px;             /* reduced height */
+      object-fit:cover;         /* keeps it like a real banner */
       display:block;
-      object-fit:cover;
     }
 
-    .controlRow{
-      margin-top: 14px;
+    /* Controls */
+    .controlsRow{
+      margin-top:16px;
       display:flex;
-      justify-content:center; /* centered */
-      gap: 14px;
-      flex-wrap: wrap;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
     }
-
     .pill{
       display:flex;
       align-items:center;
       gap:10px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      border: 1px solid var(--stroke);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 30px rgba(0,0,0,.40);
-      backdrop-filter: blur(10px);
+      padding:10px 14px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
     }
     .pill label{
-      font-size: 13px;
-      color: rgba(233,238,252,.72);
-      white-space: nowrap;
+      font-size:13px;
+      color:var(--muted);
+      white-space:nowrap;
     }
     select{
-      min-width: 560px;
-      max-width: 72vw;
-      border-radius: 999px;
-      padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(15,21,36,.65);
-      color: var(--txt);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:999px;
+      padding:10px 12px;
+      min-width: 520px;
       outline:none;
-      font-size: 14px;
+      font-size:14px;
     }
+    select:focus{ border-color: rgba(255,255,255,.35); }
 
-    .quizTitle{
-      margin: 18px 0 10px;
+    .titleLine{
       text-align:center;
-      letter-spacing:.5px;
-      color: rgba(233,238,252,.90);
-      font-weight: 800;
+      margin:18px 0 10px;
+      font-weight:800;
+      letter-spacing:.6px;
+    }
+    .titleLine span{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
     }
 
-    /* Toggle strip: Set1..Set5 + Review Missed */
-    .toggleWrap{
+    /* Set toggle */
+    .setToggle{
       display:flex;
       justify-content:center;
-      margin: 10px 0 14px;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:12px 0 18px;
+      padding:12px;
+      border-radius:999px;
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: 0 14px 40px rgba(0,0,0,.40);
     }
-    .toggle{
-      display:flex;
-      gap: 8px;
-      padding: 10px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,211,77,.16), rgba(124,73,201,.12));
-      border: 1px solid rgba(255,211,77,.35);
-      box-shadow: 0 16px 50px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.08);
-      backdrop-filter: blur(10px);
-    }
-    .tabBtn{
-      border:0;
+    .setBtn{
+      border:none;
       cursor:pointer;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 13px;
-      color: rgba(10,10,16,.88);
-      background: linear-gradient(180deg, var(--yellow2), var(--yellow));
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
-      transition: transform .06s ease, filter .15s ease;
-      user-select:none;
+      padding:10px 14px;
+      border-radius:999px;
+      background: var(--yellow);
+      color:#201a06;
+      font-weight:800;
+      box-shadow: 0 10px 26px rgba(0,0,0,.30);
+      transition: transform .08s ease, filter .15s ease;
+      white-space:nowrap;
     }
-    .tabBtn:hover{ filter: brightness(1.03); }
-    .tabBtn:active{ transform: translateY(1px); }
-    .tabBtn.active{
-      color: rgba(245,245,255,.92);
-      background: linear-gradient(180deg, rgba(124,73,201,.95), rgba(124,73,201,.75));
-      outline: 2px solid rgba(255,211,77,.45);
-      box-shadow: 0 18px 50px rgba(124,73,201,.28), inset 0 1px 0 rgba(255,255,255,.12);
+    .setBtn:hover{ filter:brightness(1.03); }
+    .setBtn:active{ transform: translateY(1px); }
+
+    .setBtn.active{
+      background: var(--purple);
+      color:white;
+      outline: 2px solid rgba(255,255,255,.18);
     }
 
-    .panel{
-      margin-top: 12px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid var(--stroke);
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.45);
-      backdrop-filter: blur(10px);
+    /* Quiz card */
+    .card{
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardBody{
+      padding:18px 18px 16px;
     }
 
     .topBar{
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
     }
     .badge{
-      font-size: 13px;
-      color: rgba(233,238,252,.72);
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,14,26,.38);
+      font-size:13px;
+      color:var(--muted);
+      padding:7px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
     }
-
-    .btnRow{
+    .actions{
       display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap:10px;
+      flex-wrap:wrap;
     }
     .btn{
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color: var(--txt);
-      padding: 10px 14px;
-      border-radius: 12px;
+      border:none;
       cursor:pointer;
-      font-weight: 800;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      padding:10px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.12);
+      font-weight:700;
     }
-    .btn:hover{ background: rgba(255,255,255,.09); }
     .btn.primary{
-      border-color: rgba(255,211,77,.30);
-      background: linear-gradient(180deg, rgba(255,211,77,.20), rgba(124,73,201,.10));
+      background: rgba(243,211,122,.18);
+      border-color: rgba(243,211,122,.35);
     }
     .btn.danger{
-      border-color: rgba(255,107,107,.35);
-      background: rgba(255,107,107,.10);
+      background: rgba(255,80,80,.14);
+      border-color: rgba(255,80,80,.30);
     }
     .btn:disabled{
       opacity:.45;
       cursor:not-allowed;
     }
 
-    .questionArea{
-      margin-top: 14px;
-      padding: 16px;
-      background: rgba(12,16,30,.35);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-    }
-    .qHeader{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-    .qTitle{
-      font-weight: 900;
-      font-size: 18px;
-      line-height: 1.25;
-    }
-    .qMeta{
-      font-size: 12px;
-      color: rgba(233,238,252,.65);
-      white-space: nowrap;
+    .msg{
+      margin:12px 0 8px;
+      color: var(--muted);
+      font-weight:600;
     }
 
-    .choices{
-      display:grid;
-      gap: 10px;
-      margin-top: 12px;
+    .qBox{
+      margin-top:12px;
+      padding:16px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
     }
-    .choice{
+    .qTitle{
+      font-size:18px;
+      font-weight:900;
+      margin:0 0 10px;
+    }
+    .qText{
+      margin:0 0 12px;
+      color: rgba(231,236,255,.92);
+      line-height:1.5;
+    }
+
+    .options{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin:10px 0 10px;
+    }
+    .opt{
       display:flex;
       gap:10px;
       align-items:flex-start;
-      padding: 12px 12px;
+      padding:12px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
       cursor:pointer;
-      transition: background .12s ease, transform .06s ease, border-color .12s ease;
+      user-select:none;
+      transition: filter .12s ease, transform .05s ease;
     }
-    .choice:hover{
-      background: rgba(255,255,255,.07);
-      border-color: rgba(255,211,77,.25);
-    }
-    .choice:active{ transform: translateY(1px); }
-    .choice input{ margin-top: 3px; }
-    .choice .label{
-      font-weight: 800;
-      color: rgba(233,238,252,.82);
-      min-width: 22px;
-    }
-    .choice .text{
-      color: rgba(233,238,252,.92);
-      line-height: 1.35;
-    }
+    .opt:hover{ filter:brightness(1.03); }
+    .opt:active{ transform: translateY(1px); }
+    .opt input{ margin-top:3px; }
 
     .feedback{
-      margin-top: 12px;
+      margin-top:12px;
+      padding:12px 12px;
       border-radius: 14px;
-      padding: 12px 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: rgba(231,236,255,.92);
+      line-height:1.5;
       display:none;
-      white-space: pre-wrap;
+      white-space:pre-wrap;
     }
     .feedback.good{
       display:block;
-      border-color: rgba(61,224,140,.35);
-      background: rgba(61,224,140,.12);
+      border-color: rgba(120,255,160,.25);
+      background: rgba(40,120,70,.18);
     }
     .feedback.bad{
       display:block;
-      border-color: rgba(255,107,107,.35);
-      background: rgba(255,107,107,.10);
+      border-color: rgba(255,120,120,.25);
+      background: rgba(120,50,50,.15);
     }
 
-    .stats{
-      margin-top: 12px;
+    .scoreRow{
+      margin-top:14px;
       display:flex;
       gap:10px;
-      flex-wrap: wrap;
-      color: rgba(233,238,252,.74);
-      font-size: 13px;
-    }
-    .statPill{
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,14,26,.28);
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
     }
 
-    .footer{
-      margin-top: 22px;
-      padding-top: 14px;
+    .score{
+      font-size:13px;
+      color: var(--muted);
+      padding:7px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    .bottomRule{
+      margin:18px 0 12px;
+      height:1px;
+      background: rgba(255,255,255,.10);
+    }
+    footer{
       text-align:center;
-      color: rgba(233,238,252,.70);
-      border-top: 1px solid rgba(255,255,255,.10);
-      font-size: 13px;
+      color: rgba(231,236,255,.72);
+      font-size:13px;
+      padding:10px 0 4px;
     }
-    .footer a{ color: rgba(255,211,77,.95); text-decoration:none; }
-    .footer a:hover{ text-decoration:underline; }
+    footer a{ color: rgba(231,236,255,.85); }
 
-    @media (max-width: 600px){
-      select{ min-width: 82vw; }
-      .tabBtn{ padding: 9px 10px; font-size: 12px; }
-      .qTitle{ font-size: 16px; }
+    /* Mobile tweaks */
+    @media (max-width: 700px){
+      .bannerImg{ height:120px; }
+      select{ min-width: 280px; width: 100%; }
+      .controlsRow{ padding:0 4px; }
+      .setToggle{ border-radius: 18px; }
     }
   </style>
+
+  <!-- Mammoth (DOCX reader) -->
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="banner">
-      <img src="Vedic_podcast_banner_2.png" alt="Veda Podcasts Banner">
+    <div class="bannerCard">
+      <img class="bannerImg" src="Vedic_podcast_banner_2.png" alt="Vedic Podcast Banner" />
     </div>
 
-    <div class="controlRow">
-      <div class="pill">
-        <label for="podcastSelect">Podcast</label>
-        <select id="podcastSelect" aria-label="Podcast"></select>
+    <div class="controlsRow">
+      <div class="pill" style="width:min(980px,100%);">
+        <label>Podcast</label>
+        <select id="podcastSelect" aria-label="Podcast selection"></select>
       </div>
     </div>
 
-    <div class="quizTitle">LEARNING CHECK QUIZ (Multiple Choice)</div>
-
-    <div class="toggleWrap">
-      <div class="toggle" id="setTabs">
-        <!-- buttons inserted by JS -->
-      </div>
+    <div class="titleLine">
+      <span>LEARNING CHECK QUIZ (Multiple Choice)</span>
     </div>
 
-    <div class="panel">
-      <div class="topBar">
-        <div class="badge" id="sessionBadge">Select a podcast, then press Start.</div>
-        <div class="btnRow">
-          <button class="btn primary" id="btnStart">Start</button>
-          <button class="btn danger" id="btnFinish">Finish Quiz</button>
-        </div>
-      </div>
+    <div class="setToggle" role="tablist" aria-label="Quiz sets">
+      <button class="setBtn active" id="set1" type="button">Set 1 (Q1–10)</button>
+      <button class="setBtn" id="set2" type="button">Set 2 (Q11–20)</button>
+      <button class="setBtn" id="set3" type="button">Set 3 (Q21–30)</button>
+      <button class="setBtn" id="set4" type="button">Set 4 (Q31–40)</button>
+      <button class="setBtn" id="set5" type="button">Set 5 (Q41–50)</button>
+      <button class="setBtn" id="missed" type="button">Review Missed</button>
+    </div>
 
-      <div class="questionArea" id="questionArea" style="display:none;">
-        <div class="qHeader">
-          <div>
-            <div class="qTitle" id="qTitle">Question</div>
+    <div class="card">
+      <div class="cardBody">
+        <div class="topBar">
+          <div class="badge" id="modeBadge">Set 1 • Ready</div>
+          <div class="actions">
+            <button class="btn primary" id="btnStart" type="button">Start</button>
+            <button class="btn danger" id="btnFinish" type="button">Finish Quiz</button>
           </div>
-          <div class="qMeta" id="qMeta"></div>
         </div>
 
-        <div class="choices" id="choices"></div>
+        <div class="msg" id="messageLine">Select a podcast, pick a set, then press Start.</div>
 
-        <div class="btnRow" style="justify-content:flex-end; margin-top:12px;">
-          <button class="btn" id="btnCheck">Check Answer</button>
-          <button class="btn" id="btnNext">Next</button>
+        <div class="qBox" id="questionBox" style="display:none;">
+          <div class="qTitle" id="qTitle">Question</div>
+          <div class="qText" id="qText"></div>
+
+          <div class="options" id="options"></div>
+
+          <div class="actions" style="margin-top:12px;">
+            <button class="btn primary" id="btnCheck" type="button" disabled>Check Answer</button>
+            <button class="btn" id="btnNext" type="button" disabled>Next</button>
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+
+          <div class="scoreRow">
+            <div class="score" id="scoreLine">Correct: 0 • Attempted: 0 • First-try: 0</div>
+            <div class="score" id="poolLine">In Review Missed pool: 0</div>
+          </div>
         </div>
 
-        <div class="feedback" id="feedback"></div>
+        <div class="bottomRule"></div>
 
-        <div class="stats">
-          <div class="statPill" id="statCorrect">Correct: 0</div>
-          <div class="statPill" id="statAttempted">Attempted: 0</div>
-          <div class="statPill" id="statFirstTry">First-try: 0</div>
-        </div>
+        <footer>
+          <div><b>Acknowledgements:</b> Shri Ram kumar Vaidyanathan, Portland, OR, USA</div>
+          <div><b>Contact:</b> <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a></div>
+        </footer>
       </div>
-
-      <div class="questionArea" id="summaryArea" style="display:none;"></div>
-    </div>
-
-    <div class="footer">
-      <div><b>Acknowledgements</b>: Shri Ram kumar Vaidyanathan, Portland, OR, USA</div>
-      <div><b>Contact</b>: <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a></div>
     </div>
   </div>
 
