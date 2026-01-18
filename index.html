@@ -2,309 +2,417 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Veda Podcast Learning Check Quiz</title>
+
   <style>
     :root{
       --bg0:#070a12;
       --bg1:#0b1020;
       --card:rgba(255,255,255,.06);
-      --stroke:rgba(255,255,255,.10);
-      --text:#e9edf7;
-      --muted:rgba(233,237,247,.72);
-      --muted2:rgba(233,237,247,.58);
-      --accent:#7c5cff;
-      --accent2:#bfa7ff;
-      --good:#42d392;
-      --bad:#ff5c7a;
-      --shadow: 0 24px 70px rgba(0,0,0,.55);
-      --radius: 22px;
-      --pill: 999px;
-      --max: 1180px;
-      --bannerH: 210px;
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --stroke2:rgba(255,255,255,.18);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.55);
+      --purple:#7c5cff;
+      --purple2:#5a3dff;
+      --danger:#7b2c3c;
+      --ok:#2a8a5b;
+      --shadow:0 18px 50px rgba(0,0,0,.45);
+      --radius:28px;
+      --radius2:18px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
-    *{box-sizing:border-box}
+
+    *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      font-family:var(--font);
       color:var(--text);
       background:
-        radial-gradient(1200px 500px at 25% 18%, rgba(124,92,255,.20), transparent 60%),
-        radial-gradient(900px 520px at 78% 22%, rgba(66,211,146,.10), transparent 62%),
+        radial-gradient(1200px 700px at 18% 20%, rgba(124,92,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 85% 30%, rgba(26,177,148,.10), transparent 55%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       min-height:100vh;
     }
-    .wrap{ max-width: var(--max); margin: 0 auto; padding: 26px 16px 38px; }
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    .panel{
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
 
     .banner{
-      border-radius: var(--radius);
-      overflow:hidden;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow);
+      padding: 18px 18px 10px;
     }
-    .banner img{ width:100%; height: var(--bannerH); object-fit: cover; display:block; }
+
+    .banner img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.10);
+    }
 
     .controls{
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: var(--radius);
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+      margin-top: 14px;
+      padding: 18px;
     }
-    .row{ display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap: wrap; }
 
-    .selectPill{
+    .row{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .pill{
       display:flex;
       align-items:center;
       gap:10px;
       padding: 12px 14px;
-      border-radius: var(--pill);
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      min-width: min(980px, 100%);
-      justify-content: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--stroke);
+      min-width: min(820px, 100%);
     }
-    .label{ color: var(--muted2); font-size: 13px; letter-spacing: .2px; padding: 0 6px; }
+
+    .pill label{
+      font-size: 13px;
+      color: var(--muted2);
+      padding-left: 4px;
+      min-width: 70px;
+    }
+
     select{
       appearance: none;
-      background: rgba(0,0,0,.20);
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.18);
       color: var(--text);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 14px;
-      min-width: min(820px, 100%);
-      outline: none;
+      outline:none;
+      font-size: 15px;
     }
-    select:focus{ border-color: rgba(124,92,255,.55); box-shadow: 0 0 0 3px rgba(124,92,255,.18); }
 
-    .titleChip{ margin-top: 14px; display:flex; justify-content:center; }
-    .titleChip span{
-      padding: 10px 14px;
-      border-radius: var(--pill);
+    .titlePill{
+      margin: 12px auto 0;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      font-weight: 600;
-      letter-spacing: .2px;
+      font-weight: 650;
+      letter-spacing:.3px;
     }
 
-    .segWrap{ margin-top: 14px; display:flex; justify-content:center; }
-    .seg{
-      display:flex; gap: 10px; padding: 10px;
-      border-radius: var(--pill);
-      background: rgba(0,0,0,.20);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 14px 40px rgba(0,0,0,.28);
-      flex-wrap: wrap; justify-content:center; max-width: 100%;
+    .toggleBar{
+      margin: 14px auto 0;
+      padding: 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
     }
-    .seg button{
+
+    .tab{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      padding: 10px 14px;
+      border-radius: 999px;
       cursor:pointer;
-      border:none;
-      padding: 10px 14px;
-      border-radius: var(--pill);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.12);
       font-weight: 600;
-      letter-spacing: .1px;
-      transition: transform .06s ease, background .15s ease, border-color .15s ease;
-      white-space: nowrap;
+      font-size: 14px;
+      transition: .15s ease;
+      user-select:none;
     }
-    .seg button:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
-    .seg button.active{
-      background: rgba(124,92,255,.22);
+    .tab:hover{
+      border-color: rgba(255,255,255,.22);
+      transform: translateY(-1px);
+    }
+    .tab.active{
+      background: rgba(124,92,255,.18);
       border-color: rgba(124,92,255,.55);
-      box-shadow: 0 0 0 3px rgba(124,92,255,.16);
+      color: rgba(255,255,255,.92);
+      box-shadow: 0 8px 22px rgba(124,92,255,.18);
     }
-    .seg button.ghost{ background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.10); color: var(--muted); }
+    .tab.ghost{
+      background: rgba(255,255,255,.04);
+    }
 
-    .card{
+    .quizCard{
       margin-top: 16px;
       padding: 18px;
-      border-radius: var(--radius);
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+      border-top: 1px solid rgba(255,255,255,.10);
     }
-    .topline{
-      display:flex; gap: 12px; flex-wrap: wrap;
-      align-items:center; justify-content: space-between;
+
+    .topLine{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
     }
+
     .statusPill{
-      padding: 10px 12px;
-      border-radius: var(--pill);
+      padding: 8px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.10);
-      color: var(--muted);
-      font-size: 13px; line-height: 1;
-    }
-    .btnRow{ display:flex; gap: 10px; align-items:center; }
-    .btn{
-      cursor:pointer;
-      border:none;
-      padding: 10px 14px;
-      border-radius: 14px;
-      font-weight: 700;
-      color: var(--text);
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      transition: transform .06s ease, border-color .15s ease;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
-    .btn.primary{ background: rgba(124,92,255,.22); border-color: rgba(124,92,255,.55); }
-    .btn.danger{ background: rgba(255,92,122,.10); border-color: rgba(255,92,122,.35); }
-    .btn:disabled{ opacity: .45; cursor:not-allowed; transform:none; }
-
-    .divider{ margin: 14px 0; height: 1px; background: rgba(255,255,255,.08); }
-    .helper{ color: var(--muted); font-size: 15px; margin: 0 0 10px; }
-
-    .scoreline{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .scorePill{
-      padding: 9px 12px;
-      border-radius: var(--pill);
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.10);
       color: var(--muted);
       font-size: 13px;
     }
 
-    .qwrap{
+    .btns{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+
+    .btn{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight: 650;
+      transition: .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.28); }
+    .btn.primary{
+      background: rgba(124,92,255,.18);
+      border-color: rgba(124,92,255,.55);
+    }
+    .btn.danger{
+      background: rgba(123,44,60,.18);
+      border-color: rgba(123,44,60,.55);
+    }
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .hint{
       margin-top: 10px;
-      border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.10);
-      padding: 14px;
+      color: var(--muted);
     }
-    .qtitle{ font-weight: 800; font-size: 18px; margin: 0 0 8px; }
-    .qtext{ margin: 0 0 12px; line-height: 1.45; }
-    .opts{ display:grid; gap: 10px; }
-    .opt{
-      display:flex; gap: 10px; align-items:flex-start;
-      padding: 10px 12px;
-      border-radius: 14px;
+
+    .scoreRow{
+      margin-top: 14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+    }
+    .badge{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.10);
-      cursor:pointer; user-select:none;
+      color: var(--muted);
+      font-size: 13px;
     }
-    .opt:hover{ border-color: rgba(255,255,255,.16); }
-    .opt input{ margin-top: 3px; }
+
+    .questionBox{
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+    }
+
+    .qText{
+      font-size: 18px;
+      line-height: 1.35;
+      margin: 0 0 12px;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      margin-top: 8px;
+    }
+
+    .opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 12px 12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      transition:.12s ease;
+    }
+    .opt:hover{ border-color: rgba(255,255,255,.24); transform: translateY(-1px); }
     .opt.selected{
       border-color: rgba(124,92,255,.55);
-      box-shadow: 0 0 0 3px rgba(124,92,255,.14);
-      background: rgba(124,92,255,.10);
+      background: rgba(124,92,255,.12);
     }
+    .opt .letter{
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.15);
+      color: var(--muted);
+      flex: 0 0 auto;
+      font-weight: 700;
+    }
+    .opt .txt{
+      color: var(--text);
+      line-height: 1.28;
+    }
+
     .feedback{
       margin-top: 12px;
       padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
       color: var(--muted);
-      white-space: pre-wrap;
+      display:none;
     }
-    .feedback.good{ border-color: rgba(66,211,146,.35); background: rgba(66,211,146,.08); color: rgba(233,237,247,.92); }
-    .feedback.bad{ border-color: rgba(255,92,122,.35); background: rgba(255,92,122,.08); color: rgba(233,237,247,.92); }
+    .feedback.ok{
+      border-color: rgba(42,138,91,.55);
+      background: rgba(42,138,91,.12);
+      color: rgba(255,255,255,.90);
+    }
+    .feedback.bad{
+      border-color: rgba(123,44,60,.55);
+      background: rgba(123,44,60,.12);
+      color: rgba(255,255,255,.90);
+    }
 
-    .qActions{ margin-top: 12px; display:flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+    .explain{
+      margin-top: 10px;
+      color: rgba(255,255,255,.82);
+      display:none;
+    }
+    .explain .label{
+      color: var(--muted2);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
 
-    footer{
-      margin-top: 18px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,.08);
+    .footer{
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top:1px solid rgba(255,255,255,.10);
       text-align:center;
       color: var(--muted2);
       font-size: 13px;
-      line-height: 1.6;
     }
-    footer a{ color: var(--accent2); text-decoration: none; }
-    footer a:hover{ text-decoration: underline; }
+    .footer a{ color: rgba(255,255,255,.78); }
 
-    @media (max-width: 720px){
-      :root{ --bannerH: 150px; }
-      .selectPill{ min-width: 100%; }
-      select{ min-width: 100%; }
+    @media (max-width:700px){
+      .pill label{ min-width: 58px; }
+      .qText{ font-size: 16px; }
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
+    <div class="panel">
+      <div class="banner">
+        <!-- IMPORTANT: exact case + extension -->
+        <img id="bannerImg" src="Images/Vedic_podcast_banner_2.png" alt="Veda Podcast Banner">
+      </div>
 
-    <div class="banner">
-      <!-- FIXED: extension is .png (lowercase) -->
-      <img src="Images/Vedic_podcast_banner_2.png" alt="Veda Podcast Banner" />
+      <div class="controls">
+        <div class="row">
+          <div class="pill">
+            <label for="podcastSelect">Podcast</label>
+            <select id="podcastSelect">
+              <option value="">Loading podcasts…</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="titlePill">LEARNING CHECK QUIZ (Multiple Choice)</div>
+        </div>
+
+        <div class="row">
+          <div class="toggleBar" id="setTabs">
+            <button class="tab active" data-mode="set" data-set="1">Set 1</button>
+            <button class="tab" data-mode="set" data-set="2">Set 2</button>
+            <button class="tab" data-mode="set" data-set="3">Set 3</button>
+            <button class="tab" data-mode="set" data-set="4">Set 4</button>
+            <button class="tab" data-mode="set" data-set="5">Set 5</button>
+            <button class="tab ghost" data-mode="missed" id="missedTab">Review Missed (0)</button>
+          </div>
+        </div>
+
+        <div class="quizCard">
+          <div class="topLine">
+            <div class="statusPill" id="modeStatus">Set 1 • Ready</div>
+            <div class="btns">
+              <button class="btn primary" id="startBtn">Start</button>
+              <button class="btn danger" id="finishBtn">Finish Quiz</button>
+            </div>
+          </div>
+
+          <div class="hint" id="hintLine">Select a podcast, pick a set, then press Start.</div>
+
+          <div class="scoreRow">
+            <div class="badge" id="scoreA">Correct: 0</div>
+            <div class="badge" id="scoreB">Attempted: 0</div>
+            <div class="badge" id="scoreC">First-try: 0</div>
+            <div class="badge" id="scoreD">In Review Missed pool: 0</div>
+          </div>
+
+          <div class="questionBox" id="questionBox" style="display:none;">
+            <p class="qText" id="qText"></p>
+            <div class="options" id="options"></div>
+
+            <div class="btns" style="justify-content:flex-end; margin-top:12px;">
+              <button class="btn" id="checkBtn" disabled>Check Answer</button>
+              <button class="btn" id="nextBtn" disabled>Next</button>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="explain" id="explain">
+              <div class="label">Why this is correct:</div>
+              <div id="explainText"></div>
+            </div>
+          </div>
+
+          <div class="footer">
+            Acknowledgements: Shri Ram kumar Vaidyanathan, Portland, OR, USA<br/>
+            Contact: <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="controls">
-      <div class="row">
-        <div class="selectPill">
-          <div class="label">Podcast</div>
-          <select id="podcastSelect" aria-label="Select podcast"></select>
-        </div>
-      </div>
-
-      <div class="titleChip">
-        <span>LEARNING CHECK QUIZ (Multiple Choice)</span>
-      </div>
-
-      <div class="segWrap">
-        <div class="seg" id="setToggle" aria-label="Pick question set">
-          <button id="btnSet1" class="active" data-set="1">Set 1</button>
-          <button id="btnSet2" class="ghost" data-set="2">Set 2</button>
-          <button id="btnSet3" class="ghost" data-set="3">Set 3</button>
-          <button id="btnSet4" class="ghost" data-set="4">Set 4</button>
-          <button id="btnSet5" class="ghost" data-set="5">Set 5</button>
-          <button id="btnMissed" class="ghost" data-set="missed">Review Missed</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="topline">
-        <div class="statusPill" id="statusPill">Loading…</div>
-
-        <div class="btnRow">
-          <button class="btn primary" id="btnStart">Start</button>
-          <button class="btn danger" id="btnFinish">Finish Quiz</button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <p class="helper" id="helperText">Select a podcast, pick a set, then press Start.</p>
-
-      <div class="scoreline">
-        <div class="scorePill" id="scorePill">Correct: 0 • Attempted: 0 • First-try: 0</div>
-        <div class="scorePill" id="missedPill">In Review Missed pool: 0</div>
-      </div>
-
-      <div class="qwrap" id="questionWrap" style="display:none;">
-        <div class="qtitle" id="qTitle">Question</div>
-        <div class="qtext" id="qText"></div>
-
-        <div class="opts" id="opts"></div>
-
-        <div class="feedback" id="feedback" style="display:none;"></div>
-
-        <div class="qActions">
-          <button class="btn" id="btnCheck" disabled>Check Answer</button>
-          <button class="btn primary" id="btnNext" disabled>Next</button>
-        </div>
-      </div>
-
-      <!-- NEW: a visible error box area, so failures aren't silent -->
-      <div class="feedback bad" id="errorBox" style="display:none;"></div>
-    </div>
-
-    <footer>
-      <div><b>Acknowledgements:</b> Shri Ram kumar Vaidyanathan, Portland, OR, USA</div>
-      <div><b>Contact:</b> <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a></div>
-    </footer>
-
   </div>
 
+  <!-- Mammoth for DOCX parsing (browser) -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script src="script.js"></script>
 </body>
