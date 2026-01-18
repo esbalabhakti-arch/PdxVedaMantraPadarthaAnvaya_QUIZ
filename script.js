@@ -3,6 +3,7 @@
    - Discovers DOCX files in /Images via GitHub API
    - Fetches DOCX from same origin (Images/<file>)
    - Parses questions robustly (handles options in one line)
+   - Auto-checks answer immediately on option click ✅
    ========================================================= */
 
 const REPO_OWNER = "esbalabhakti-arch";
@@ -18,7 +19,7 @@ const btnMissed = $("btnMissed");
 
 const btnStart = $("btnStart");
 const btnFinish = $("btnFinish");
-const btnCheck = $("btnCheck");
+const btnCheck = $("btnCheck");   // kept for UI, but we won't require it
 const btnNext = $("btnNext");
 
 const statCorrect = $("statCorrect");
@@ -44,6 +45,9 @@ let quizActive = false;
 
 let selectedOption = null;
 let currentQuestionAttemptedOnce = false;
+
+// NEW: lock options after correct so extra clicks don't change anything
+let questionLocked = false;
 
 let score = {
   attempted: 0,
@@ -106,10 +110,11 @@ function resetQuestionUI(){
   qText.style.display = "none";
   optionsEl.style.display = "none";
   optionsEl.innerHTML = "";
-  btnCheck.disabled = true;
+  btnCheck.disabled = true;  // we keep it disabled; auto-check happens on click
   btnNext.disabled = true;
   selectedOption = null;
   currentQuestionAttemptedOnce = false;
+  questionLocked = false;    // NEW
   clearFeedback();
 }
 
@@ -199,32 +204,27 @@ function parseQuizText(text){
   const isCheckLine = (l) => /^Check\s*:/i.test(l);
 
   while (i < lines.length){
-    // Find "1." style line
     while (i < lines.length && !isNumLine(lines[i])) i++;
     if (i >= lines.length) break;
 
     const qNumber = parseInt(lines[i].match(/^(\d+)/)[1], 10);
     i++;
 
-    // Collect question text until we hit options (A.) or Correct Answer
     let qParts = [];
     while (i < lines.length && !/^[A-D]\./.test(lines[i]) && !isCorrectLine(lines[i]) && !isNumLine(lines[i])) {
-      // ignore source lines like [Source: ...]
       if (!/^\[Source:/i.test(lines[i])) qParts.push(lines[i]);
       i++;
     }
     const questionText = qParts.join(" ").trim();
 
-    // Collect options text block until Correct Answer
     let optionBlock = [];
     while (i < lines.length && !isCorrectLine(lines[i]) && !isNumLine(lines[i])) {
       optionBlock.push(lines[i]);
       i++;
     }
 
-    const { options, optionsMap } = parseOptions(optionBlock.join(" "));
+    const { options } = parseOptions(optionBlock.join(" "));
 
-    // Correct answer
     let correct = null;
     if (i < lines.length && isCorrectLine(lines[i])) {
       const m = lines[i].match(/Correct\s*Answer\s*:\s*([A-D])/i);
@@ -232,26 +232,23 @@ function parseQuizText(text){
       i++;
     }
 
-    // Check / explanation (can be multi-line until next number)
     let checkParts = [];
     while (i < lines.length && !isNumLine(lines[i])) {
       if (isCheckLine(lines[i])) {
         checkParts.push(lines[i].replace(/^Check\s*:\s*/i, "").trim());
       } else if (!isCorrectLine(lines[i])) {
-        // Some docs may continue explanation without "Check:"
         checkParts.push(lines[i]);
       }
       i++;
     }
     const checkText = checkParts.join(" ").trim();
 
-    // Validate minimal
     if (questionText && options.length >= 4 && correct){
       questions.push({
         num: qNumber,
         question: questionText,
-        options,          // [{letter, text}]
-        correct,          // "A".."D"
+        options,
+        correct,
         check: checkText || ""
       });
     }
@@ -261,25 +258,16 @@ function parseQuizText(text){
 }
 
 function parseOptions(block){
-  // block might be: "A. xxx B. yyy C. zzz D. www"
-  // Make sure there is spacing around letters for splitting.
   const normalized = block.replace(/\s+/g, " ").trim();
-
-  // Split by letters A-D with dots
   const parts = normalized.split(/(?=[A-D]\.\s)/g).map(s => s.trim()).filter(Boolean);
 
   const options = [];
-  const optionsMap = {};
   for (const p of parts){
     const m = p.match(/^([A-D])\.\s*(.+)$/);
     if (!m) continue;
-    const letter = m[1].toUpperCase();
-    const text = m[2].trim();
-    options.push({ letter, text });
-    optionsMap[letter] = text;
+    options.push({ letter: m[1].toUpperCase(), text: m[2].trim() });
   }
 
-  // If somehow everything is in one string without splits, fallback:
   if (options.length < 4){
     const fallback = [];
     const re = /([A-D])\.\s*/g;
@@ -294,10 +282,10 @@ function parseOptions(block){
       const mm = seg.match(/^([A-D])\.\s*(.+)$/);
       if (mm) fallback.push({ letter:mm[1].toUpperCase(), text:mm[2].trim() });
     }
-    if (fallback.length >= 4) return { options:fallback, optionsMap:Object.fromEntries(fallback.map(o=>[o.letter,o.text])) };
+    if (fallback.length >= 4) return { options:fallback };
   }
 
-  return { options, optionsMap };
+  return { options };
 }
 
 // ---------- Quiz mechanics ----------
@@ -306,11 +294,10 @@ function buildQueue(allQuestions){
 
   if (currentSet === "missed"){
     const missedNums = loadMissed(currentPodcastFile);
-    const set = allQuestions.filter(q => missedNums.includes(q.num));
-    return set;
+    return allQuestions.filter(q => missedNums.includes(q.num));
   }
 
-  const setIdx = parseInt(currentSet, 10); // 1..5
+  const setIdx = parseInt(currentSet, 10);
   const start = (setIdx - 1) * 10;
   const end = start + 10;
   return allQuestions.slice(start, end);
@@ -337,7 +324,7 @@ function renderQuestion(){
   setMeta(modeLabel);
   qText.textContent = q.question;
 
-  // Build separate option boxes
+  // Build separate option boxes + AUTO CHECK on click ✅
   for (const opt of q.options){
     const div = document.createElement("div");
     div.className = "opt";
@@ -349,12 +336,15 @@ function renderQuestion(){
     `;
 
     div.addEventListener("click", ()=>{
-      // mark selected
+      if (!quizActive) return;
+      if (questionLocked) return; // NEW: lock after correct
+
       [...optionsEl.querySelectorAll(".opt")].forEach(x=>x.classList.remove("selected"));
       div.classList.add("selected");
       selectedOption = opt.letter;
-      btnCheck.disabled = false;
-      clearFeedback();
+
+      // ✅ Immediately validate (no need to press Check Answer)
+      checkAnswer();
     });
 
     optionsEl.appendChild(div);
@@ -394,7 +384,7 @@ async function startQuiz(){
 
   if (!all.length){
     setMeta("Could not start the quiz.");
-    setFeedback(`Error loading quiz ❌\nParsed 0 questions from ${currentPodcastFile}.\n\nThis means the DOCX text pattern didn’t match.`, "bad");
+    setFeedback(`Error loading quiz ❌\nParsed 0 questions from ${currentPodcastFile}.`, "bad");
     return;
   }
 
@@ -406,7 +396,7 @@ async function startQuiz(){
       setFeedback("Nothing in Missed right now. Pick a Set and press Start.", "ok");
     } else {
       setMeta("No questions in this set.");
-      setFeedback("Looks like this DOCX has fewer than 50 questions, or this set range is empty.", "bad");
+      setFeedback("This set range is empty for this DOCX.", "bad");
     }
     updateStats();
     return;
@@ -453,13 +443,18 @@ function checkAnswer(){
 
     const checkLine = q.check ? `\n\nWhy: ${q.check}` : "";
     setFeedback(`${pick(MOTIVATION_OK)}${checkLine}`, "ok");
+
+    // ✅ Lock options once correct, enable Next
+    questionLocked = true;
     btnNext.disabled = false;
-    btnCheck.disabled = true;
+
   } else {
     if (isFirstAttemptForThisQ){
       addToMissed(q.num);
     }
     setFeedback(`${pick(MOTIVATION_TRY)}\n(You need to get it right to move forward.)`, "bad");
+
+    // Keep Next disabled until correct
     btnNext.disabled = true;
   }
 
@@ -490,7 +485,6 @@ podcastSelect.addEventListener("change", async ()=>{
   setMeta(`Selected: ${currentPodcastFile}. Press Start.`);
   updateStats();
 
-  // warm-load questions in background (optional)
   try { await loadQuestionsForPodcast(currentPodcastFile); }
   catch { /* ignore */ }
 });
@@ -502,19 +496,17 @@ btnStart.addEventListener("click", ()=>{
   });
 });
 btnFinish.addEventListener("click", finishQuiz);
+
+// We keep this button, but it’s no longer required.
+// If someone clicks it, it still works.
 btnCheck.addEventListener("click", checkAnswer);
+
 btnNext.addEventListener("click", nextQuestion);
 
 // ---------- Init ----------
 async function init(){
   setMeta("Loading podcast list...");
   updateStats();
-
-  // Banner fallback if missing
-  const banner = document.getElementById("bannerImg");
-  banner.addEventListener("error", ()=>{
-    banner.style.display = "none";
-  });
 
   try{
     podcasts = await listDocxFromRepo();
@@ -532,7 +524,6 @@ async function init(){
       podcastSelect.value = currentPodcastFile;
       setMeta("Pick a set, then press Start.");
       updateStats();
-      // warm-load
       loadQuestionsForPodcast(currentPodcastFile).catch(()=>{});
     } else {
       setMeta(`No *_quiz.docx found in /${IMAGES_DIR}.`);
