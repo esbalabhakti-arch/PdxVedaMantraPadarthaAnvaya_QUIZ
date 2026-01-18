@@ -9,16 +9,13 @@
       --bg0:#070a12;
       --bg1:#0b1020;
       --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.08);
       --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.14);
       --text:#e9edf7;
       --muted:rgba(233,237,247,.72);
       --muted2:rgba(233,237,247,.58);
-      --accent:#7c5cff;     /* purple */
-      --accent2:#bfa7ff;    /* light purple */
+      --accent:#7c5cff;
+      --accent2:#bfa7ff;
       --good:#42d392;
-      --warn:#ffb86b;
       --bad:#ff5c7a;
       --shadow: 0 24px 70px rgba(0,0,0,.55);
       --radius: 22px;
@@ -26,11 +23,10 @@
       --max: 1180px;
       --bannerH: 210px;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
       color:var(--text);
       background:
         radial-gradient(1200px 500px at 25% 18%, rgba(124,92,255,.20), transparent 60%),
@@ -38,14 +34,8 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
       min-height:100vh;
     }
+    .wrap{ max-width: var(--max); margin: 0 auto; padding: 26px 16px 38px; }
 
-    .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 26px 16px 38px;
-    }
-
-    /* Banner */
     .banner{
       border-radius: var(--radius);
       overflow:hidden;
@@ -53,14 +43,8 @@
       border: 1px solid rgba(255,255,255,.10);
       box-shadow: var(--shadow);
     }
-    .banner img{
-      width:100%;
-      height: var(--bannerH);
-      object-fit: cover;
-      display:block;
-    }
+    .banner img{ width:100%; height: var(--bannerH); object-fit: cover; display:block; }
 
-    /* Controls Card */
     .controls{
       margin-top: 16px;
       padding: 16px;
@@ -69,14 +53,7 @@
       border: 1px solid var(--stroke);
       box-shadow: 0 18px 55px rgba(0,0,0,.35);
     }
-
-    .row{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:14px;
-      flex-wrap: wrap;
-    }
+    .row{ display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap: wrap; }
 
     .selectPill{
       display:flex;
@@ -89,12 +66,7 @@
       min-width: min(980px, 100%);
       justify-content: center;
     }
-    .label{
-      color: var(--muted2);
-      font-size: 13px;
-      letter-spacing: .2px;
-      padding: 0 6px;
-    }
+    .label{ color: var(--muted2); font-size: 13px; letter-spacing: .2px; padding: 0 6px; }
     select{
       appearance: none;
       background: rgba(0,0,0,.20);
@@ -108,38 +80,24 @@
     }
     select:focus{ border-color: rgba(124,92,255,.55); box-shadow: 0 0 0 3px rgba(124,92,255,.18); }
 
-    .titleChip{
-      margin-top: 14px;
-      display:flex;
-      justify-content:center;
-    }
+    .titleChip{ margin-top: 14px; display:flex; justify-content:center; }
     .titleChip span{
       padding: 10px 14px;
       border-radius: var(--pill);
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.12);
-      color: var(--text);
       font-weight: 600;
       letter-spacing: .2px;
     }
 
-    /* Set Toggle */
-    .segWrap{
-      margin-top: 14px;
-      display:flex;
-      justify-content:center;
-    }
+    .segWrap{ margin-top: 14px; display:flex; justify-content:center; }
     .seg{
-      display:flex;
-      gap: 10px;
-      padding: 10px;
+      display:flex; gap: 10px; padding: 10px;
       border-radius: var(--pill);
       background: rgba(0,0,0,.20);
       border: 1px solid rgba(255,255,255,.12);
       box-shadow: 0 14px 40px rgba(0,0,0,.28);
-      flex-wrap: wrap;
-      justify-content:center;
-      max-width: 100%;
+      flex-wrap: wrap; justify-content:center; max-width: 100%;
     }
     .seg button{
       cursor:pointer;
@@ -160,14 +118,8 @@
       border-color: rgba(124,92,255,.55);
       box-shadow: 0 0 0 3px rgba(124,92,255,.16);
     }
-    .seg button.ghost{
-      background: rgba(255,255,255,.05);
-      border-color: rgba(255,255,255,.10);
-      color: var(--muted);
-      font-weight: 600;
-    }
+    .seg button.ghost{ background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.10); color: var(--muted); }
 
-    /* Quiz Card */
     .card{
       margin-top: 16px;
       padding: 18px;
@@ -176,30 +128,19 @@
       border: 1px solid var(--stroke);
       box-shadow: 0 18px 55px rgba(0,0,0,.35);
     }
-
     .topline{
-      display:flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items:center;
-      justify-content: space-between;
+      display:flex; gap: 12px; flex-wrap: wrap;
+      align-items:center; justify-content: space-between;
     }
-
     .statusPill{
       padding: 10px 12px;
       border-radius: var(--pill);
       background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,.10);
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1;
+      font-size: 13px; line-height: 1;
     }
-
-    .btnRow{
-      display:flex;
-      gap: 10px;
-      align-items:center;
-    }
+    .btnRow{ display:flex; gap: 10px; align-items:center; }
     .btn{
       cursor:pointer;
       border:none;
@@ -212,38 +153,14 @@
       transition: transform .06s ease, border-color .15s ease;
     }
     .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
-    .btn.primary{
-      background: rgba(124,92,255,.22);
-      border-color: rgba(124,92,255,.55);
-    }
-    .btn.danger{
-      background: rgba(255,92,122,.10);
-      border-color: rgba(255,92,122,.35);
-    }
-    .btn:disabled{
-      opacity: .45;
-      cursor:not-allowed;
-      transform:none;
-    }
+    .btn.primary{ background: rgba(124,92,255,.22); border-color: rgba(124,92,255,.55); }
+    .btn.danger{ background: rgba(255,92,122,.10); border-color: rgba(255,92,122,.35); }
+    .btn:disabled{ opacity: .45; cursor:not-allowed; transform:none; }
 
-    .divider{
-      margin: 14px 0;
-      height: 1px;
-      background: rgba(255,255,255,.08);
-    }
+    .divider{ margin: 14px 0; height: 1px; background: rgba(255,255,255,.08); }
+    .helper{ color: var(--muted); font-size: 15px; margin: 0 0 10px; }
 
-    .helper{
-      color: var(--muted);
-      font-size: 15px;
-      margin: 0 0 10px;
-    }
-
-    .scoreline{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
+    .scoreline{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
     .scorePill{
       padding: 9px 12px;
       border-radius: var(--pill);
@@ -253,7 +170,6 @@
       font-size: 13px;
     }
 
-    /* Question UI */
     .qwrap{
       margin-top: 10px;
       border-radius: 18px;
@@ -261,45 +177,24 @@
       border: 1px solid rgba(255,255,255,.10);
       padding: 14px;
     }
-    .qtitle{
-      font-weight: 800;
-      font-size: 18px;
-      margin: 0 0 8px;
-    }
-    .qtext{
-      color: var(--text);
-      margin: 0 0 12px;
-      line-height: 1.45;
-    }
-
-    .opts{
-      display:grid;
-      gap: 10px;
-    }
+    .qtitle{ font-weight: 800; font-size: 18px; margin: 0 0 8px; }
+    .qtext{ margin: 0 0 12px; line-height: 1.45; }
+    .opts{ display:grid; gap: 10px; }
     .opt{
-      display:flex;
-      gap: 10px;
-      align-items:flex-start;
+      display:flex; gap: 10px; align-items:flex-start;
       padding: 10px 12px;
       border-radius: 14px;
       background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,.10);
-      cursor:pointer;
-      user-select:none;
-      transition: border-color .15s ease, background .15s ease;
+      cursor:pointer; user-select:none;
     }
     .opt:hover{ border-color: rgba(255,255,255,.16); }
     .opt input{ margin-top: 3px; }
-    .opt span{
-      line-height: 1.35;
-      color: var(--text);
-    }
     .opt.selected{
       border-color: rgba(124,92,255,.55);
       box-shadow: 0 0 0 3px rgba(124,92,255,.14);
       background: rgba(124,92,255,.10);
     }
-
     .feedback{
       margin-top: 12px;
       padding: 12px 12px;
@@ -312,13 +207,7 @@
     .feedback.good{ border-color: rgba(66,211,146,.35); background: rgba(66,211,146,.08); color: rgba(233,237,247,.92); }
     .feedback.bad{ border-color: rgba(255,92,122,.35); background: rgba(255,92,122,.08); color: rgba(233,237,247,.92); }
 
-    .qActions{
-      margin-top: 12px;
-      display:flex;
-      gap: 10px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
+    .qActions{ margin-top: 12px; display:flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
 
     footer{
       margin-top: 18px;
@@ -344,7 +233,7 @@
   <div class="wrap">
 
     <div class="banner">
-      <!-- Put banner in Images folder as you have it -->
+      <!-- FIXED: extension is .png (lowercase) -->
       <img src="Images/Vedic_podcast_banner_2.png" alt="Veda Podcast Banner" />
     </div>
 
@@ -404,6 +293,9 @@
           <button class="btn primary" id="btnNext" disabled>Next</button>
         </div>
       </div>
+
+      <!-- NEW: a visible error box area, so failures aren't silent -->
+      <div class="feedback bad" id="errorBox" style="display:none;"></div>
     </div>
 
     <footer>
@@ -413,7 +305,6 @@
 
   </div>
 
-  <!-- mammoth: used to read docx in browser -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script src="script.js"></script>
 </body>
