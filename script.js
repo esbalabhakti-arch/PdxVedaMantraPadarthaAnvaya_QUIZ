@@ -1,652 +1,595 @@
-/* Veda Podcast Learning Check Quiz
-   - Auto-lists Images/*_quiz.docx via GitHub Contents API
-   - Parses DOCX using mammoth.extractRawText
-   - Splits 50 Q into 5 sets of 10
-   - One question at a time; must answer correctly to advance
-   - Tracks attempted/correct/first-try; wrong first attempt -> Review Missed pool
+/*  Veda Podcast Learning Check Quiz
+    - Loads .docx quizzes from Images/ folder on GitHub Pages
+    - Splits each doc into Set 1..5 (10 questions each)
+    - "Review Missed" contains questions not correct on FIRST attempt
+    - One question at a time; cannot proceed until correct
 */
 
-(() => {
-  // ---------- DOM ----------
-  const podcastSelect = document.getElementById("podcastSelect");
-  const setTabs = document.getElementById("setTabs");
-  const missedTab = document.getElementById("missedTab");
+const UI = {
+  podcastSelect: document.getElementById("podcastSelect"),
+  setToggle: document.getElementById("setToggle"),
+  missedBtn: document.getElementById("missedBtn"),
+  modePill: document.getElementById("modePill"),
+  startBtn: document.getElementById("startBtn"),
+  finishBtn: document.getElementById("finishBtn"),
+  mainMsg: document.getElementById("mainMsg"),
 
-  const modeStatus = document.getElementById("modeStatus");
-  const hintLine = document.getElementById("hintLine");
+  scoreCorrect: document.getElementById("scoreCorrect"),
+  scoreAttempted: document.getElementById("scoreAttempted"),
+  scoreFirstTry: document.getElementById("scoreFirstTry"),
+  scoreMissedPool: document.getElementById("scoreMissedPool"),
 
-  const startBtn = document.getElementById("startBtn");
-  const finishBtn = document.getElementById("finishBtn");
+  qBox: document.getElementById("qBox"),
+  qTitle: document.getElementById("qTitle"),
+  qMeta: document.getElementById("qMeta"),
+  options: document.getElementById("options"),
+  checkBtn: document.getElementById("checkBtn"),
+  nextBtn: document.getElementById("nextBtn"),
+  resultBox: document.getElementById("resultBox"),
+};
 
-  const questionBox = document.getElementById("questionBox");
-  const qText = document.getElementById("qText");
-  const optionsEl = document.getElementById("options");
+const ENCOURAGE_OK = [
+  "Nice! ✅",
+  "Super! 💪",
+  "Great job! 🌟",
+  "Perfect — keep going! 🔥",
+  "Awesome! 🙌"
+];
 
-  const checkBtn = document.getElementById("checkBtn");
-  const nextBtn = document.getElementById("nextBtn");
+const ENCOURAGE_BAD = [
+  "Not yet — try once more 🙂",
+  "Close! Give it another go 💡",
+  "Good effort — one more try 💪",
+  "Almost there — re-read the options 🙂"
+];
 
-  const feedback = document.getElementById("feedback");
-  const explain = document.getElementById("explain");
-  const explainText = document.getElementById("explainText");
+// ------------ State ------------
+const State = {
+  files: [],                 // [{name, path}]
+  cache: new Map(),          // filename -> parsed questions[]
+  selectedFile: "",
 
-  const scoreA = document.getElementById("scoreA");
-  const scoreB = document.getElementById("scoreB");
-  const scoreC = document.getElementById("scoreC");
-  const scoreD = document.getElementById("scoreD");
+  activeMode: "set",         // "set" | "missed"
+  activeSetIndex: 0,         // 0..4
 
-  // ---------- Helpers ----------
-  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  // quiz session counters (for current session only)
+  attempted: 0,
+  correct: 0,
+  firstTry: 0,
 
-  function ownerFromPagesHost() {
-    // esbalabhakti-arch.github.io -> esbalabhakti-arch
-    const host = window.location.hostname || "";
-    return host.split(".")[0];
+  // missed pool across session (for current selected podcast)
+  missedIds: new Set(),      // question.id strings for "first-try failed"
+  missedList: [],            // question objects (unique), in encounter order
+
+  // current run
+  runList: [],               // questions for this run (set or missed)
+  runIndex: 0,               // index in runList
+  current: null,             // current question object
+  currentTries: 0,           // tries for current question in this run
+  selectedChoice: null,      // "A"|"B"|"C"|"D"
+  started: false
+};
+
+// ------------ Helpers ------------
+function randPick(arr){
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function setMessage(html){
+  UI.mainMsg.innerHTML = html;
+}
+
+function updateScores(){
+  UI.scoreCorrect.textContent = `Correct: ${State.correct}`;
+  UI.scoreAttempted.textContent = `Attempted: ${State.attempted}`;
+  UI.scoreFirstTry.textContent = `First-try: ${State.firstTry}`;
+  UI.scoreMissedPool.textContent = `In Review Missed pool: ${State.missedList.length}`;
+  UI.missedBtn.textContent = `Review Missed (${State.missedList.length})`;
+}
+
+function setModePill(){
+  if (State.activeMode === "missed"){
+    UI.modePill.textContent = `Review Missed • Ready`;
+  } else {
+    UI.modePill.textContent = `Set ${State.activeSetIndex + 1} • Ready`;
+  }
+}
+
+function setActiveToggleButton(){
+  const btns = [...UI.setToggle.querySelectorAll(".tbtn")];
+  btns.forEach(b => b.classList.remove("active"));
+
+  if (State.activeMode === "missed"){
+    UI.missedBtn.classList.add("active");
+  } else {
+    const wanted = String(State.activeSetIndex + 1);
+    const b = btns.find(x => x.dataset.set === wanted);
+    if (b) b.classList.add("active");
+  }
+}
+
+function getOwnerAndRepo(){
+  // Works for: https://<owner>.github.io/<repo>/
+  const host = window.location.hostname || "";
+  const owner = host.split(".github.io")[0] || "";
+  const parts = (window.location.pathname || "/").split("/").filter(Boolean);
+  const repo = parts[0] || "";
+  return { owner, repo };
+}
+
+function nicePodcastName(filename){
+  // e.g. 101_Intro_1_quiz.docx -> "101 — Intro 1"
+  let base = filename.replace(/_quiz\.docx$/i, "");
+  base = base.replace(/_/g, " ").trim();
+  // If starts with number, add em dash styling
+  const m = base.match(/^(\d+)\s+(.*)$/);
+  if (m) return `${m[1]} — ${m[2]}`;
+  return base;
+}
+
+// ------------ DOCX parsing ------------
+function parseQuestionsFromRawText(rawText, sourceFilename){
+  // The DOCX raw text (from mammoth) follows:
+  // 1.
+  // Question text...
+  // A. ...
+  // B. ...
+  // C. ...
+  // D. ...
+  // Correct Answer: B
+  // Check: explanation...
+  //
+  // We'll parse using a robust regex across the whole text.
+
+  const text = (rawText || "").replace(/\r\n/g, "\n");
+  const re = /(?:^|\n)(\d+)\.\s*\n([\s\S]*?)\nA\.\s*([^\n]*)\nB\.\s*([^\n]*)\nC\.\s*([^\n]*)\nD\.\s*([^\n]*)\nCorrect Answer:\s*([ABCD])\s*\nCheck:\s*([\s\S]*?)(?=\n\d+\.\s*\n|$)/g;
+
+  const out = [];
+  let m;
+  while ((m = re.exec(text)) !== null){
+    const n = parseInt(m[1], 10);
+    const qText = m[2].trim();
+    const A = m[3].trim();
+    const B = m[4].trim();
+    const C = m[5].trim();
+    const D = m[6].trim();
+    const ans = m[7].trim();
+    const check = m[8].trim();
+
+    // stable id per podcast+question number
+    const id = `${sourceFilename}::Q${n}`;
+
+    out.push({
+      id,
+      num: n,
+      text: qText,
+      options: { A, B, C, D },
+      answer: ans,
+      check
+    });
   }
 
-  function repoFromPath() {
-    // /PdxVedaMantraPadarthaAnvaya_QUIZ/ -> "PdxVedaMantraPadarthaAnvaya_QUIZ"
-    const seg = (window.location.pathname || "/").split("/").filter(Boolean);
-    return seg.length ? seg[0] : "";
+  // Sort by question number just in case
+  out.sort((a,b) => a.num - b.num);
+  return out;
+}
+
+async function loadDocxQuestions(filename){
+  if (State.cache.has(filename)) return State.cache.get(filename);
+
+  // Fetch DOCX from Images/ (capital I)
+  const url = `Images/${encodeURIComponent(filename)}`;
+  const resp = await fetch(url);
+  if (!resp.ok){
+    throw new Error(`Could not fetch ${url}. HTTP ${resp.status}`);
+  }
+  const arrayBuffer = await resp.arrayBuffer();
+
+  if (!window.mammoth || !mammoth.extractRawText){
+    throw new Error("Mammoth did not load. Check the mammoth script tag.");
   }
 
-  function githubContentsUrl(owner, repo, path) {
-    return `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${path}`;
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  const raw = (result && result.value) ? result.value : "";
+  const qs = parseQuestionsFromRawText(raw, filename);
+
+  State.cache.set(filename, qs);
+  return qs;
+}
+
+// ------------ GitHub listing (auto-pickup new DOCX) ------------
+async function listDocxFiles(){
+  const { owner, repo } = getOwnerAndRepo();
+
+  // If not running on GitHub pages, fallback to known filenames
+  if (!owner || !repo){
+    return [
+      { name: "101_Intro_1_quiz.docx", path: "Images/101_Intro_1_quiz.docx" },
+      { name: "102_Intro_2_quiz.docx", path: "Images/102_Intro_2_quiz.docx" },
+      { name: "103_1st_Panchadi_quiz.docx", path: "Images/103_1st_Panchadi_quiz.docx" }
+    ];
   }
 
-  function rawFileUrl(owner, repo, branch, path) {
-    return `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${path}`;
+  const api = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/Images`;
+  const resp = await fetch(api, { headers: { "Accept": "application/vnd.github+json" } });
+
+  if (!resp.ok){
+    // API rate limit / temporary failure — fallback to known list
+    return [
+      { name: "101_Intro_1_quiz.docx", path: "Images/101_Intro_1_quiz.docx" },
+      { name: "102_Intro_2_quiz.docx", path: "Images/102_Intro_2_quiz.docx" },
+      { name: "103_1st_Panchadi_quiz.docx", path: "Images/103_1st_Panchadi_quiz.docx" }
+    ];
   }
 
-  function safeText(s) {
-    return (s || "").replace(/[<>]/g, "");
+  const items = await resp.json();
+  const docx = (items || [])
+    .filter(x => x && x.type === "file" && typeof x.name === "string")
+    .filter(x => x.name.toLowerCase().endsWith("_quiz.docx"))
+    .map(x => ({ name: x.name, path: `Images/${x.name}` }));
+
+  // Sort by leading number if present
+  docx.sort((a,b) => {
+    const na = parseInt((a.name.match(/^(\d+)/) || [,"999999"])[1], 10);
+    const nb = parseInt((b.name.match(/^(\d+)/) || [,"999999"])[1], 10);
+    return na - nb;
+  });
+
+  return docx;
+}
+
+function fillPodcastDropdown(files){
+  UI.podcastSelect.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = "Select a podcast…";
+  UI.podcastSelect.appendChild(opt0);
+
+  files.forEach(f => {
+    const opt = document.createElement("option");
+    opt.value = f.name;
+    opt.textContent = nicePodcastName(f.name);
+    UI.podcastSelect.appendChild(opt);
+  });
+}
+
+// ------------ Quiz mechanics ------------
+function resetSessionStateForPodcast(){
+  State.attempted = 0;
+  State.correct = 0;
+  State.firstTry = 0;
+
+  State.missedIds = new Set();
+  State.missedList = [];
+
+  State.runList = [];
+  State.runIndex = 0;
+  State.current = null;
+  State.currentTries = 0;
+  State.selectedChoice = null;
+  State.started = false;
+
+  updateScores();
+  setModePill();
+  setActiveToggleButton();
+
+  UI.qBox.style.display = "none";
+  UI.resultBox.style.display = "none";
+  UI.nextBtn.disabled = true;
+  UI.checkBtn.disabled = false;
+
+  setMessage(`Select a podcast, pick a set, then press <b>Start</b>.`);
+}
+
+function makeSetRunList(allQs){
+  // 50 questions -> sets of 10
+  const set = State.activeSetIndex; // 0..4
+  const start = set * 10;
+  const end = start + 10;
+  return allQs.slice(start, end);
+}
+
+function startRun(runList){
+  State.runList = runList.slice(); // copy
+  State.runIndex = 0;
+  State.started = true;
+  showQuestionAtIndex(0);
+}
+
+function showQuestionAtIndex(i){
+  if (!State.runList.length){
+    UI.qBox.style.display = "none";
+    UI.resultBox.style.display = "none";
+    State.current = null;
+    setMessage(`No questions available for this selection.`);
+    return;
   }
 
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+  if (i >= State.runList.length){
+    // Finished this run
+    State.current = null;
+    UI.qBox.style.display = "none";
+    UI.resultBox.style.display = "none";
+
+    const msg = (State.activeMode === "missed")
+      ? `Finished <b>Review Missed</b>. Want another Set? 💪`
+      : `Finished <b>Set ${State.activeSetIndex + 1}</b>. You can try another set — or hit <b>Review Missed</b> to clean up mistakes 💪`;
+
+    setMessage(msg);
+    State.started = false;
+    return;
   }
 
-  // Motivators
-  const GOOD = [
-    "Nice work! ✅",
-    "Super! Keep going 💪",
-    "Correct! 🔥",
-    "Great focus 👏",
-    "That’s it! 🌟",
-    "Boom. Nailed it 💯"
-  ];
-  const TRY_AGAIN = [
-    "Almost — try again 🙂",
-    "Not yet — take another shot 💡",
-    "Close! Read the options once more 👀",
-    "Good effort — one more try 💪",
-    "No worries — you’ll get it now ✅"
-  ];
+  State.current = State.runList[i];
+  State.currentTries = 0;
+  State.selectedChoice = null;
 
-  // ---------- State ----------
-  const STATE = {
-    owner: ownerFromPagesHost(),
-    repo: repoFromPath(),
-    branch: "main",
-    imagesDir: "Images", // IMPORTANT: your folder is "Images" (capital I)
-    docxMap: new Map(),  // key: docx filename, value: parsed questions []
-    podcasts: [],         // [{file, label}]
-    currentPodcastFile: "",
-    currentMode: "set",   // "set" | "missed"
-    currentSet: 1,        // 1..5
-    queue: [],
-    qIndex: 0,
-    selectedLetter: null,
+  UI.qBox.style.display = "block";
+  UI.resultBox.style.display = "none";
+  UI.resultBox.className = "result";
 
-    // scoring (session-level)
-    attempted: 0,         // counts questions completed (answered correctly at least once)
-    correct: 0,           // equals attempted (since must be correct to finish each question)
-    firstTryCorrect: 0,
+  UI.checkBtn.disabled = false;
+  UI.nextBtn.disabled = true;
 
-    // per-question tries in the current run
-    triesByQid: new Map(),  // qid -> tries count in this run
+  UI.qTitle.textContent = `Q${State.current.num}. ${State.current.text}`;
+  UI.qMeta.textContent = (State.activeMode === "missed")
+    ? `Mode: Review Missed • Question ${i + 1} of ${State.runList.length}`
+    : `Set ${State.activeSetIndex + 1} • Question ${i + 1} of ${State.runList.length}`;
 
-    // Missed pool (global while page is open)
-    missedPool: new Map(),  // qid -> question object
-  };
+  // render options
+  UI.options.innerHTML = "";
+  ["A","B","C","D"].forEach(letter => {
+    const wrap = document.createElement("label");
+    wrap.className = "opt";
 
-  // Question object:
-  // { qid, n, question, options:{A,B,C,D}, answerLetter, checkText }
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "mcq";
+    radio.value = letter;
 
-  function updateScores() {
-    scoreA.textContent = `Correct: ${STATE.correct}`;
-    scoreB.textContent = `Attempted: ${STATE.attempted}`;
-    scoreC.textContent = `First-try: ${STATE.firstTryCorrect}`;
-    scoreD.textContent = `In Review Missed pool: ${STATE.missedPool.size}`;
-    missedTab.textContent = `Review Missed (${STATE.missedPool.size})`;
-  }
+    const txt = document.createElement("div");
+    txt.className = "txt";
+    txt.textContent = `${letter}. ${State.current.options[letter]}`;
 
-  function setModeUI(mode, setNum) {
-    // tabs visuals
-    [...setTabs.querySelectorAll(".tab")].forEach(btn => btn.classList.remove("active"));
-    if (mode === "missed") {
-      missedTab.classList.add("active");
-      STATE.currentMode = "missed";
-      modeStatus.textContent = "Review Missed • Ready";
-    } else {
-      const btn = setTabs.querySelector(`.tab[data-mode="set"][data-set="${setNum}"]`);
-      if (btn) btn.classList.add("active");
-      STATE.currentMode = "set";
-      STATE.currentSet = setNum;
-      modeStatus.textContent = `Set ${setNum} • Ready`;
-    }
+    wrap.appendChild(radio);
+    wrap.appendChild(txt);
 
-    hintLine.textContent = "Select a podcast, pick a set, then press Start.";
-    hideQuestionUI();
-  }
-
-  function hideQuestionUI() {
-    questionBox.style.display = "none";
-    qText.textContent = "";
-    optionsEl.innerHTML = "";
-    feedback.style.display = "none";
-    feedback.className = "feedback";
-    explain.style.display = "none";
-    explainText.textContent = "";
-    checkBtn.disabled = true;
-    nextBtn.disabled = true;
-    STATE.selectedLetter = null;
-  }
-
-  function showFeedback(kind, msg) {
-    feedback.style.display = "block";
-    feedback.className = `feedback ${kind}`;
-    feedback.textContent = msg;
-  }
-
-  // ---------- DOCX Listing ----------
-  async function loadPodcastList() {
-    const owner = STATE.owner;
-    const repo = STATE.repo;
-    if (!owner || !repo) {
-      podcastSelect.innerHTML = `<option value="">Error: cannot detect owner/repo from URL</option>`;
-      return;
-    }
-
-    const api = githubContentsUrl(owner, repo, STATE.imagesDir);
-    const res = await fetch(api, { cache: "no-store" });
-    if (!res.ok) {
-      podcastSelect.innerHTML = `<option value="">Error loading Images folder (GitHub API)</option>`;
-      return;
-    }
-
-    const items = await res.json();
-    const docx = (items || [])
-      .filter(x => x && x.type === "file")
-      .map(x => x.name)
-      .filter(name => name.toLowerCase().endsWith("_quiz.docx")); // IMPORTANT naming convention
-
-    docx.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-
-    STATE.podcasts = docx.map(file => ({
-      file,
-      label: labelFromFilename(file),
-    }));
-
-    if (!STATE.podcasts.length) {
-      podcastSelect.innerHTML = `<option value="">No *_quiz.docx found in Images/</option>`;
-      return;
-    }
-
-    podcastSelect.innerHTML = `<option value="">Select a podcast…</option>` +
-      STATE.podcasts.map(p => `<option value="${encodeURIComponent(p.file)}">${safeText(p.label)}</option>`).join("");
-
-    // preselect first
-    podcastSelect.selectedIndex = 1;
-    STATE.currentPodcastFile = decodeURIComponent(podcastSelect.value);
-  }
-
-  function labelFromFilename(file) {
-    // "101_Intro_1_quiz.docx" -> "101 — Intro 1"
-    const base = file.replace(/_quiz\.docx$/i, "");
-    const parts = base.split("_").filter(Boolean);
-    if (!parts.length) return base;
-
-    // nicer: first part numeric becomes id
-    const id = parts[0];
-    const rest = parts.slice(1).join(" ").replace(/\s+/g, " ").trim();
-    if (/^\d+$/.test(id)) return `${id} — ${rest || base}`;
-    return base;
-  }
-
-  // ---------- DOCX Parsing ----------
-  async function ensureParsed(docxFile) {
-    if (STATE.docxMap.has(docxFile)) return STATE.docxMap.get(docxFile);
-
-    const url = rawFileUrl(STATE.owner, STATE.repo, STATE.branch, `${STATE.imagesDir}/${docxFile}`);
-
-    let arrayBuffer;
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-      arrayBuffer = await res.arrayBuffer();
-    } catch (e) {
-      throw new Error(`Could not fetch DOCX: ${docxFile}. (${e.message})`);
-    }
-
-    let raw;
-    try {
-      const out = await window.mammoth.extractRawText({ arrayBuffer });
-      raw = (out && out.value) ? out.value : "";
-    } catch (e) {
-      throw new Error(`Could not parse DOCX with mammoth: ${docxFile}. (${e.message})`);
-    }
-
-    const questions = parseQuestionsFromRawText(raw, docxFile);
-    if (!questions.length) {
-      throw new Error(`No questions parsed from ${docxFile}. Format may have changed.`);
-    }
-
-    // keep stable order by question number
-    questions.sort((a, b) => a.n - b.n);
-
-    STATE.docxMap.set(docxFile, questions);
-    return questions;
-  }
-
-  function parseQuestionsFromRawText(raw, docxFile) {
-    // Normalize
-    const text = (raw || "")
-      .replace(/\r/g, "\n")
-      .replace(/[ \t]+\n/g, "\n")
-      .replace(/\n{3,}/g, "\n\n");
-
-    // Find question starts: a line that is ONLY "number."
-    const re = /(^|\n)\s*(\d+)\.\s*(?=\n)/g;
-    const starts = [];
-    let m;
-    while ((m = re.exec(text)) !== null) {
-      starts.push({ idx: m.index + (m[1] ? 1 : 0), n: parseInt(m[2], 10) });
-    }
-    if (!starts.length) return [];
-
-    const blocks = [];
-    for (let i = 0; i < starts.length; i++) {
-      const start = starts[i].idx;
-      const end = (i + 1 < starts.length) ? starts[i + 1].idx : text.length;
-      blocks.push(text.slice(start, end).trim());
-    }
-
-    const out = [];
-    for (const block of blocks) {
-      // block begins with "N."
-      const nMatch = block.match(/^\s*(\d+)\.\s*/);
-      if (!nMatch) continue;
-      const n = parseInt(nMatch[1], 10);
-      const body = block.replace(/^\s*\d+\.\s*/, "").trim();
-
-      // Extract Correct Answer letter
-      const ansMatch = body.match(/Correct\s*Answer:\s*([ABCD])\b/i);
-      if (!ansMatch) continue;
-      const answerLetter = ansMatch[1].toUpperCase();
-
-      // Extract Check explanation
-      let checkText = "";
-      const checkMatch = body.match(/Check:\s*([\s\S]*?)\s*$/i);
-      if (checkMatch) checkText = checkMatch[1].trim();
-
-      // Extract options A-D lines
-      // We’ll locate each option by "A." "B." "C." "D." at line start.
-      const opt = extractOptions(body);
-      if (!opt || !opt.A || !opt.B || !opt.C || !opt.D) continue;
-
-      // Question text is everything before "A."
-      const qPart = body.split(/\n\s*A\.\s*/i)[0].trim();
-      const question = qPart
-        .replace(/\[\(Source:[^\]]*\)\]/gi, "") // remove source markers if present
-        .replace(/\[\s*Source:[^\]]*\]/gi, "")
-        .replace(/\n{2,}/g, "\n")
-        .trim();
-
-      const qid = `${docxFile}::${n}`;
-
-      out.push({
-        qid,
-        n,
-        question,
-        options: opt,
-        answerLetter,
-        checkText,
-        _docx: docxFile
-      });
-    }
-
-    return out;
-  }
-
-  function extractOptions(body) {
-    // Pull A-D blocks robustly:
-    // A. ... (until B.)
-    // B. ... (until C.)
-    // ...
-    const get = (letter, nextLetter) => {
-      const re = new RegExp(`\\n\\s*${letter}\\.\\s*([\\s\\S]*?)\\n\\s*${nextLetter}\\.\\s*`, "i");
-      const m = body.match(re);
-      if (!m) return null;
-      return m[1].trim().replace(/\n+/g, " ").trim();
-    };
-
-    const A = (() => {
-      const re = /\n\s*A\.\s*([\s\S]*?)\n\s*B\.\s*/i;
-      const m = body.match(re);
-      return m ? m[1].trim().replace(/\n+/g, " ").trim() : null;
-    })();
-
-    const B = (() => {
-      const re = /\n\s*B\.\s*([\s\S]*?)\n\s*C\.\s*/i;
-      const m = body.match(re);
-      return m ? m[1].trim().replace(/\n+/g, " ").trim() : null;
-    })();
-
-    const C = (() => {
-      const re = /\n\s*C\.\s*([\s\S]*?)\n\s*D\.\s*/i;
-      const m = body.match(re);
-      return m ? m[1].trim().replace(/\n+/g, " ").trim() : null;
-    })();
-
-    const D = (() => {
-      // until "Correct Answer"
-      const re = /\n\s*D\.\s*([\s\S]*?)\n\s*Correct\s*Answer:/i;
-      const m = body.match(re);
-      return m ? m[1].trim().replace(/\n+/g, " ").trim() : null;
-    })();
-
-    if (!A || !B || !C || !D) return null;
-    return { A, B, C, D };
-  }
-
-  // ---------- Quiz Building ----------
-  function buildQueue(questions) {
-    if (STATE.currentMode === "missed") {
-      const pool = [...STATE.missedPool.values()];
-      return shuffle(pool);
-    }
-
-    // set mode
-    const setNum = clamp(STATE.currentSet, 1, 5);
-    const start = (setNum - 1) * 10;
-    const end = start + 10;
-    return questions.slice(start, end);
-  }
-
-  function resetRunState() {
-    STATE.queue = [];
-    STATE.qIndex = 0;
-    STATE.selectedLetter = null;
-    STATE.triesByQid = new Map();
-    hideQuestionUI();
-  }
-
-  function renderQuestion() {
-    const q = STATE.queue[STATE.qIndex];
-    if (!q) {
-      // finished
-      questionBox.style.display = "none";
-      const msg = summaryMessage();
-      showEndSummary(msg);
-      return;
-    }
-
-    questionBox.style.display = "block";
-    feedback.style.display = "none";
-    feedback.className = "feedback";
-    explain.style.display = "none";
-    explainText.textContent = "";
-    checkBtn.disabled = true;
-    nextBtn.disabled = true;
-    STATE.selectedLetter = null;
-
-    // In missed mode show (Missed) label, else show set label
-    const where = (STATE.currentMode === "missed") ? "Review Missed" : `Set ${STATE.currentSet}`;
-    modeStatus.textContent = `${where} • Q${STATE.qIndex + 1}/${STATE.queue.length}`;
-
-    qText.textContent = q.question || `(Question ${q.n})`;
-
-    optionsEl.innerHTML = "";
-    const letters = ["A", "B", "C", "D"];
-    letters.forEach(L => {
-      const div = document.createElement("div");
-      div.className = "opt";
-      div.dataset.letter = L;
-      div.innerHTML = `
-        <div class="letter">${L}</div>
-        <div class="txt">${safeText(q.options[L] || "")}</div>
-      `;
-      div.addEventListener("click", () => selectOption(L));
-      optionsEl.appendChild(div);
+    wrap.addEventListener("click", () => {
+      State.selectedChoice = letter;
+      [...UI.options.querySelectorAll(".opt")].forEach(x => x.classList.remove("selected"));
+      wrap.classList.add("selected");
+      radio.checked = true;
     });
 
-    hintLine.textContent = "Pick an option, then press Check Answer.";
+    UI.options.appendChild(wrap);
+  });
+}
+
+function recordMissedIfNeeded(q){
+  if (!State.missedIds.has(q.id)){
+    State.missedIds.add(q.id);
+    State.missedList.push(q);
+  }
+  updateScores();
+}
+
+function showResult(ok, html){
+  UI.resultBox.style.display = "block";
+  UI.resultBox.className = ok ? "result ok" : "result bad";
+  UI.resultBox.innerHTML = html;
+}
+
+function finishSummary(){
+  UI.qBox.style.display = "none";
+  UI.resultBox.style.display = "none";
+  State.started = false;
+
+  const summary = `
+    <div style="font-weight:800; font-size:18px; margin-bottom:8px;">
+      Nice work! ✅
+    </div>
+    <div style="color:rgba(255,255,255,0.85); line-height:1.55;">
+      <div><b>Attempted:</b> ${State.attempted}</div>
+      <div><b>Correct:</b> ${State.correct}</div>
+      <div><b>First-try correct:</b> ${State.firstTry}</div>
+      <div><b>In Review Missed pool:</b> ${State.missedList.length}</div>
+      <div style="margin-top:10px; color:rgba(255,255,255,0.72);">
+        Want a challenge? Try another Set — or hit <b>Review Missed</b> to clean up mistakes 💪
+      </div>
+    </div>
+  `;
+  setMessage(summary);
+}
+
+// ------------ Wiring UI events ------------
+UI.setToggle.addEventListener("click", (e) => {
+  const btn = e.target.closest(".tbtn");
+  if (!btn) return;
+
+  const val = btn.dataset.set;
+  if (val === "missed"){
+    State.activeMode = "missed";
+  } else {
+    State.activeMode = "set";
+    State.activeSetIndex = Math.max(0, Math.min(4, parseInt(val, 10) - 1));
   }
 
-  function selectOption(letter) {
-    STATE.selectedLetter = letter;
-    [...optionsEl.querySelectorAll(".opt")].forEach(x => x.classList.remove("selected"));
-    const picked = optionsEl.querySelector(`.opt[data-letter="${letter}"]`);
-    if (picked) picked.classList.add("selected");
-    checkBtn.disabled = false;
+  setActiveToggleButton();
+  setModePill();
+
+  // Changing set resets only the current run UI, not the counters/missed pool.
+  State.started = false;
+  UI.qBox.style.display = "none";
+  UI.resultBox.style.display = "none";
+  UI.nextBtn.disabled = true;
+  UI.checkBtn.disabled = false;
+
+  if (State.activeMode === "missed"){
+    setMessage(`Review Missed is ready. Press <b>Start</b> to practice questions you didn’t get on the first try.`);
+  } else {
+    setMessage(`Set ${State.activeSetIndex + 1} is ready. Press <b>Start</b> to begin.`);
   }
+});
 
-  function currentQ() {
-    return STATE.queue[STATE.qIndex] || null;
-  }
+UI.podcastSelect.addEventListener("change", async () => {
+  const filename = UI.podcastSelect.value;
+  State.selectedFile = filename;
 
-  function markTry(qid) {
-    const prev = STATE.triesByQid.get(qid) || 0;
-    const next = prev + 1;
-    STATE.triesByQid.set(qid, next);
-    return next;
-  }
+  // Reset everything when podcast changes
+  resetSessionStateForPodcast();
 
-  function onCheck() {
-    const q = currentQ();
-    if (!q) return;
+  if (!filename) return;
 
-    if (!STATE.selectedLetter) {
-      showFeedback("bad", "Pick an option first 🙂");
+  setMessage(`Loading <b>${nicePodcastName(filename)}</b>…`);
+
+  try{
+    const qs = await loadDocxQuestions(filename);
+
+    if (!qs.length){
+      setMessage(
+        `Could not parse questions from <b>${filename}</b>.<br/>
+         This usually means the DOCX didn’t contain the expected pattern (1., A., B., C., D., Correct Answer, Check).`
+      );
       return;
     }
 
-    const tries = markTry(q.qid);
+    setMessage(
+      `Loaded <b>${qs.length}</b> questions for <b>${nicePodcastName(filename)}</b>.<br/>
+       Pick a Set (1–5) or try <b>Review Missed</b>, then press <b>Start</b>.`
+    );
+  } catch(err){
+    setMessage(
+      `Error loading <b>${filename}</b>:<br/><span style="color:rgba(255,255,255,0.85)">${String(err.message || err)}</span>`
+    );
+  }
+});
 
-    if (STATE.selectedLetter === q.answerLetter) {
-      // correct
-      if (tries === 1) STATE.firstTryCorrect += 1;
-      // “attempted/correct” are counted when the question is completed (i.e., correct reached)
-      STATE.attempted += 1;
-      STATE.correct += 1;
-
-      showFeedback("ok", `${GOOD[Math.floor(Math.random() * GOOD.length)]}  Correct answer: ${q.answerLetter}.`);
-      explain.style.display = "block";
-      explainText.textContent = q.checkText ? q.checkText : "Good catch — keep going.";
-
-      // allow next
-      nextBtn.disabled = false;
-      checkBtn.disabled = true;
-
-      hintLine.textContent = "Press Next to move on.";
-      updateScores();
-
-      // If missed on first try, keep it in pool (so they can review later).
-      // (Requirement: if wrong in first attempt, put into missed section.)
-      // That happens in wrong branch below.
-    } else {
-      // wrong
-      if (tries === 1) {
-        // add to missed pool if first attempt wrong
-        STATE.missedPool.set(q.qid, q);
-      }
-      updateScores();
-
-      showFeedback("bad", `${TRY_AGAIN[Math.floor(Math.random() * TRY_AGAIN.length)]}  (You chose ${STATE.selectedLetter}.)`);
-      explain.style.display = "none";
-      explainText.textContent = "";
-
-      // Must not proceed until correct
-      nextBtn.disabled = true;
-      checkBtn.disabled = false;
-
-      hintLine.textContent = "Try again — you’ve got this.";
-    }
+UI.startBtn.addEventListener("click", async () => {
+  if (!State.selectedFile){
+    setMessage(`Please select a podcast first.`);
+    return;
   }
 
-  function onNext() {
-    const q = currentQ();
-    if (!q) return;
+  setMessage(`Preparing quiz…`);
 
-    // Move forward
-    STATE.qIndex += 1;
-    renderQuestion();
-  }
-
-  function showEndSummary(msg) {
-    // Reuse the feedback box area (clean)
-    questionBox.style.display = "block";
-    qText.textContent = msg.title;
-    optionsEl.innerHTML = "";
-    checkBtn.disabled = true;
-    nextBtn.disabled = true;
-
-    feedback.style.display = "block";
-    feedback.className = "feedback ok";
-    feedback.textContent = msg.body;
-
-    explain.style.display = "block";
-    explain.querySelector(".label").textContent = "Session summary:";
-    explainText.innerHTML = `
-      • Attempted: ${STATE.attempted}<br/>
-      • Correct: ${STATE.correct}<br/>
-      • First-try correct: ${STATE.firstTryCorrect}<br/>
-      • In Review Missed pool: ${STATE.missedPool.size}
-    `;
-
-    hintLine.textContent = "Pick another set — or hit Review Missed to clean up mistakes 💪";
-  }
-
-  function summaryMessage() {
-    const missed = STATE.missedPool.size;
-    let title = "Nice work! ✅";
-    let body = "Set finished. Want a challenge? Try another set — or go to Review Missed.";
-    if (STATE.currentMode === "missed") {
-      title = "Review complete! ✅";
-      body = "You cleared your missed questions. Keep going — consistency wins 💪";
-      // optionally clear missed pool after review:
-      // STATE.missedPool.clear();
-    } else if (missed > 0) {
-      body = `Set finished. You have ${missed} question(s) in Review Missed — go finish them off 💪`;
-    }
-    return { title, body };
-  }
-
-  // ---------- Start / Finish ----------
-  async function onStart() {
-    const podcastFile = STATE.currentPodcastFile;
-    if (!podcastFile) {
-      showFeedback("bad", "Please select a podcast first 🙂");
+  try{
+    const allQs = await loadDocxQuestions(State.selectedFile);
+    if (!allQs.length){
+      setMessage(`No questions parsed from <b>${State.selectedFile}</b>.`);
       return;
     }
 
-    resetRunState();
-
-    try {
-      const questions = await ensureParsed(podcastFile);
-
-      // Build queue based on mode/set
-      STATE.queue = buildQueue(questions);
-      STATE.qIndex = 0;
-
-      if (!STATE.queue.length) {
-        hintLine.textContent = "No questions available for that selection.";
-        showFeedback("bad", "No questions found for that set / mode.");
+    let runList = [];
+    if (State.activeMode === "missed"){
+      runList = State.missedList.slice();
+      if (!runList.length){
+        setMessage(`Your <b>Review Missed</b> pool is empty 🎉 Pick a Set and try it!`);
         return;
       }
-
-      // In missed mode, if empty, show helpful message
-      if (STATE.currentMode === "missed" && STATE.missedPool.size === 0) {
-        showEndSummary({
-          title: "All clean ✅",
-          body: "No missed questions yet. Do a set first — then come back here."
-        });
-        return;
-      }
-
-      renderQuestion();
-      updateScores();
-    } catch (e) {
-      resetRunState();
-      questionBox.style.display = "block";
-      qText.textContent = "Could not start the quiz.";
-      optionsEl.innerHTML = "";
-      showFeedback("bad", e.message);
-      explain.style.display = "block";
-      explain.querySelector(".label").textContent = "Fix checklist:";
-      explainText.innerHTML = `
-        1) Ensure files are in <b>Images/</b> (capital I)<br/>
-        2) Ensure filename ends with <b>_quiz.docx</b><br/>
-        3) Ensure branch is <b>main</b><br/>
-        4) In GitHub Pages, wait for deployment to finish<br/>
-      `;
-    }
-  }
-
-  function onFinish() {
-    // Just show summary; user can restart anytime
-    showEndSummary(summaryMessage());
-  }
-
-  // ---------- Events ----------
-  setTabs.addEventListener("click", (e) => {
-    const btn = e.target.closest(".tab");
-    if (!btn) return;
-
-    const mode = btn.dataset.mode;
-    if (mode === "missed") {
-      setModeUI("missed", STATE.currentSet);
     } else {
-      const setNum = parseInt(btn.dataset.set, 10);
-      setModeUI("set", clamp(setNum || 1, 1, 5));
+      runList = makeSetRunList(allQs);
+      if (!runList.length){
+        setMessage(`This set has no questions (unexpected).`);
+        return;
+      }
     }
-  });
 
-  podcastSelect.addEventListener("change", () => {
-    const v = podcastSelect.value ? decodeURIComponent(podcastSelect.value) : "";
-    STATE.currentPodcastFile = v;
-    hideQuestionUI();
-    modeStatus.textContent = (STATE.currentMode === "missed")
-      ? "Review Missed • Ready"
-      : `Set ${STATE.currentSet} • Ready`;
-    hintLine.textContent = "Select a podcast, pick a set, then press Start.";
-  });
+    setModePill();
+    startRun(runList);
+    setMessage(`Go! Answer correctly to move forward 🙂`);
+  } catch(err){
+    setMessage(`Could not start the quiz: ${String(err.message || err)}`);
+  }
+});
 
-  startBtn.addEventListener("click", onStart);
-  finishBtn.addEventListener("click", onFinish);
-  checkBtn.addEventListener("click", onCheck);
-  nextBtn.addEventListener("click", onNext);
+UI.checkBtn.addEventListener("click", () => {
+  if (!State.started || !State.current){
+    setMessage(`Press <b>Start</b> to begin.`);
+    return;
+  }
+  if (!State.selectedChoice){
+    showResult(false, `Please pick an option first 🙂`);
+    return;
+  }
 
-  // ---------- Boot ----------
-  (async function init() {
-    // Default UI
-    setModeUI("set", 1);
+  State.currentTries += 1;
+  State.attempted += 1;
+
+  const correctLetter = State.current.answer;
+  const isCorrect = (State.selectedChoice === correctLetter);
+
+  if (isCorrect){
+    State.correct += 1;
+    if (State.currentTries === 1){
+      State.firstTry += 1;
+    } else {
+      // if they missed first try, it should be in missed pool already
+    }
+
+    updateScores();
+    const praise = randPick(ENCOURAGE_OK);
+
+    // Show the "Check:" explanation after correct (as requested)
+    showResult(
+      true,
+      `<b>${praise}</b><br/><br/>
+       <b>Correct:</b> ${correctLetter}<br/>
+       <b>Check:</b> ${State.current.check}`
+    );
+
+    UI.nextBtn.disabled = false;
+    UI.checkBtn.disabled = true;
+
+  } else {
+    // Wrong
+    // If first attempt wrong, add to missed pool
+    if (State.currentTries === 1){
+      recordMissedIfNeeded(State.current);
+    }
     updateScores();
 
-    // Load podcast list from Images folder
-    await loadPodcastList();
+    const nudge = randPick(ENCOURAGE_BAD);
+    showResult(
+      false,
+      `<b>${nudge}</b><br/>
+       That’s not correct. Try again — you’ll get it.`
+    );
 
-    // Update selected podcast file state
-    const v = podcastSelect.value ? decodeURIComponent(podcastSelect.value) : "";
-    STATE.currentPodcastFile = v;
+    // Must not go next until correct
+    UI.nextBtn.disabled = true;
+    UI.checkBtn.disabled = false;
+  }
+});
 
-    // Ensure banner uses correct case and extension (.png)
-    const banner = document.getElementById("bannerImg");
-    banner.src = `${STATE.imagesDir}/Vedic_podcast_banner_2.png`;
-  })();
+UI.nextBtn.addEventListener("click", () => {
+  if (!State.started) return;
+  State.runIndex += 1;
+  showQuestionAtIndex(State.runIndex);
+});
+
+UI.finishBtn.addEventListener("click", () => {
+  finishSummary();
+});
+
+// ------------ Boot ------------
+(async function init(){
+  setMessage(`Loading podcasts…`);
+
+  try{
+    const files = await listDocxFiles();
+    State.files = files;
+
+    fillPodcastDropdown(files);
+
+    // default UI state
+    State.activeMode = "set";
+    State.activeSetIndex = 0;
+    setActiveToggleButton();
+    setModePill();
+    updateScores();
+
+    setMessage(`Select a podcast, pick a set, then press <b>Start</b>.`);
+  } catch(err){
+    setMessage(`Failed to load podcast list: ${String(err.message || err)}`);
+  }
 })();
