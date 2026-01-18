@@ -28,14 +28,17 @@
       margin: 0 auto;
     }
 
-    /* Banner - Compact */
-    .banner {
-      width: 100%;
-      max-height: 120px;
-      object-fit: cover;
-      object-position: center;
-      border-radius: 12px;
+    /* Banner - Compact and Centered */
+    .banner-container {
+      text-align: center;
       margin-bottom: 20px;
+    }
+
+    .banner {
+      max-width: 100%;
+      max-height: 120px;
+      object-fit: contain;
+      border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
 
@@ -212,7 +215,7 @@
     .question-number {
       font-size: 14px;
       color: #a78bfa;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
 
     .question-text {
@@ -222,7 +225,7 @@
       margin-bottom: 20px;
     }
 
-    /* Options */
+    /* Options - FIXED: Each option is now a separate clickable box */
     .options {
       display: flex;
       flex-direction: column;
@@ -245,22 +248,26 @@
     .option:hover {
       background: rgba(255,255,255,0.08);
       border-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
     }
 
     .option.selected {
       background: rgba(167, 139, 250, 0.15);
       border-color: #a78bfa;
+      box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
     }
 
     .option-letter {
       font-weight: 700;
       color: #a78bfa;
-      min-width: 24px;
+      font-size: 16px;
+      min-width: 30px;
     }
 
     .option-text {
       flex: 1;
       line-height: 1.5;
+      font-size: 15px;
     }
 
     /* Feedback */
@@ -329,7 +336,10 @@
 <body>
   <div class="container">
     <!-- Banner -->
-    <img src="Images/Vedic_podcast_banner_2.png" alt="Veda Podcast Banner" class="banner" onerror="this.style.display='none'">
+    <div class="banner-container">
+      <img src="Vedic_podcast_banner_2.png" alt="Veda Podcast Banner" class="banner" 
+           onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/esbalabhakti-arch/PdxVedaMantraPadarthaAnvaya_QUIZ/main/Vedic_podcast_banner_2.png';">
+    </div>
 
     <!-- Main Card -->
     <div class="card">
