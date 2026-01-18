@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Veda Padārtha Anvaya Podcasts</title>
+  <title>Veda Podcast Learning Check Quiz</title>
 
-  <!-- DOCX → HTML converter -->
+  <!-- DOCX → text converter (browser) -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
 
   <style>
@@ -22,11 +22,20 @@
       --shadow: 0 18px 60px rgba(0,0,0,0.48);
       --radius: 18px;
 
-      /* Toggle colors */
-      --toggleOuter: rgba(255, 213, 79, 0.28);
+      /* Toggle colors (yellow outer + purple active) */
+      --toggleOuter: rgba(255, 213, 79, 0.26);
       --toggleOuterBorder: rgba(255, 213, 79, 0.55);
       --toggleActive: rgba(168, 85, 247, 0.55);
       --toggleActiveBorder: rgba(210, 170, 255, 0.70);
+
+      --good: rgba(34,197,94,0.20);
+      --goodBorder: rgba(34,197,94,0.45);
+
+      --bad: rgba(239,68,68,0.18);
+      --badBorder: rgba(239,68,68,0.40);
+
+      --btn: rgba(255,255,255,0.10);
+      --btnBorder: rgba(255,255,255,0.18);
     }
 
     *{ box-sizing:border-box; }
@@ -58,6 +67,8 @@
       width: 100%;
       border-radius: 16px;
       overflow:hidden;
+      /* IMPORTANT: remove weird phone "black shadow box" look */
+      background: transparent;
     }
     .bannerFrame img{
       width: 100%;
@@ -72,13 +83,13 @@
       flex-direction:column;
       gap:14px;
       margin: 10px 0 14px;
+      align-items: center;
     }
 
-    /* Podcast dropdown centered */
     .controlsRow{
       display:flex;
       flex-wrap:wrap;
-      justify-content:center;   /* CENTERED */
+      justify-content:center;
       gap:12px;
       width:100%;
     }
@@ -109,15 +120,26 @@
       border-radius: 14px;
       padding: 10px 12px;
       font-size: 14px;
-      min-width: 360px;
+      min-width: 520px;
+      max-width: 80vw;
     }
     select option{ background:#0b1020; }
+
+    /* Quiz label */
+    .quizLabel{
+      font-weight: 700;
+      letter-spacing: .4px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      margin-top: -4px;
+      text-align:center;
+    }
 
     /* Toggle (centered, obvious) */
     .toggleRow{
       display:flex;
       justify-content:center;
-      margin-top: 4px;
+      width:100%;
     }
 
     .toggle{
@@ -138,6 +160,7 @@
       color: rgba(255,255,255,0.9);
       cursor:pointer;
       font-size: 14px;
+      font-weight: 650;
     }
     .toggle button.active{
       background: var(--toggleActive);
@@ -155,28 +178,95 @@
       margin-bottom: 16px;
     }
 
-    /* Audio player only */
-    video{
-      width:100%;
-      height:56px;
-      border-radius:14px;
+    .rowBetween{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content: space-between;
     }
 
-    .docHeader h3{
-      margin:0 0 10px;
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.82);
+      font-size: 12.5px;
+      white-space: nowrap;
+    }
+
+    .btn{
+      border: 1px solid var(--btnBorder);
+      background: var(--btn);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 650;
+    }
+    .btn:disabled{
+      opacity: 0.55;
+      cursor:not-allowed;
+    }
+
+    .qTitle{
+      margin: 10px 0 0;
       font-size: 16px;
+      line-height:1.4;
+      font-weight: 750;
     }
 
-    .docBody{
-      background: rgba(0,0,0,0.22);
-      border: 1px solid rgba(255,255,255,0.12);
+    .qSource{
+      margin-top: 6px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      margin-top: 14px;
+    }
+
+    .opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 12px 12px;
       border-radius: 14px;
-      padding: 14px;
-      max-height: 55vh;
-      overflow:auto;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      cursor:pointer;
+    }
+    .opt input{ margin-top: 3px; }
+    .opt:hover{
+      border-color: rgba(255,255,255,0.28);
     }
 
-    .docBody p{ margin:0 0 10px; line-height:1.6; }
+    .feedback{
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      display:none;
+      line-height:1.55;
+      white-space: pre-wrap;
+    }
+    .feedback.good{
+      display:block;
+      background: var(--good);
+      border-color: var(--goodBorder);
+    }
+    .feedback.bad{
+      display:block;
+      background: var(--bad);
+      border-color: var(--badBorder);
+    }
 
     .footer{
       margin-top: 28px;
@@ -187,9 +277,38 @@
       color: rgba(255,255,255,0.65);
     }
 
+    /* Modal */
+    .modalBackdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 999;
+    }
+    .modal{
+      width: min(720px, 94vw);
+      background: rgba(15,18,38,0.92);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 16px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+    .modal h3{ margin: 6px 0 10px; }
+    .modal p{ margin: 6px 0; color: rgba(255,255,255,0.86); line-height:1.55; }
+    .modal .actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top: 12px;
+    }
+
     @media (max-width:640px){
       .bannerFrame img{ height:140px; }
-      select{ min-width:260px; }
+      select{ min-width: 240px; }
     }
   </style>
 </head>
@@ -200,45 +319,55 @@
     <!-- Banner -->
     <div class="banner">
       <div class="bannerFrame">
-        <img src="Vedic_podcast_banner_2.png" alt="Veda Padārtha Anvaya Podcasts">
+        <!-- Use the same banner image file name you already have -->
+        <img src="Vedic_podcast_banner_2.png" alt="Veda Podcasts Banner">
       </div>
     </div>
 
     <!-- Controls -->
     <div class="controlsWrap">
 
-      <!-- Podcast dropdown centered -->
       <div class="controlsRow">
         <div class="field">
-          <label for="dateSelect">Podcast</label>
-          <select id="dateSelect"></select>
+          <label for="podcastSelect">Podcast</label>
+          <select id="podcastSelect"></select>
         </div>
       </div>
 
-      <!-- Toggle -->
+      <div class="quizLabel">LEARNING CHECK QUIZ (Multiple Choice)</div>
+
       <div class="toggleRow">
-        <div class="toggle">
-          <button id="btnTranscription" class="active" type="button">Transcription</button>
-          <button id="btnSummary" type="button">Podcast Summary</button>
+        <div class="toggle" aria-label="Quiz mode toggle">
+          <button id="btnQuiz" class="active" type="button">Quiz</button>
+          <button id="btnReview" type="button">Review Missed</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Card -->
+    <div class="card">
+      <div class="rowBetween">
+        <div class="pill" id="pillProgress">Loading…</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="btnStart">Start</button>
+          <button class="btn" id="btnFinish">Finish Quiz</button>
         </div>
       </div>
 
-      <!-- IMPORTANT: removed the Ready/status box completely -->
-    </div>
+      <div class="qTitle" id="qText">Select a podcast, then press Start.</div>
+      <div class="qSource" id="qSource"></div>
 
-    <!-- Audio (ONLY player, no redundant title/meta above it) -->
-    <div class="card">
-      <video id="audioPlayer" controls playsinline preload="metadata"></video>
-      <div class="error" id="audioError" style="display:none;"></div>
-    </div>
+      <div class="options" id="options"></div>
 
-    <!-- Text -->
-    <div class="card">
-      <div class="docHeader">
-        <h3 id="docTitle">Transcription</h3>
+      <div class="rowBetween" style="margin-top: 14px;">
+        <div class="pill" id="pillScore">Correct: 0 • Attempted: 0 • First-try: 0</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="btnCheck" disabled>Check Answer</button>
+          <button class="btn" id="btnNext" disabled>Next</button>
+        </div>
       </div>
-      <div class="docBody" id="docBody">Loading…</div>
-      <div class="error" id="docError" style="display:none;"></div>
+
+      <div class="feedback" id="feedback"></div>
     </div>
 
     <!-- Footer -->
@@ -252,6 +381,17 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- Summary Modal -->
+  <div class="modalBackdrop" id="modalBackdrop">
+    <div class="modal">
+      <h3>Quiz Summary</h3>
+      <p id="summaryText"></p>
+      <div class="actions">
+        <button class="btn" id="btnCloseModal">Close</button>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
