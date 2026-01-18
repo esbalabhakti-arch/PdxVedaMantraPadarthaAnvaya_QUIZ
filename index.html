@@ -9,16 +9,17 @@
     :root{
       --bg0:#070a12;
       --bg1:#0b1222;
-      --card:#121a2a;
-      --card2:#0f1726;
       --text:#e7ecff;
       --muted:rgba(231,236,255,.70);
       --line:rgba(255,255,255,.10);
       --shadow: 0 18px 60px rgba(0,0,0,.55);
       --radius:22px;
-      --gold: #f3d37a;
+
+      --pillBg: rgba(255,255,255,.05);
+      --pillBorder: rgba(255,255,255,.10);
+
       --purple:#7a4bd6;
-      --yellow:#ffe07a;
+      --purpleSoft: rgba(122,75,214,.18);
     }
 
     *{box-sizing:border-box}
@@ -49,8 +50,8 @@
     }
     .bannerImg{
       width:100%;
-      height:170px;             /* reduced height */
-      object-fit:cover;         /* keeps it like a real banner */
+      height:150px;
+      object-fit:cover;
       display:block;
     }
 
@@ -72,6 +73,7 @@
       border-radius:999px;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
       backdrop-filter: blur(8px);
+      width:min(980px,100%);
     }
     .pill label{
       font-size:13px;
@@ -79,14 +81,15 @@
       white-space:nowrap;
     }
     select{
+      flex:1;
       background: rgba(0,0,0,.20);
       color: var(--text);
       border:1px solid rgba(255,255,255,.18);
       border-radius:999px;
       padding:10px 12px;
-      min-width: 520px;
       outline:none;
       font-size:14px;
+      min-width: 240px;
     }
     select:focus{ border-color: rgba(255,255,255,.35); }
 
@@ -104,7 +107,7 @@
       border:1px solid rgba(255,255,255,.12);
     }
 
-    /* Set toggle */
+    /* Set toggle (subtle, no yellow) */
     .setToggle{
       display:flex;
       justify-content:center;
@@ -113,7 +116,7 @@
       margin:12px 0 18px;
       padding:12px;
       border-radius:999px;
-      background: rgba(0,0,0,.20);
+      background: rgba(0,0,0,.18);
       border:1px solid rgba(255,255,255,.10);
       box-shadow: 0 14px 40px rgba(0,0,0,.40);
     }
@@ -122,20 +125,24 @@
       cursor:pointer;
       padding:10px 14px;
       border-radius:999px;
-      background: var(--yellow);
-      color:#201a06;
-      font-weight:800;
-      box-shadow: 0 10px 26px rgba(0,0,0,.30);
-      transition: transform .08s ease, filter .15s ease;
+      background: var(--pillBg);
+      color: rgba(231,236,255,.88);
+      font-weight:600; /* less bold */
+      border:1px solid var(--pillBorder);
+      box-shadow: 0 10px 26px rgba(0,0,0,.22);
+      transition: transform .08s ease, filter .15s ease, border-color .15s ease;
       white-space:nowrap;
     }
-    .setBtn:hover{ filter:brightness(1.03); }
+    .setBtn:hover{
+      filter:brightness(1.05);
+      border-color: rgba(255,255,255,.18);
+    }
     .setBtn:active{ transform: translateY(1px); }
 
     .setBtn.active{
-      background: var(--purple);
-      color:white;
-      outline: 2px solid rgba(255,255,255,.18);
+      background: var(--purpleSoft);
+      border-color: rgba(122,75,214,.55);
+      color: #efe8ff;
     }
 
     /* Quiz card */
@@ -181,8 +188,8 @@
       font-weight:700;
     }
     .btn.primary{
-      background: rgba(243,211,122,.18);
-      border-color: rgba(243,211,122,.35);
+      background: rgba(122,75,214,.16);
+      border-color: rgba(122,75,214,.35);
     }
     .btn.danger{
       background: rgba(255,80,80,.14);
@@ -197,6 +204,7 @@
       margin:12px 0 8px;
       color: var(--muted);
       font-weight:600;
+      white-space:pre-wrap;
     }
 
     .qBox{
@@ -208,7 +216,7 @@
     }
     .qTitle{
       font-size:18px;
-      font-weight:900;
+      font-weight:800;
       margin:0 0 10px;
     }
     .qText{
@@ -294,9 +302,7 @@
 
     /* Mobile tweaks */
     @media (max-width: 700px){
-      .bannerImg{ height:120px; }
-      select{ min-width: 280px; width: 100%; }
-      .controlsRow{ padding:0 4px; }
+      .bannerImg{ height:110px; }
       .setToggle{ border-radius: 18px; }
     }
   </style>
@@ -312,7 +318,7 @@
     </div>
 
     <div class="controlsRow">
-      <div class="pill" style="width:min(980px,100%);">
+      <div class="pill">
         <label>Podcast</label>
         <select id="podcastSelect" aria-label="Podcast selection"></select>
       </div>
