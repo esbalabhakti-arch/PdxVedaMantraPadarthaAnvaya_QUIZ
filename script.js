@@ -1,4 +1,4 @@
-// Veda Podcast Quiz - Fixed Implementation
+// Veda Podcast Quiz - Fixed Option Display
 console.log('=== Quiz Application Starting ===');
 
 // Configuration - HARDCODED FILE LIST
@@ -97,7 +97,6 @@ async function loadDocxFile(url) {
     
     const result = await mammoth.extractRawText({ arrayBuffer });
     console.log('Text extracted, length:', result.value.length);
-    console.log('First 500 chars:', result.value.substring(0, 500));
     
     return result.value;
   } catch (error) {
@@ -108,92 +107,93 @@ async function loadDocxFile(url) {
 
 function parseQuestions(text) {
   console.log('=== Starting to parse questions ===');
-  console.log('Text length:', text.length);
-  
   const questions = [];
   
-  // Split text by question numbers
-  const lines = text.split('\n');
-  let currentQuestion = null;
-  let currentSection = 'question'; // question, options, answer, check
+  // Split by question numbers - looking for patterns like "\n1.\n" or "\n2.\n"
+  const blocks = text.split(/\n+(\d+)\.\s*\n+/);
   
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+  console.log('Found blocks:', blocks.length);
+  
+  // Process blocks in pairs (question number, content)
+  for (let i = 1; i < blocks.length; i += 2) {
+    const questionNum = parseInt(blocks[i]);
+    const content = blocks[i + 1];
     
-    // Detect question number (e.g., "1." at start of line)
-    const questionMatch = line.match(/^(\d+)\.\s*$/);
-    if (questionMatch) {
-      // Save previous question if exists
-      if (currentQuestion && currentQuestion.correctAnswer) {
-        questions.push(currentQuestion);
+    if (!content) continue;
+    
+    try {
+      const question = parseQuestionBlock(questionNum, content);
+      if (question) {
+        questions.push(question);
       }
-      
-      // Start new question
-      currentQuestion = {
-        number: parseInt(questionMatch[1]),
-        question: '',
-        options: {},
-        correctAnswer: null,
-        explanation: '',
-        attempts: 0
-      };
-      currentSection = 'question';
-      continue;
-    }
-    
-    if (!currentQuestion) continue;
-    
-    // Detect options (A., B., C., D.)
-    const optionMatch = line.match(/^([A-D])\.\s*(.+)$/);
-    if (optionMatch) {
-      currentQuestion.options[optionMatch[1]] = optionMatch[2].trim();
-      currentSection = 'options';
-      continue;
-    }
-    
-    // Detect correct answer
-    const answerMatch = line.match(/^Correct Answer:\s*([A-D])/i);
-    if (answerMatch) {
-      currentQuestion.correctAnswer = answerMatch[1].toUpperCase();
-      currentSection = 'answer';
-      continue;
-    }
-    
-    // Detect explanation
-    const checkMatch = line.match(/^Check:\s*(.+)$/i);
-    if (checkMatch) {
-      currentQuestion.explanation = checkMatch[1].trim();
-      currentSection = 'check';
-      continue;
-    }
-    
-    // Append to current section
-    if (line.length > 0) {
-      if (currentSection === 'question') {
-        currentQuestion.question += (currentQuestion.question ? ' ' : '') + line;
-      } else if (currentSection === 'check') {
-        currentQuestion.explanation += ' ' + line;
-      }
+    } catch (error) {
+      console.error(`Error parsing question ${questionNum}:`, error);
     }
   }
   
-  // Save last question
-  if (currentQuestion && currentQuestion.correctAnswer) {
-    questions.push(currentQuestion);
-  }
-  
-  // Clean up questions
-  questions.forEach(q => {
-    q.question = q.question.replace(/\[\(Source:[^\]]+\)\]/g, '').trim();
-    q.explanation = q.explanation.trim();
-  });
-  
-  console.log(`Parsed ${questions.length} questions`);
+  console.log(`Successfully parsed ${questions.length} questions`);
   if (questions.length > 0) {
-    console.log('First question:', questions[0]);
+    console.log('Sample question:', questions[0]);
   }
   
   return questions;
+}
+
+function parseQuestionBlock(num, content) {
+  // Find where options start (look for "A.")
+  const optionAIndex = content.search(/\n\s*A\.\s+/);
+  if (optionAIndex === -1) {
+    console.warn(`Question ${num}: No option A found`);
+    return null;
+  }
+  
+  // Question text is everything before option A
+  const questionText = content.substring(0, optionAIndex).trim();
+  
+  // Extract all options (A, B, C, D)
+  const options = {};
+  const optionRegex = /\n\s*([A-D])\.\s+([^\n]+(?:\n(?!\s*[A-D]\.\s+)[^\n]+)*)/g;
+  let match;
+  
+  while ((match = optionRegex.exec(content)) !== null) {
+    const letter = match[1];
+    const text = match[2].trim().replace(/\s+/g, ' ');
+    options[letter] = text;
+  }
+  
+  // Must have at least 2 options
+  if (Object.keys(options).length < 2) {
+    console.warn(`Question ${num}: Not enough options found`);
+    return null;
+  }
+  
+  // Find correct answer
+  const answerMatch = content.match(/Correct Answer:\s*([A-D])/i);
+  if (!answerMatch) {
+    console.warn(`Question ${num}: No correct answer found`);
+    return null;
+  }
+  
+  const correctAnswer = answerMatch[1].toUpperCase();
+  
+  // Extract explanation if present
+  const checkMatch = content.match(/Check:\s*(.+?)(?=\n\n|\n\d+\.|$)/s);
+  const explanation = checkMatch ? checkMatch[1].trim() : '';
+  
+  // Clean question text (remove source citations)
+  const cleanQuestion = questionText
+    .replace(/\[\(Source:[^\]]+\)\]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  
+  return {
+    number: num,
+    question: cleanQuestion,
+    options: options,
+    correctAnswer: correctAnswer,
+    explanation: explanation,
+    attempts: 0
+  };
 }
 
 // Set Management
@@ -254,7 +254,8 @@ function displayQuestion() {
     return;
   }
   
-  console.log('Displaying question:', question.number);
+  console.log('Displaying question:', question.number, question.question);
+  console.log('Options:', question.options);
   
   state.selectedAnswer = null;
   state.isAnswered = false;
@@ -263,22 +264,35 @@ function displayQuestion() {
   elements.questionNumber.textContent = `Set ${state.currentSet} - Question ${state.currentQuestionIndex + 1} of ${setQuestions.length}`;
   elements.questionText.textContent = question.question;
   
-  // Create options
+  // FIXED: Create separate option boxes
   elements.optionsContainer.innerHTML = '';
-  const letters = Object.keys(question.options).sort();
   
-  letters.forEach(letter => {
-    const option = document.createElement('div');
-    option.className = 'option';
-    option.dataset.letter = letter;
+  // Get available options in order (A, B, C, D)
+  const availableOptions = ['A', 'B', 'C', 'D'].filter(letter => question.options[letter]);
+  
+  console.log('Available options:', availableOptions);
+  
+  availableOptions.forEach(letter => {
+    const optionDiv = document.createElement('div');
+    optionDiv.className = 'option';
+    optionDiv.dataset.letter = letter;
     
-    option.innerHTML = `
-      <div class="option-letter">${letter}.</div>
-      <div class="option-text">${question.options[letter]}</div>
-    `;
+    // Create letter and text separately
+    const letterSpan = document.createElement('div');
+    letterSpan.className = 'option-letter';
+    letterSpan.textContent = `${letter}.`;
     
-    option.addEventListener('click', () => selectOption(letter));
-    elements.optionsContainer.appendChild(option);
+    const textSpan = document.createElement('div');
+    textSpan.className = 'option-text';
+    textSpan.textContent = question.options[letter];
+    
+    optionDiv.appendChild(letterSpan);
+    optionDiv.appendChild(textSpan);
+    
+    // Add click handler
+    optionDiv.addEventListener('click', () => selectOption(letter));
+    
+    elements.optionsContainer.appendChild(optionDiv);
   });
   
   elements.checkBtn.disabled = true;
@@ -290,10 +304,14 @@ function displayQuestion() {
 function selectOption(letter) {
   if (state.isAnswered) return;
   
+  console.log('Selected option:', letter);
+  
+  // Remove previous selection
   document.querySelectorAll('.option').forEach(opt => {
     opt.classList.remove('selected');
   });
   
+  // Add new selection
   const selectedOption = document.querySelector(`.option[data-letter="${letter}"]`);
   if (selectedOption) {
     selectedOption.classList.add('selected');
@@ -313,7 +331,11 @@ function checkAnswer() {
   
   const isCorrect = state.selectedAnswer === question.correctAnswer;
   
-  console.log('Checking answer:', state.selectedAnswer, 'Correct:', question.correctAnswer, 'Result:', isCorrect);
+  console.log('Answer check:', {
+    selected: state.selectedAnswer,
+    correct: question.correctAnswer,
+    result: isCorrect
+  });
   
   if (isCorrect) {
     state.stats.correct++;
@@ -333,7 +355,10 @@ function checkAnswer() {
     elements.feedbackArea.textContent = feedbackText;
   } else {
     elements.feedbackArea.className = 'feedback show incorrect';
-    elements.feedbackArea.textContent = '❌ Not quite. Try again!\n\nTip: Re-read the question carefully and pick the best match.';
+    elements.feedbackArea.textContent = '❌ Incorrect. Try again!\n\nPlease select a different option.';
+    
+    // Don't allow moving forward - user must try again
+    elements.nextBtn.disabled = true;
   }
   
   updateStats();
