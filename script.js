@@ -1,19 +1,11 @@
 /* =========================================================
-   ✅ FIX FOR DOCX LOADING ON GITHUB PAGES (incl. Git LFS)
-   - Tries GitHub Pages path first (same-origin)
-   - Detects Git LFS pointer files and auto-falls back to:
-     https://media.githubusercontent.com/media/<owner>/<repo>/<branch>/<path>
-   - Shows clear diagnostics in the UI when failing
+   DOCX LOADING FIX (GitHub Pages + case/path + LFS pointer)
+   - Shows detailed diagnostics in a dedicated debug box
+   - Validates that downloaded bytes are a real DOCX (ZIP: starts with "PK")
+   - Detects LFS pointer text and retries via GitHub "media" URL
+   - Tries branch candidates automatically: main, master, gh-pages
    ========================================================= */
 
-/* ---- SET THESE THREE CORRECTLY ---- */
-const REPO_OWNER  = "esbalabhakti-arch";
-const REPO_NAME   = "PdxVedaMantraPadarthaAnvaya_QUIZ";
-const REPO_BRANCH = "main";
-
-/* -----------------------------
-   PODCASTS (paths relative to repo root)
--------------------------------- */
 const PODCASTS = [
   { id: "101", title: "101 — Intro 1", file: "Images/101_Intro_1_quiz.docx" },
   { id: "102", title: "102 — Intro 2", file: "Images/102_Intro_2_quiz.docx" },
@@ -30,9 +22,6 @@ const SETS = [
   { key: "missed", label: "Missed", start: 0, end: 0 },
 ];
 
-/* -----------------------------
-   STATE
--------------------------------- */
 let selectedPodcastId = PODCASTS[0]?.id || null;
 let selectedSetKey = "set1";
 
@@ -63,8 +52,273 @@ const statAttempted = document.getElementById("statAttempted");
 const statFirstTry = document.getElementById("statFirstTry");
 const statMissed = document.getElementById("statMissed");
 
+const debugBox = document.getElementById("debugBox");
+
 /* -----------------------------
-   INIT
+   DEBUG helpers (never overwritten)
+-------------------------------- */
+function setDebug(text) {
+  debugBox.textContent = text;
+}
+function appendDebug(line) {
+  debugBox.textContent += "\n" + line;
+}
+
+/* -----------------------------
+   GitHub inference (no manual config)
+-------------------------------- */
+function inferOwnerRepoFromLocation() {
+  // Example: https://esbalabhakti-arch.github.io/PdxVedaMantraPadarthaAnvaya_QUIZ/
+  const host = window.location.host; // esbalabhakti-arch.github.io
+  const owner = host.split(".github.io")[0];
+
+  // First path segment is repo name on Pages
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
+  const repo = pathParts[0] || "";
+
+  return { owner, repo };
+}
+
+function resolveUrl(relPath) {
+  return new URL(relPath, window.location.href).toString();
+}
+
+function githubMediaUrl(owner, repo, branch, repoPath) {
+  return `https://media.githubusercontent.com/media/${owner}/${repo}/${branch}/${repoPath}`;
+}
+
+function githubRawUrl(owner, repo, branch, repoPath) {
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${repoPath}`;
+}
+
+/* -----------------------------
+   DOCX byte validation
+-------------------------------- */
+function startsWithPK(u8) {
+  // DOCX is a ZIP container. ZIP signature: 0x50 0x4B => "PK"
+  return u8.length >= 2 && u8[0] === 0x50 && u8[1] === 0x4B;
+}
+
+function looksLikeLFSPointer(u8) {
+  // LFS pointer is plain text starting with "version https://git-lfs.github.com/spec"
+  const txt = new TextDecoder().decode(u8.slice(0, 120));
+  return txt.includes("git-lfs.github.com/spec");
+}
+
+async function fetchArrayBuffer(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  const ct = res.headers.get("content-type") || "";
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} ${res.statusText} | type=${ct}`);
+  }
+  const ab = await res.arrayBuffer();
+  return { ab, ct, bytes: ab.byteLength };
+}
+
+/**
+ * Smart loader:
+ * 1) Try Pages URL(s): Images/ vs images/
+ * 2) Validate bytes. If not ZIP or LFS pointer → try GitHub media/raw across branches.
+ */
+async function loadDocxSmart(repoPath) {
+  const { owner, repo } = inferOwnerRepoFromLocation();
+  const branches = ["main", "master", "gh-pages"];
+
+  const variants = [...new Set([
+    repoPath,
+    repoPath.replace(/^Images\//, "images/"),
+    repoPath.replace(/^images\//, "Images/"),
+  ])];
+
+  setDebug(
+    `Debug (DOCX loader)\n` +
+    `Owner: ${owner}\nRepo: ${repo}\n` +
+    `Requested file: ${repoPath}\n` +
+    `Now trying URLs…`
+  );
+
+  // 1) Try Pages same-origin first
+  for (const v of variants) {
+    const url = resolveUrl(v);
+    try {
+      const r = await fetchArrayBuffer(url);
+      const u8 = new Uint8Array(r.ab);
+
+      appendDebug(`✅ Pages OK: ${url}`);
+      appendDebug(`   bytes=${r.bytes} | type=${r.ct || "?"}`);
+
+      if (looksLikeLFSPointer(u8)) {
+        appendDebug(`⚠️ Looks like Git LFS pointer text (NOT real docx). Will try GitHub media/raw…`);
+        break;
+      }
+      if (!startsWithPK(u8)) {
+        appendDebug(`⚠️ Downloaded content is NOT a ZIP/DOCX (missing "PK" header). Will try GitHub media/raw…`);
+        break;
+      }
+
+      appendDebug(`✅ DOCX bytes look valid (ZIP header "PK").`);
+      return r.ab;
+    } catch (e) {
+      appendDebug(`❌ Pages FAIL: ${url}`);
+      appendDebug(`   ${String(e.message || e)}`);
+    }
+  }
+
+  // 2) Fallback: GitHub media/raw (tries branches)
+  for (const branch of branches) {
+    // try media first (best for LFS)
+    {
+      const media = githubMediaUrl(owner, repo, branch, repoPath);
+      try {
+        const r = await fetchArrayBuffer(media);
+        const u8 = new Uint8Array(r.ab);
+
+        appendDebug(`✅ Media OK: ${media}`);
+        appendDebug(`   bytes=${r.bytes} | type=${r.ct || "?"}`);
+
+        if (looksLikeLFSPointer(u8)) {
+          appendDebug(`❌ Media returned LFS pointer too (unexpected). Continue…`);
+        } else if (!startsWithPK(u8)) {
+          appendDebug(`❌ Media returned non-DOCX bytes (no "PK"). Continue…`);
+        } else {
+          appendDebug(`✅ DOCX bytes valid via Media (branch=${branch}).`);
+          return r.ab;
+        }
+      } catch (e) {
+        appendDebug(`❌ Media FAIL (branch=${branch}): ${media}`);
+        appendDebug(`   ${String(e.message || e)}`);
+      }
+    }
+
+    // then raw
+    {
+      const raw = githubRawUrl(owner, repo, branch, repoPath);
+      try {
+        const r = await fetchArrayBuffer(raw);
+        const u8 = new Uint8Array(r.ab);
+
+        appendDebug(`✅ Raw OK: ${raw}`);
+        appendDebug(`   bytes=${r.bytes} | type=${r.ct || "?"}`);
+
+        if (looksLikeLFSPointer(u8)) {
+          appendDebug(`❌ Raw returned LFS pointer (expected if stored in LFS). Continue…`);
+        } else if (!startsWithPK(u8)) {
+          appendDebug(`❌ Raw returned non-DOCX bytes (no "PK"). Continue…`);
+        } else {
+          appendDebug(`✅ DOCX bytes valid via Raw (branch=${branch}).`);
+          return r.ab;
+        }
+      } catch (e) {
+        appendDebug(`❌ Raw FAIL (branch=${branch}): ${raw}`);
+        appendDebug(`   ${String(e.message || e)}`);
+      }
+    }
+  }
+
+  throw new Error("All attempts failed. See Debug box above for exact URLs and errors.");
+}
+
+/* -----------------------------
+   DOCX -> text -> parse
+-------------------------------- */
+async function loadPodcastQuestions(podcastId) {
+  const p = PODCASTS.find(x => x.id === podcastId);
+  if (!p) throw new Error("Unknown podcast id: " + podcastId);
+
+  showMessage(`Loading: ${p.file}`, "");
+  allQuestions = [];
+
+  const arrayBuffer = await loadDocxSmart(p.file);
+
+  let rawText = "";
+  try {
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    rawText = (result?.value || "").replace(/\r/g, "");
+  } catch (e) {
+    appendDebug(`❌ Mammoth parse failed: ${String(e.message || e)}`);
+    throw new Error("DOCX downloaded, but Mammoth could not parse it (likely not real DOCX bytes).");
+  }
+
+  const parsed = parseQuestionsFromText(rawText);
+  allQuestions = parsed;
+
+  if (!allQuestions.length) {
+    appendDebug(`⚠️ Mammoth extracted text, but parser found 0 questions.`);
+    appendDebug(`--- Extracted text preview (first 1200 chars) ---\n${rawText.slice(0, 1200)}`);
+    showMessage(`Parsed 0 questions ❌ (See Debug box above — it includes extracted text preview)`, "bad");
+  } else {
+    showMessage(`Loaded ${allQuestions.length} questions ✅ Pick a set and press Start.`, "good");
+  }
+
+  return allQuestions;
+}
+
+/* -----------------------------
+   Parser (keep simple for now)
+-------------------------------- */
+function parseQuestionsFromText(text) {
+  const lines = (text || "")
+    .replace(/\u00A0/g, " ")
+    .split("\n")
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const out = [];
+  let cur = null;
+  let lastWasOpt = false;
+
+  const qRe = /^(?:Q\s*)?(\d+)\s*[\.\)\-:]\s+(.*)$/i;
+  const optRe = /^([A-Da-d])\s*[\.\)\-:]\s+(.*)$/;
+  const ansRe = /^(?:Correct\s*Answer|Answer|Ans|Correct)\s*[:\-]\s*([A-D])\b/i;
+
+  function finalize() {
+    if (!cur) return;
+    if (cur.options.length === 4 && cur.correctIndex >= 0) {
+      cur.stableKey = cur.q;
+      out.push(cur);
+    }
+    cur = null;
+    lastWasOpt = false;
+  }
+
+  for (const line of lines) {
+    if (/^Check\s*:/i.test(line)) continue;
+
+    const qm = line.match(qRe);
+    if (qm) {
+      finalize();
+      cur = { q: (qm[2] || "").trim(), options: [], correctIndex: -1 };
+      continue;
+    }
+    if (!cur) continue;
+
+    const am = line.match(ansRe);
+    if (am) {
+      cur.correctIndex = am[1].toUpperCase().charCodeAt(0) - 65;
+      lastWasOpt = false;
+      continue;
+    }
+
+    const om = line.match(optRe);
+    if (om) {
+      cur.options.push((om[2] || "").trim());
+      lastWasOpt = true;
+      continue;
+    }
+
+    if (cur.options.length > 0 && lastWasOpt) {
+      cur.options[cur.options.length - 1] = (cur.options[cur.options.length - 1] + " " + line).trim();
+    } else if (cur.options.length === 0) {
+      cur.q = (cur.q + " " + line).trim();
+    }
+  }
+
+  finalize();
+  return out;
+}
+
+/* -----------------------------
+   UI: Tabs, Quiz, Immediate check, Auto-advance
 -------------------------------- */
 function init() {
   podcastSelect.innerHTML = "";
@@ -94,241 +348,15 @@ function init() {
 
   loadPodcastQuestions(selectedPodcastId)
     .then(() => showMessage("Pick a set, then press Start.", ""))
-    .catch((e) => {
-      console.error(e);
-      showMessage("Could not load the quiz. See error details above.", "bad");
-    });
+    .catch((e) => showMessage(`Load failed ❌\n${String(e.message || e)}\n\n(See Debug box above.)`, "bad"));
 }
 
-/* -----------------------------
-   URL helpers
--------------------------------- */
-function resolveUrl(relPath) {
-  // Important on GitHub Pages subpaths
-  return new URL(relPath, window.location.href).toString();
-}
-
-function githubMediaUrl(repoPath) {
-  // Works well for LFS-backed files too
-  return `https://media.githubusercontent.com/media/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/${repoPath}`;
-}
-
-function githubRawUrl(repoPath) {
-  return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/${repoPath}`;
-}
-
-function looksLikeGitLFSPointer(u8) {
-  // LFS pointer is plain text; begins with "version https://git-lfs.github.com/spec"
-  const head = new TextDecoder().decode(u8.slice(0, 120));
-  return head.includes("git-lfs.github.com/spec");
-}
-
-async function fetchBinary(url) {
-  const res = await fetch(url, { cache: "no-store" });
-  const ct = res.headers.get("content-type") || "";
-  if (!res.ok) {
-    throw new Error(`Fetch failed: ${res.status} ${res.statusText}\nURL: ${url}\nContent-Type: ${ct}`);
-  }
-  const ab = await res.arrayBuffer();
-  return { ab, ct, bytes: ab.byteLength, url };
-}
-
-async function fetchDocxSmart(repoRelativePath) {
-  // 1) Try GitHub Pages same-origin first
-  const pageUrl = resolveUrl(repoRelativePath);
-
-  // 2) Try case variants for Images folder
-  const variants = [...new Set([
-    repoRelativePath,
-    repoRelativePath.replace(/^Images\//, "images/"),
-    repoRelativePath.replace(/^images\//, "Images/"),
-  ])];
-
-  const attempts = [];
-  let lastErr = null;
-
-  // Try pages URLs
-  for (const v of variants) {
-    const u = resolveUrl(v);
-    try {
-      const r = await fetchBinary(u);
-      attempts.push(`✅ OK (Pages): ${u}\n   bytes=${r.bytes}, type=${r.ct || "?"}`);
-
-      const u8 = new Uint8Array(r.ab);
-      if (looksLikeGitLFSPointer(u8)) {
-        attempts.push(`⚠️ Detected Git LFS pointer at Pages URL. Will try GitHub media URL…`);
-        break; // go to media fallback
-      }
-      return { arrayBuffer: r.ab, attempts };
-    } catch (e) {
-      attempts.push(`❌ FAIL (Pages): ${u}\n   ${String(e.message || e)}`);
-      lastErr = e;
-    }
-  }
-
-  // If we got here: either Pages failed, or LFS pointer detected.
-  const media = githubMediaUrl(repoRelativePath);
-  try {
-    const r = await fetchBinary(media);
-    attempts.push(`✅ OK (Media): ${media}\n   bytes=${r.bytes}, type=${r.ct || "?"}`);
-    return { arrayBuffer: r.ab, attempts };
-  } catch (e) {
-    attempts.push(`❌ FAIL (Media): ${media}\n   ${String(e.message || e)}`);
-    lastErr = e;
-  }
-
-  // Also try raw (sometimes helpful for non-LFS)
-  const raw = githubRawUrl(repoRelativePath);
-  try {
-    const r = await fetchBinary(raw);
-    attempts.push(`✅ OK (Raw): ${raw}\n   bytes=${r.bytes}, type=${r.ct || "?"}`);
-    return { arrayBuffer: r.ab, attempts };
-  } catch (e) {
-    attempts.push(`❌ FAIL (Raw): ${raw}\n   ${String(e.message || e)}`);
-    lastErr = e;
-  }
-
-  throw new Error(`All DOCX fetch attempts failed.\n\n${attempts.join("\n\n")}\n\nLast error:\n${String(lastErr?.message || lastErr)}`);
-}
-
-/* -----------------------------
-   Load + parse
--------------------------------- */
-async function loadPodcastQuestions(podcastId) {
-  const p = PODCASTS.find(x => x.id === podcastId);
-  if (!p) throw new Error("Unknown podcast id: " + podcastId);
-
-  showMessage(`Loading quiz DOCX…\n\nFile: ${p.file}\n\n(If it fails, I will show detailed URL attempts here.)`, "");
-
-  allQuestions = [];
-
-  const { arrayBuffer, attempts } = await fetchDocxSmart(p.file);
-
-  // Mammoth expects valid docx bytes
-  let rawText = "";
-  try {
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    rawText = (result?.value || "").replace(/\r/g, "");
-  } catch (e) {
-    throw new Error(
-      `Mammoth failed to read DOCX (not valid DOCX bytes).\n\n` +
-      `Fetch diagnostics:\n${attempts.join("\n\n")}\n\n` +
-      `Error:\n${String(e.message || e)}`
-    );
-  }
-
-  const parsed = parseQuestionsFromText(rawText);
-  allQuestions = parsed;
-
-  if (!allQuestions.length) {
-    // Show extracted text snippet to tune parser later if needed
-    const preview = rawText.slice(0, 2500);
-    showMessage(
-      `DOCX downloaded, but parsed 0 questions.\n\n` +
-      `Fetch diagnostics:\n${attempts.join("\n\n")}\n\n` +
-      `Extracted text preview (first 2500 chars):\n` +
-      `${preview}`,
-      "bad"
-    );
-  } else {
-    showMessage(
-      `Loaded ${allQuestions.length} questions ✅\n\nFetch diagnostics:\n${attempts.join("\n\n")}\n\nPick a set and press Start.`,
-      "good"
-    );
-  }
-
-  return allQuestions;
-}
-
-/* -----------------------------
-   Parser (forgiving)
--------------------------------- */
-function parseQuestionsFromText(text) {
-  const normalized = (text || "")
-    .replace(/\u00A0/g, " ")
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n");
-
-  const chunks = normalized
-    .split("\n")
-    .map(s => s.trim())
-    .filter(Boolean);
-
-  const out = [];
-  let cur = null;
-  let lastWasOption = false;
-
-  const qStartRe = /^(?:Q\s*)?(\d+)\s*[\.\)\-:]\s+(.*)$/i;
-  const optRe = /^([A-Da-d])\s*[\.\)\-:]\s+(.*)$/;
-  const correctRe = /^(?:Correct\s*Answer|Correct\s*Option|Correct|Answer|Ans)\s*[:\-]\s*([A-D])\b/i;
-
-  function finalize() {
-    if (!cur) return;
-    if (cur.options.length === 4 && cur.correctIndex >= 0 && cur.correctIndex <= 3) {
-      cur.stableKey = (cur.source || "") + "||" + cur.q;
-      out.push(cur);
-    }
-    cur = null;
-    lastWasOption = false;
-  }
-
-  for (const line of chunks) {
-    if (/^Check\s*:/i.test(line)) continue;
-
-    const qm = line.match(qStartRe);
-    if (qm) {
-      finalize();
-      cur = { q: (qm[2] || "").trim(), options: [], correctIndex: -1, source: "" };
-      lastWasOption = false;
-      continue;
-    }
-    if (!cur) continue;
-
-    const cm = line.match(correctRe);
-    if (cm) {
-      const letter = (cm[1] || "").toUpperCase();
-      cur.correctIndex = letter.charCodeAt(0) - 65;
-      lastWasOption = false;
-      continue;
-    }
-
-    const om = line.match(optRe);
-    if (om) {
-      cur.options.push((om[2] || "").trim());
-      lastWasOption = true;
-      continue;
-    }
-
-    if (cur.options.length > 0 && lastWasOption) {
-      cur.options[cur.options.length - 1] = (cur.options[cur.options.length - 1] + " " + line).trim();
-      continue;
-    }
-
-    if (cur.options.length === 0) {
-      cur.q = (cur.q + " " + line).trim();
-      continue;
-    }
-  }
-
-  finalize();
-
-  for (const q of out) {
-    q.q = (q.q || "").trim();
-    q.options = (q.options || []).map(s => (s || "").trim());
-  }
-  return out;
-}
-
-/* -----------------------------
-   Tabs
--------------------------------- */
 function renderTabs() {
   setTabs.innerHTML = "";
   for (const s of SETS) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "tab" + (s.key === selectedSetKey ? " active" : "");
-    b.dataset.key = s.key;
     b.textContent = (s.key === "missed") ? `${s.label} (${missedPool.length})` : s.label;
 
     b.addEventListener("click", () => {
@@ -341,12 +369,9 @@ function renderTabs() {
   }
 }
 
-/* -----------------------------
-   Quiz flow
--------------------------------- */
 function startQuiz() {
   if (!allQuestions.length) {
-    showMessage("No questions loaded yet.\n\n(Use the message above to see exactly which DOCX URL failed.)", "bad");
+    showMessage("No questions loaded yet ❌\n(See Debug box above for exact DOCX URL failures.)", "bad");
     return;
   }
 
@@ -354,7 +379,7 @@ function startQuiz() {
   if (!activeQuestions.length) {
     showMessage(
       selectedSetKey === "missed"
-        ? "Missed pool is empty 🎉 (It fills when you answer something wrong once.)"
+        ? "Missed pool is empty 🎉"
         : "This set has no questions (unexpected).",
       "bad"
     );
@@ -369,8 +394,7 @@ function startQuiz() {
 function buildActiveList() {
   if (selectedSetKey === "missed") return missedPool.slice();
   const s = SETS.find(x => x.key === selectedSetKey);
-  if (!s) return [];
-  return allQuestions.slice(s.start, s.end);
+  return s ? allQuestions.slice(s.start, s.end) : [];
 }
 
 function finishQuiz() {
@@ -379,8 +403,7 @@ function finishQuiz() {
     `• Attempted: ${attempted}\n` +
     `• Correct: ${correct}\n` +
     `• First-try correct: ${firstTryCorrect}\n` +
-    `• Missed pool: ${missedPool.length}\n\n` +
-    `Pick another set and press Start.`,
+    `• Missed pool: ${missedPool.length}`,
     "good"
   );
 }
@@ -391,15 +414,11 @@ function renderQuestion() {
 
   currentFirstAttempt = true;
 
-  const setLabel = selectedSetKey === "missed"
-    ? `Missed (${activeQuestions.length})`
-    : (SETS.find(x => x.key === selectedSetKey)?.label || "Set");
-
   quizArea.innerHTML = "";
 
   const header = document.createElement("div");
   header.className = "qHeader";
-  header.textContent = `${setLabel} • Q ${qIndex + 1} / ${activeQuestions.length}`;
+  header.textContent = `Q ${qIndex + 1} / ${activeQuestions.length}`;
   quizArea.appendChild(header);
 
   const qEl = document.createElement("div");
@@ -414,7 +433,6 @@ function renderQuestion() {
   qObj.options.forEach((optText, idx) => {
     const card = document.createElement("div");
     card.className = "opt";
-    card.dataset.idx = String(idx);
 
     const badge = document.createElement("div");
     badge.className = "optBadge";
@@ -428,6 +446,7 @@ function renderQuestion() {
     card.appendChild(t);
 
     card.addEventListener("click", () => onPickOption(idx, card, qObj));
+
     opts.appendChild(card);
   });
 
@@ -451,18 +470,17 @@ function onPickOption(idx, cardEl, qObj) {
   if (isCorrect) {
     cardEl.classList.add("good");
     allOptEls.forEach(el => el.classList.add("disabled"));
+
     correct++;
     if (currentFirstAttempt) firstTryCorrect++;
     updateStats();
+
     setFeedback("Correct ✅", "good");
 
     setTimeout(() => {
       qIndex++;
       if (qIndex >= activeQuestions.length) {
-        showMessage(
-          `Finished ✅\n\nAttempted: ${attempted}\nCorrect: ${correct}\nFirst-try: ${firstTryCorrect}\nMissed pool: ${missedPool.length}\n\nPick another set and press Start.`,
-          "good"
-        );
+        showMessage("Finished ✅ Pick another set and press Start.", "good");
         return;
       }
       renderQuestion();
@@ -470,16 +488,17 @@ function onPickOption(idx, cardEl, qObj) {
 
   } else {
     cardEl.classList.add("bad");
+
     if (currentFirstAttempt) addToMissed(qObj);
     currentFirstAttempt = false;
+
     setFeedback("Not this one ❌ Try again.", "bad");
   }
 }
 
 function addToMissed(qObj) {
   const key = qObj.stableKey || qObj.q;
-  const already = missedPool.some(x => (x.stableKey || x.q) === key);
-  if (!already) missedPool.push(qObj);
+  if (!missedPool.some(x => (x.stableKey || x.q) === key)) missedPool.push(qObj);
   renderTabs();
   updateStats();
 }
@@ -506,7 +525,4 @@ function updateStats() {
   statMissed.textContent = `Missed pool: ${missedPool.length}`;
 }
 
-/* -----------------------------
-   START
--------------------------------- */
 init();
