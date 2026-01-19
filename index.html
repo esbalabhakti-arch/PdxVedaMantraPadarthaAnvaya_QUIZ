@@ -7,19 +7,26 @@
 
   <style>
     :root{
-      --bg0:#05070d; --bg1:#0b1020;
+      --bg0:#05070d;
+      --bg1:#0b1020;
+
       --card:rgba(255,255,255,0.06);
       --stroke:rgba(255,255,255,0.10);
+
       --text:rgba(255,255,255,0.92);
       --muted:rgba(255,255,255,0.72);
       --muted2:rgba(255,255,255,0.55);
+
       --accent:#7c5cff;
       --accent2:rgba(124,92,255,0.18);
+
       --good:#36d399;
       --bad:#ff5c7a;
+
       --shadow:0 18px 50px rgba(0,0,0,0.55);
       --radius:22px;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -33,31 +40,39 @@
       min-height:100vh;
     }
 
-    /* ✅ Banner: thicker + full width edge-to-edge */
-    .bannerWrap{
+    /* FULL-WIDTH BANNER (tight height, edge-to-edge) */
+    .hero{
       width:100%;
-      height:170px;
+      background:#000;
+      border-bottom:1px solid rgba(255,255,255,0.10);
       overflow:hidden;
-      border-bottom:1px solid rgba(255,255,255,0.08);
-      background:rgba(0,0,0,0.18);
     }
-    .bannerImg{
+    .hero img{
       width:100%;
-      height:100%;
-      object-fit:cover;
+      height:130px;            /* tight height */
+      object-fit:cover;        /* fill full width nicely */
+      object-position:center;
       display:block;
-      filter:saturate(1.05) contrast(1.02);
+      filter:saturate(1.02) contrast(1.02);
+    }
+    @media (max-width:520px){
+      .hero img{height:110px;}
     }
 
-    .wrap{max-width:1050px; margin:16px auto 44px; padding:0 18px;}
+    .wrap{
+      max-width:1050px;
+      margin:18px auto 48px;
+      padding:0 18px;
+    }
+
     .panel{
       background:var(--card);
       border:1px solid var(--stroke);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
-      padding:22px;
-      margin-top:16px;
+      padding:20px;
     }
+
     .titlePill{
       display:inline-block;
       padding:10px 16px;
@@ -67,10 +82,19 @@
       font-weight:800;
       letter-spacing:0.2px;
       margin:0 auto 14px;
-      text-align:center;
     }
-    .row{display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:center;}
+
+    .row{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+    }
+    .rowLeft{justify-content:flex-start}
+
     label{color:var(--muted); font-size:14px}
+
     select{
       width:min(780px, 100%);
       padding:12px 14px;
@@ -81,25 +105,22 @@
       outline:none;
     }
 
-    /* ✅ Sets: single row, scroll if needed */
+    /* ONE-ROW SET TABS (compact) */
     .tabs{
       display:flex;
       gap:8px;
-      flex-wrap:nowrap;
-      justify-content:flex-start;
+      flex-wrap:nowrap;            /* force single row */
+      justify-content:center;
       align-items:center;
       padding:10px 10px;
       border-radius:999px;
       border:1px solid var(--stroke);
       background:rgba(255,255,255,0.04);
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
-      max-width:100%;
+      overflow-x:auto;             /* if tiny screen, allow scroll */
+      -webkit-overflow-scrolling: touch;
     }
-    .tabs::-webkit-scrollbar{height:8px}
-    .tabs::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12); border-radius:999px}
-
     .tab{
+      white-space:nowrap;
       padding:8px 10px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.10);
@@ -107,12 +128,11 @@
       color:var(--muted);
       cursor:pointer;
       user-select:none;
-      font-weight:800;
-      font-size:12.5px;
-      white-space:nowrap;
-      flex:0 0 auto;
-      line-height:1;
       transition:transform .05s ease, background .2s ease, color .2s ease, border-color .2s ease;
+      font-weight:800;
+      font-size:13px;             /* smaller */
+      letter-spacing:0.1px;
+      flex:0 0 auto;
     }
     .tab:hover{transform:translateY(-1px)}
     .tab.active{
@@ -122,9 +142,11 @@
       box-shadow:0 0 0 2px rgba(124,92,255,0.12) inset;
     }
 
-    .btnRow{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px;}
+    .btnRow{
+      display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px;
+    }
     .btn{
-      padding:12px 18px;
+      padding:11px 16px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.14);
       background:rgba(255,255,255,0.06);
@@ -133,10 +155,20 @@
       font-weight:900;
       letter-spacing:0.2px;
     }
-    .btn.primary{background:rgba(124,92,255,0.22); border-color:rgba(124,92,255,0.55);}
-    .btn.danger{background:rgba(255,92,122,0.15); border-color:rgba(255,92,122,0.45);}
+    .btn.primary{
+      background:rgba(124,92,255,0.22);
+      border-color:rgba(124,92,255,0.55);
+    }
+    .btn.danger{
+      background:rgba(255,92,122,0.15);
+      border-color:rgba(255,92,122,0.45);
+    }
+    .btn:disabled{opacity:0.45; cursor:not-allowed;}
 
-    .stats{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;}
+    .stats{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+      margin-top:10px;
+    }
     .chip{
       padding:8px 12px;
       border-radius:999px;
@@ -147,13 +179,31 @@
       font-size:13px;
     }
 
-    .divider{height:1px; background:rgba(255,255,255,0.08); margin:16px 0;}
+    .divider{height:1px; background:rgba(255,255,255,0.08); margin:18px 0;}
 
-    .qHeader{color:var(--muted); font-weight:900; font-size:14px; margin-bottom:10px; text-align:left;}
-    .question{font-size:22px; font-weight:950; line-height:1.25; margin:4px 0 14px;}
+    .qHeader{
+      color:var(--muted);
+      font-weight:900;
+      font-size:14px;
+      margin-bottom:10px;
+      text-align:left;
+    }
+    .question{
+      font-size:22px;
+      font-weight:950;
+      line-height:1.25;
+      margin:4px 0 14px;
+    }
 
-    .options{display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px;}
-    @media (min-width: 860px){ .options{grid-template-columns:1fr 1fr;} }
+    .options{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (min-width: 860px){
+      .options{grid-template-columns:1fr 1fr;}
+    }
 
     .opt{
       border:1px solid rgba(255,255,255,0.10);
@@ -182,51 +232,54 @@
     }
     .optText{color:var(--text); font-weight:800; line-height:1.25}
 
-    .opt.good{border-color:rgba(54,211,153,0.70); background:rgba(54,211,153,0.10);}
-    .opt.bad{border-color:rgba(255,92,122,0.70); background:rgba(255,92,122,0.10);}
+    .opt.good{
+      border-color:rgba(54,211,153,0.70);
+      background:rgba(54,211,153,0.10);
+    }
+    .opt.bad{
+      border-color:rgba(255,92,122,0.70);
+      background:rgba(255,92,122,0.10);
+    }
 
-    .msg{
+    .statusBox{
       margin-top:14px;
+      padding:12px 14px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,0.10);
-      background:rgba(255,255,255,0.04);
-      padding:12px 14px;
+      background:rgba(0,0,0,0.20);
       color:var(--muted);
-      font-weight:800;
-      white-space:pre-wrap;
+      font-weight:750;
+      min-height:46px;
     }
-    .msg.good{border-color:rgba(54,211,153,0.55); background:rgba(54,211,153,0.08); color:rgba(255,255,255,0.92)}
-    .msg.bad{border-color:rgba(255,92,122,0.55); background:rgba(255,92,122,0.08); color:rgba(255,255,255,0.92)}
 
-    details{margin-top:14px;}
-    summary{cursor:pointer; color:var(--muted2); font-weight:800;}
-    .debugBox{
-      margin-top:10px;
+    .debug{
+      margin-top:14px;
+      padding:10px 12px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,0.10);
-      background:rgba(0,0,0,0.22);
-      padding:12px 14px;
-      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      background:rgba(0,0,0,0.18);
+      color:rgba(255,255,255,0.75);
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:12px;
-      line-height:1.25;
-      color:rgba(255,255,255,0.82);
+      display:none; /* keep hidden by default */
       white-space:pre-wrap;
     }
 
-    .foot{margin-top:18px; text-align:center; color:var(--muted2); font-size:13px;}
-    .foot a{color:rgba(124,92,255,0.92)}
+    .footer{
+      margin-top:14px;
+      text-align:center;
+      color:var(--muted2);
+      font-size:14px;
+      line-height:1.35;
+    }
+    .footer a{color:var(--accent); text-decoration:none; font-weight:800}
   </style>
 </head>
 
 <body>
-  <div class="bannerWrap">
-    <img
-      id="bannerImg"
-      class="bannerImg"
-      src="Images/Vedic_podcast_banner_2.png"
-      alt="Veda Podcast Banner"
-      onerror="this.style.display='none';"
-    />
+  <!-- Banner: change src to your real banner file in Images/ -->
+  <div class="hero">
+    <img src="./Images/banner.png" alt="Banner" />
   </div>
 
   <div class="wrap">
@@ -235,13 +288,20 @@
         <div class="titlePill">LEARNING CHECK QUIZ (Multiple Choice)</div>
       </div>
 
-      <div class="row" style="margin-top:10px;">
-        <label for="podcastSelect" style="min-width:110px; text-align:center;">Select Podcast</label>
-        <select id="podcastSelect" aria-label="Select Podcast"></select>
+      <div class="row rowLeft" style="margin-top:4px;">
+        <label for="podcastSelect" style="min-width:120px;">Select Podcast</label>
+        <select id="podcastSelect"></select>
       </div>
 
-      <div class="row" style="margin-top:14px; justify-content:center;">
-        <div class="tabs" id="setTabs" aria-label="Question Sets"></div>
+      <div class="row" style="margin-top:12px;">
+        <div class="tabs" id="setTabs">
+          <div class="tab active" data-set="0">1–10</div>
+          <div class="tab" data-set="1">11–20</div>
+          <div class="tab" data-set="2">21–30</div>
+          <div class="tab" data-set="3">31–40</div>
+          <div class="tab" data-set="4">41–50</div>
+          <div class="tab" data-set="missed">Missed (0)</div>
+        </div>
       </div>
 
       <div class="btnRow">
@@ -250,31 +310,29 @@
       </div>
 
       <div class="stats">
-        <div class="chip" id="statCorrect">Correct: 0</div>
-        <div class="chip" id="statAttempted">Attempted: 0</div>
-        <div class="chip" id="statFirstTry">First-try: 0</div>
-        <div class="chip" id="statMissed">Missed pool: 0</div>
+        <div class="chip" id="chipCorrect">Correct: 0</div>
+        <div class="chip" id="chipAttempted">Attempted: 0</div>
+        <div class="chip" id="chipFirstTry">First-try: 0</div>
+        <div class="chip" id="chipMissedPool">Missed pool: 0</div>
       </div>
 
       <div class="divider"></div>
 
       <div id="quizArea">
-        <div class="msg" id="statusMsg">Select a podcast, pick a set, then press Start.</div>
+        <div class="qHeader" id="qHeader">No questions loaded yet.</div>
+        <div class="question" id="qText" style="display:none;"></div>
+        <div class="options" id="options" style="display:none;"></div>
+        <div class="statusBox" id="statusBox">Load the quiz by pressing Start.</div>
+        <div class="debug" id="debugBox"></div>
       </div>
 
-      <details>
-        <summary>Debug details</summary>
-        <div class="debugBox" id="debugBox">Debug: (idle)</div>
-      </details>
-
-      <div class="foot">
+      <div class="footer">
         Acknowledgements: Shri Ram kumar Vaidyanathan, Portland, OR, USA<br/>
         Contact: <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a>
       </div>
     </div>
   </div>
 
-  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
-  <script src="script.js?v=fix-parser-20260118b"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
