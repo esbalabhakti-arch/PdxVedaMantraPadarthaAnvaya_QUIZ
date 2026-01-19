@@ -1,494 +1,519 @@
-/* =========================================================
-   ✅ Working version for your DOCX format:
-   - Questions are numbered: "1.", "2.", ...
-   - Options may be inline: "A. ... B. ... C. ... D. ..."
-   - Correct line may be: "Correct Answer :B" (no space)
-   - Immediate feedback on click
-   - Auto-advance on correct; stay until correct when wrong
-   ========================================================= */
+/* 20260119_txt_based_quiz_v1 */
 
-const PODCASTS = [
-  { id: "101", title: "101 — Intro 1", file: "Images/101_Intro_1_quiz.docx" },
-  { id: "102", title: "102 — Intro 2", file: "Images/102_Intro_2_quiz.docx" },
-  { id: "103", title: "103 — 1st Panchadi", file: "Images/103_1st_Panchadi_quiz.docx" },
-  { id: "104", title: "104 — 2nd Panchadi (Part 1)", file: "Images/104_2nd_Panchadi_Part1_quiz.docx" },
-];
+(() => {
+  const QUIZ_TXT_URL = "./Images/Quiz_file.txt";   // you said you'll upload here
+  const DEBUG = false; // set true if you want debug visible
 
-const SETS = [
-  { key: "set1", label: "1–10",  start: 0,  end: 10 },
-  { key: "set2", label: "11–20", start: 10, end: 20 },
-  { key: "set3", label: "21–30", start: 20, end: 30 },
-  { key: "set4", label: "31–40", start: 30, end: 40 },
-  { key: "set5", label: "41–50", start: 40, end: 50 },
-  { key: "missed", label: "Missed", start: 0, end: 0 },
-];
+  // ---------- DOM ----------
+  const podcastSelect = document.getElementById("podcastSelect");
+  const setTabs = document.getElementById("setTabs");
+  const startBtn = document.getElementById("startBtn");
+  const finishBtn = document.getElementById("finishBtn");
 
-let selectedPodcastId = PODCASTS[0]?.id || null;
-let selectedSetKey = "set1";
+  const qHeader = document.getElementById("qHeader");
+  const qText = document.getElementById("qText");
+  const optionsEl = document.getElementById("options");
+  const statusBox = document.getElementById("statusBox");
+  const debugBox = document.getElementById("debugBox");
 
-let allQuestions = [];
-let activeQuestions = [];
-let qIndex = 0;
+  const chipCorrect = document.getElementById("chipCorrect");
+  const chipAttempted = document.getElementById("chipAttempted");
+  const chipFirstTry = document.getElementById("chipFirstTry");
+  const chipMissedPool = document.getElementById("chipMissedPool");
 
-let attempted = 0;
-let correct = 0;
-let firstTryCorrect = 0;
-let currentFirstAttempt = true;
+  // ---------- STATE ----------
+  let podcasts = []; // [{ key, label, questions: [...] }]
+  let podcastIndex = 0;
 
-const missedPool = [];
+  let activeSet = 0; // 0..4 or "missed"
+  let running = false;
 
-/* -----------------------------
-   DOM
--------------------------------- */
-const podcastSelect = document.getElementById("podcastSelect");
-const setTabs = document.getElementById("setTabs");
+  let viewList = []; // questions currently being played (set slice or missed)
+  let viewPos = 0;
 
-const startBtn = document.getElementById("startBtn");
-const finishBtn = document.getElementById("finishBtn");
+  let stats = {
+    correct: 0,
+    attempted: 0,
+    firstTry: 0,
+  };
 
-const quizArea = document.getElementById("quizArea");
+  // per podcast tracking
+  let attemptedIds = new Set();   // question unique id that was attempted at least once
+  let firstTryEligible = new Set(); // question ids not yet tried (for first-try)
+  let missedIds = new Set();      // question ids that were answered wrong at least once
+  let wrongOnceIds = new Set();   // question ids wrong at least once (same as missedIds, but kept explicit)
 
-const statCorrect = document.getElementById("statCorrect");
-const statAttempted = document.getElementById("statAttempted");
-const statFirstTry = document.getElementById("statFirstTry");
-const statMissed = document.getElementById("statMissed");
+  // ---------- UTILS ----------
+  function log(msg) {
+    if (!DEBUG) return;
+    debugBox.style.display = "block";
+    debugBox.textContent += (msg + "\n");
+  }
 
-const debugBox = document.getElementById("debugBox");
+  function baseUrlSafeFetch(url) {
+    // cache-bust so GitHub Pages doesn't serve stale content
+    const u = new URL(url, window.location.href);
+    u.searchParams.set("cb", Date.now().toString());
+    return fetch(u.toString(), { cache: "no-store" });
+  }
 
-/* -----------------------------
-   Debug helpers (collapsed by default)
--------------------------------- */
-function setDebug(text){ if (debugBox) debugBox.textContent = text; }
-function addDebug(line){ if (debugBox) debugBox.textContent += "\n" + line; }
+  function normalizePodcastKeyFromSource(sourceFile) {
+    // example:
+    // 101_Intro_1_transcription.docx -> 101_Intro_1
+    // 101_Intro_1_summary.docx       -> 101_Intro_1
+    // 104_2nd_Panchadi_Part1_transcription.docx -> 104_2nd_Panchadi_Part1
+    let s = (sourceFile || "").trim();
 
-/* -----------------------------
-   URL helpers for GitHub Pages
--------------------------------- */
-function resolveUrl(relPath) {
-  return new URL(relPath, window.location.href).toString();
-}
+    // strip trailing bracket noise just in case
+    s = s.replace(/[\]\)]$/g, "");
+    s = s.replace(/^\s*[\[\(]\s*/g, "");
 
-function inferOwnerRepoFromLocation() {
-  const host = window.location.host; // esbalabhakti-arch.github.io
-  const owner = host.split(".github.io")[0];
-  const parts = window.location.pathname.split("/").filter(Boolean);
-  const repo = parts[0] || "";
-  return { owner, repo };
-}
+    // keep only filename part if something like path appears
+    s = s.split("/").pop();
 
-function githubMediaUrl(owner, repo, branch, repoPath) {
-  return `https://media.githubusercontent.com/media/${owner}/${repo}/${branch}/${repoPath}`;
-}
+    // remove extension
+    s = s.replace(/\.docx$/i, "");
 
-function startsWithPK(u8) {
-  return u8.length >= 2 && u8[0] === 0x50 && u8[1] === 0x4B; // "PK"
-}
+    // remove a single trailing _transcription or _summary
+    s = s.replace(/_(transcription|summary)$/i, "");
 
-function looksLikeLFSPointer(u8) {
-  const txt = new TextDecoder().decode(u8.slice(0, 120));
-  return txt.includes("git-lfs.github.com/spec");
-}
+    return s.trim();
+  }
 
-async function fetchArrayBuffer(url) {
-  const res = await fetch(url, { cache: "no-store" });
-  const ct = res.headers.get("content-type") || "";
-  if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText} | type=${ct}`);
-  const ab = await res.arrayBuffer();
-  return { ab, ct, bytes: ab.byteLength };
-}
+  function labelFromPodcastKey(key) {
+    // "101_Intro_1" -> "101 — Intro 1"
+    // "104_2nd_Panchadi_Part1" -> "104 — 2nd Panchadi Part1"
+    const parts = key.split("_").filter(Boolean);
+    if (parts.length === 0) return key;
+    const num = parts[0];
+    const rest = parts.slice(1).join(" ");
+    return rest ? `${num} — ${rest}` : `${num}`;
+  }
 
-/* Smart DOCX fetch:
-   - try Pages path (Images vs images)
-   - validate ZIP header
-   - fallback to media URL (main/master/gh-pages) for LFS cases
-*/
-async function loadDocxSmart(repoPath) {
-  const { owner, repo } = inferOwnerRepoFromLocation();
-  const branches = ["main", "master", "gh-pages"];
-  const variants = [...new Set([
-    repoPath,
-    repoPath.replace(/^Images\//, "images/"),
-    repoPath.replace(/^images\//, "Images/"),
-  ])];
+  function getActivePodcast() {
+    return podcasts[podcastIndex] || null;
+  }
 
-  setDebug(`Debug: owner=${owner} repo=${repo}\nDebug: requested=${repoPath}`);
+  function updateMissedTabCount() {
+    const missedTab = setTabs.querySelector('.tab[data-set="missed"]');
+    if (missedTab) missedTab.textContent = `Missed (${missedIds.size})`;
+    chipMissedPool.textContent = `Missed pool: ${missedIds.size}`;
+  }
 
-  for (const v of variants) {
-    const url = resolveUrl(v);
-    try {
-      const r = await fetchArrayBuffer(url);
-      const u8 = new Uint8Array(r.ab);
-      addDebug(`✅ Pages OK: ${url}`);
-      addDebug(`   bytes=${r.bytes} type=${r.ct || "?"}`);
+  function resetRunStateForPodcast() {
+    running = false;
+    activeSet = 0;
+    viewList = [];
+    viewPos = 0;
 
-      if (looksLikeLFSPointer(u8)) { addDebug("⚠️ Pages returned LFS pointer text"); break; }
-      if (!startsWithPK(u8))       { addDebug("⚠️ Pages returned NOT DOCX (no PK header)"); break; }
+    stats = { correct: 0, attempted: 0, firstTry: 0 };
 
-      addDebug("✅ DOCX bytes valid (PK header)");
-      return r.ab;
-    } catch (e) {
-      addDebug(`❌ Pages FAIL: ${url}`);
-      addDebug(`   ${String(e.message || e)}`);
+    attemptedIds = new Set();
+    wrongOnceIds = new Set();
+    missedIds = new Set();
+
+    // firstTryEligible gets filled from the chosen viewList when Start happens
+    firstTryEligible = new Set();
+
+    chipCorrect.textContent = "Correct: 0";
+    chipAttempted.textContent = "Attempted: 0";
+    chipFirstTry.textContent = "First-try: 0";
+    chipMissedPool.textContent = "Missed pool: 0";
+
+    updateMissedTabCount();
+
+    qHeader.textContent = "Ready.";
+    qText.style.display = "none";
+    optionsEl.style.display = "none";
+    statusBox.textContent = "Load the quiz by pressing Start.";
+    clearOptions();
+  }
+
+  function clearOptions() {
+    optionsEl.innerHTML = "";
+  }
+
+  function setStatus(text, tone = "muted") {
+    statusBox.textContent = text;
+    if (tone === "good") {
+      statusBox.style.borderColor = "rgba(54,211,153,0.50)";
+      statusBox.style.color = "rgba(255,255,255,0.92)";
+      statusBox.style.background = "rgba(54,211,153,0.08)";
+    } else if (tone === "bad") {
+      statusBox.style.borderColor = "rgba(255,92,122,0.50)";
+      statusBox.style.color = "rgba(255,255,255,0.92)";
+      statusBox.style.background = "rgba(255,92,122,0.08)";
+    } else {
+      statusBox.style.borderColor = "rgba(255,255,255,0.10)";
+      statusBox.style.color = "rgba(255,255,255,0.72)";
+      statusBox.style.background = "rgba(0,0,0,0.20)";
     }
   }
 
-  for (const branch of branches) {
-    const media = githubMediaUrl(owner, repo, branch, repoPath);
-    try {
-      const r = await fetchArrayBuffer(media);
-      const u8 = new Uint8Array(r.ab);
-      addDebug(`✅ Media OK: ${media}`);
-      addDebug(`   bytes=${r.bytes} type=${r.ct || "?"}`);
-
-      if (looksLikeLFSPointer(u8)) { addDebug("❌ Media still pointer"); continue; }
-      if (!startsWithPK(u8))       { addDebug("❌ Media not DOCX (no PK)"); continue; }
-
-      addDebug(`✅ DOCX valid via Media (branch=${branch})`);
-      return r.ab;
-    } catch (e) {
-      addDebug(`❌ Media FAIL (branch=${branch}): ${media}`);
-      addDebug(`   ${String(e.message || e)}`);
-    }
+  function markTabActive(setValue) {
+    setTabs.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    const sel = setTabs.querySelector(`.tab[data-set="${setValue}"]`);
+    if (sel) sel.classList.add("active");
   }
 
-  throw new Error("All DOCX fetch attempts failed (see Debug details).");
-}
+  // ---------- PARSER ----------
+  function parseQuizText(raw) {
+    // Your file uses separator lines: ________________________________________
+    const blocks = raw
+      .split(/_{10,}/g)
+      .map(b => b.trim())
+      .filter(Boolean);
 
-/* -----------------------------
-   ✅ NEW PARSER: handles your exact DOCX text
--------------------------------- */
-function cleanText(s) {
-  return (s || "")
-    .replace(/\u00A0/g, " ")
-    .replace(/[ \t]+/g, " ")
-    .replace(/\s+\n/g, "\n")
-    .trim();
-}
+    const questions = [];
 
-function stripBracketSources(s) {
-  // remove things like: [(Source: 101_Intro_1_transcription.docx)]
-  return (s || "").replace(/\[\s*\(Source:[^\]]+\)\s*\]/gi, "").trim();
-}
+    for (const b of blocks) {
+      // Quickly skip if no "Correct Answer:"
+      if (!/Correct\s*Answer\s*:\s*[A-D]/i.test(b)) continue;
 
-function parseQuestionsFromText(text) {
-  const t = cleanText(text);
+      const lines = b.split(/\r?\n/).map(x => x.trim()).filter(x => x.length > 0);
 
-  // Split into numbered blocks: "\n1.\n", "\n2.\n", etc
-  // We'll locate all "^\s*\d+\." markers (multiline)
-  const re = /(^|\n)\s*(\d+)\.\s*/g;
-  const matches = [...t.matchAll(re)];
-  if (matches.length === 0) return [];
+      // Source line format: [(Source: xxx.docx)]
+      const sourceMatch = b.match(/\[\(Source:\s*([^)]+)\)\]/i);
+      const sourceFile = sourceMatch ? sourceMatch[1].trim() : "";
 
-  const blocks = [];
-  for (let i = 0; i < matches.length; i++) {
-    const start = (matches[i].index ?? 0) + (matches[i][1] ? matches[i][1].length : 0); // include newline offset
-    const next = (i + 1 < matches.length) ? (matches[i + 1].index ?? t.length) : t.length;
-    const block = t.slice(start, next).trim();
-    blocks.push(block);
-  }
+      // Find correct answer
+      const correctMatch = b.match(/Correct\s*Answer\s*:\s*([A-D])/i);
+      const correct = correctMatch ? correctMatch[1].toUpperCase() : "";
 
-  const out = [];
-
-  for (const blockRaw of blocks) {
-    const block = blockRaw.replace(/\r/g, "").trim();
-    if (!block) continue;
-
-    // Find Correct Answer letter
-    const ansM = block.match(/Correct\s*Answer\s*[:\-]\s*([A-D])\b/i)
-      || block.match(/Correct\s*Answer\s*:\s*([A-D])\b/i)
-      || block.match(/\bCorrect\s*[:\-]\s*([A-D])\b/i);
-
-    const correctLetter = ansM ? ansM[1].toUpperCase() : null;
-
-    // Extract options with a robust marker: A. / A) / A: / A -
-    const optRe = /(^|\s)([A-D])\s*[\.\)\-:]\s*/g;
-    const optMatches = [...block.matchAll(optRe)];
-
-    if (optMatches.length < 4 || !correctLetter) continue;
-
-    // Question text = from beginning of block to first option marker
-    const firstOptIdx = optMatches[0].index ?? 0;
-    let qText = block.slice(0, firstOptIdx).trim();
-    qText = stripBracketSources(qText);
-
-    // Now parse each option text as substring between markers
-    const options = [];
-    for (let i = 0; i < optMatches.length; i++) {
-      const m = optMatches[i];
-      const letter = m[2].toUpperCase();
-      const start = (m.index ?? 0) + m[0].length;
-      const end = (i + 1 < optMatches.length) ? (optMatches[i + 1].index ?? block.length) : block.length;
-      let optText = block.slice(start, end);
-
-      // Stop option text before "Correct Answer" or "Check:"
-      optText = optText.split(/Correct\s*Answer\s*[:\-]/i)[0];
-      optText = optText.split(/\bCheck\s*[:\-]/i)[0];
-
-      optText = stripBracketSources(cleanText(optText));
-      options.push({ letter, text: optText });
-    }
-
-    // Keep only A-D in order and ensure 4
-    const map = new Map(options.map(o => [o.letter, o.text]));
-    const finalOpts = ["A","B","C","D"].map(L => map.get(L) || "").filter(Boolean);
-
-    if (finalOpts.length !== 4) continue;
-
-    const correctIndex = correctLetter.charCodeAt(0) - 65;
-    if (correctIndex < 0 || correctIndex > 3) continue;
-
-    out.push({
-      q: qText,
-      options: finalOpts,
-      correctIndex,
-      stableKey: qText
-    });
-  }
-
-  return out;
-}
-
-/* -----------------------------
-   Load + parse
--------------------------------- */
-async function loadPodcastQuestions(podcastId) {
-  const p = PODCASTS.find(x => x.id === podcastId);
-  if (!p) throw new Error("Unknown podcast id: " + podcastId);
-
-  showMessage(`Loading: ${p.file}`, "");
-  allQuestions = [];
-
-  const arrayBuffer = await loadDocxSmart(p.file);
-
-  if (!window.mammoth) throw new Error("Mammoth library missing.");
-
-  const result = await window.mammoth.extractRawText({ arrayBuffer });
-  const rawText = (result?.value || "").replace(/\r/g, "");
-  addDebug(`Debug: mammoth text length = ${rawText.length}`);
-
-  const parsed = parseQuestionsFromText(rawText);
-  allQuestions = parsed;
-
-  addDebug(`Debug: parsed questions = ${allQuestions.length}`);
-
-  if (!allQuestions.length) {
-    addDebug("⚠️ Parser got 0 questions. Showing first 1200 chars:");
-    addDebug(rawText.slice(0, 1200));
-    showMessage("Parsed 0 questions ❌ (open Debug details)", "bad");
-  } else {
-    showMessage(`Loaded ${allQuestions.length} questions ✅ Pick a set and press Start.`, "good");
-  }
-}
-
-/* -----------------------------
-   Tabs
--------------------------------- */
-function renderTabs() {
-  setTabs.innerHTML = "";
-  for (const s of SETS) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "tab" + (s.key === selectedSetKey ? " active" : "");
-    b.textContent = (s.key === "missed") ? `${s.label} (${missedPool.length})` : s.label;
-
-    b.addEventListener("click", () => {
-      selectedSetKey = s.key;
-      renderTabs();
-      showMessage("Press Start to begin this set.", "");
-    });
-
-    setTabs.appendChild(b);
-  }
-}
-
-function updateStats() {
-  statCorrect.textContent = `Correct: ${correct}`;
-  statAttempted.textContent = `Attempted: ${attempted}`;
-  statFirstTry.textContent = `First-try: ${firstTryCorrect}`;
-  statMissed.textContent = `Missed pool: ${missedPool.length}`;
-}
-
-/* -----------------------------
-   Quiz flow (immediate check + auto next on correct)
--------------------------------- */
-function buildActiveList() {
-  if (selectedSetKey === "missed") return missedPool.slice();
-  const s = SETS.find(x => x.key === selectedSetKey);
-  return s ? allQuestions.slice(s.start, s.end) : [];
-}
-
-function startQuiz() {
-  if (!allQuestions.length) {
-    showMessage("No questions loaded yet ❌ (select podcast to load)", "bad");
-    return;
-  }
-
-  activeQuestions = buildActiveList();
-  if (!activeQuestions.length) {
-    showMessage(
-      selectedSetKey === "missed"
-        ? "Missed pool is empty 🎉"
-        : "This set has no questions.",
-      "bad"
-    );
-    return;
-  }
-
-  qIndex = 0;
-  currentFirstAttempt = true;
-  renderQuestion();
-}
-
-function finishQuiz() {
-  showMessage(
-    `Session summary ✅\n` +
-    `• Attempted: ${attempted}\n` +
-    `• Correct: ${correct}\n` +
-    `• First-try correct: ${firstTryCorrect}\n` +
-    `• Missed pool: ${missedPool.length}\n\n` +
-    `Pick another set and press Start.`,
-    "good"
-  );
-}
-
-function renderQuestion() {
-  const qObj = activeQuestions[qIndex];
-  if (!qObj) return;
-
-  currentFirstAttempt = true;
-
-  const setLabel = selectedSetKey === "missed"
-    ? `Missed (${activeQuestions.length})`
-    : (SETS.find(x => x.key === selectedSetKey)?.label || "Set");
-
-  quizArea.innerHTML = "";
-
-  const header = document.createElement("div");
-  header.className = "qHeader";
-  header.textContent = `${setLabel} • Q ${qIndex + 1} / ${activeQuestions.length}`;
-  quizArea.appendChild(header);
-
-  const qEl = document.createElement("div");
-  qEl.className = "question";
-  qEl.textContent = qObj.q;
-  quizArea.appendChild(qEl);
-
-  const opts = document.createElement("div");
-  opts.className = "options";
-
-  const letters = ["A","B","C","D"];
-  qObj.options.forEach((optText, idx) => {
-    const card = document.createElement("div");
-    card.className = "opt";
-
-    const badge = document.createElement("div");
-    badge.className = "optBadge";
-    badge.textContent = letters[idx];
-
-    const t = document.createElement("div");
-    t.className = "optText";
-    t.textContent = optText;
-
-    card.appendChild(badge);
-    card.appendChild(t);
-
-    card.addEventListener("click", () => onPickOption(idx, card, qObj));
-    opts.appendChild(card);
-  });
-
-  quizArea.appendChild(opts);
-
-  const msg = document.createElement("div");
-  msg.className = "msg";
-  msg.id = "feedbackMsg";
-  msg.textContent = "Pick an option — I’ll tell you immediately.";
-  quizArea.appendChild(msg);
-}
-
-function addToMissed(qObj) {
-  const key = qObj.stableKey || qObj.q;
-  if (!missedPool.some(x => (x.stableKey || x.q) === key)) missedPool.push(qObj);
-  renderTabs();
-  updateStats();
-}
-
-function setFeedback(text, kind) {
-  const el = document.getElementById("feedbackMsg");
-  if (!el) return;
-  el.textContent = text;
-  el.className = "msg" + (kind ? ` ${kind}` : "");
-}
-
-function onPickOption(idx, cardEl, qObj) {
-  const allOptEls = [...quizArea.querySelectorAll(".opt")];
-  attempted++;
-  updateStats();
-
-  const isCorrect = idx === qObj.correctIndex;
-
-  if (isCorrect) {
-    cardEl.classList.add("good");
-    allOptEls.forEach(el => el.classList.add("disabled"));
-
-    correct++;
-    if (currentFirstAttempt) firstTryCorrect++;
-    updateStats();
-
-    setFeedback("Correct ✅", "good");
-
-    setTimeout(() => {
-      qIndex++;
-      if (qIndex >= activeQuestions.length) {
-        showMessage(
-          `Finished ✅\n\nAttempted: ${attempted}\nCorrect: ${correct}\nFirst-try: ${firstTryCorrect}\nMissed pool: ${missedPool.length}\n\nPick another set and press Start.`,
-          "good"
-        );
-        return;
+      // Extract options A-D
+      const options = {};
+      for (const L of lines) {
+        const m = L.match(/^([A-D])\.\s*(.+)$/);
+        if (m) options[m[1].toUpperCase()] = m[2].trim();
       }
-      renderQuestion();
-    }, 650);
 
-  } else {
-    cardEl.classList.add("bad");
-    if (currentFirstAttempt) addToMissed(qObj);
-    currentFirstAttempt = false;
-    setFeedback("Not this one ❌ Try again.", "bad");
+      // Question number: first line like "1." or "1."
+      let qNum = "";
+      const numMatch = lines[0] && lines[0].match(/^(\d+)\.?$/);
+      if (numMatch) qNum = numMatch[1];
+
+      // Question text: everything between number line and source line, excluding options/correct/check
+      // We’ll build from the raw block for reliability.
+      // Approach: remove option lines, remove Correct Answer line, remove Check line, remove Source line, remove the leading number line.
+      let text = b;
+
+      // remove check line (can be long)
+      text = text.replace(/^Check:\s*.*$/gmi, "");
+
+      // remove Correct Answer line
+      text = text.replace(/^Correct\s*Answer\s*:\s*[A-D]\s*$/gmi, "");
+
+      // remove options lines
+      text = text.replace(/^[A-D]\.\s*.*$/gmi, "");
+
+      // remove source line
+      text = text.replace(/\[\(Source:\s*([^)]+)\)\]\s*/gi, "");
+
+      // remove leading number line
+      text = text.replace(/^\s*\d+\.\s*$/m, "");
+
+      text = text
+        .split(/\r?\n/)
+        .map(x => x.trim())
+        .filter(Boolean)
+        .join(" ");
+
+      // final sanity
+      if (!text || !correct || !options.A || !options.B || !options.C || !options.D) continue;
+
+      const q = {
+        id: `${sourceFile}__${qNum}__${text.slice(0, 40)}`, // stable enough
+        qNum: qNum || "",
+        text,
+        sourceFile,
+        correct,
+        options: {
+          A: options.A,
+          B: options.B,
+          C: options.C,
+          D: options.D
+        }
+      };
+
+      questions.push(q);
+    }
+
+    return questions;
   }
-}
 
-/* -----------------------------
-   Init
--------------------------------- */
-function init() {
-  podcastSelect.innerHTML = "";
-  for (const p of PODCASTS) {
-    const opt = document.createElement("option");
-    opt.value = p.id;
-    opt.textContent = p.title;
-    podcastSelect.appendChild(opt);
+  function buildPodcastsFromQuestions(allQuestions) {
+    const map = new Map(); // key -> { key, label, questions }
+
+    for (const q of allQuestions) {
+      const key = normalizePodcastKeyFromSource(q.sourceFile);
+      const label = labelFromPodcastKey(key);
+
+      if (!map.has(key)) map.set(key, { key, label, questions: [] });
+      map.get(key).questions.push(q);
+    }
+
+    // Sort podcasts by numeric prefix if present
+    const arr = Array.from(map.values());
+    arr.sort((a, b) => {
+      const an = parseInt(a.key.split("_")[0], 10);
+      const bn = parseInt(b.key.split("_")[0], 10);
+      if (!isNaN(an) && !isNaN(bn)) return an - bn;
+      return a.key.localeCompare(b.key);
+    });
+
+    // Within each podcast, keep original order (file already in order)
+    return arr;
   }
-  podcastSelect.value = selectedPodcastId;
 
-  renderTabs();
-  updateStats();
+  // ---------- QUIZ VIEW ----------
+  function setViewToActiveSet() {
+    const p = getActivePodcast();
+    if (!p) return;
 
-  podcastSelect.addEventListener("change", async () => {
-    selectedPodcastId = podcastSelect.value;
-    await loadPodcastQuestions(selectedPodcastId);
-    showMessage("Pick a set, then press Start.", "");
+    if (activeSet === "missed") {
+      viewList = p.questions.filter(q => missedIds.has(q.id));
+    } else {
+      const start = activeSet * 10;
+      const end = start + 10;
+      viewList = p.questions.slice(start, end);
+    }
+
+    viewPos = 0;
+    firstTryEligible = new Set(viewList.map(q => q.id));
+    updateMissedTabCount();
+  }
+
+  function renderCurrent() {
+    clearOptions();
+
+    const p = getActivePodcast();
+    if (!p) {
+      qHeader.textContent = "No podcast data found.";
+      qText.style.display = "none";
+      optionsEl.style.display = "none";
+      setStatus("Could not load quiz data.", "bad");
+      return;
+    }
+
+    if (!running) {
+      qHeader.textContent = "Ready.";
+      qText.style.display = "none";
+      optionsEl.style.display = "none";
+      setStatus("Press Start.", "muted");
+      return;
+    }
+
+    if (!viewList.length) {
+      const msg = (activeSet === "missed")
+        ? "No missed questions yet. 🎉"
+        : "This set has no questions (unexpected).";
+      qHeader.textContent = msg;
+      qText.style.display = "none";
+      optionsEl.style.display = "none";
+      setStatus(msg, "muted");
+      return;
+    }
+
+    if (viewPos >= viewList.length) {
+      qHeader.textContent = "Set complete ✅";
+      qText.style.display = "none";
+      optionsEl.style.display = "none";
+      setStatus("You finished this set. Pick another set, or Finish.", "good");
+      return;
+    }
+
+    const q = viewList[viewPos];
+
+    qHeader.textContent = `Question ${viewPos + 1} of ${viewList.length}` + (activeSet === "missed" ? " (Missed Review)" : "");
+    qText.textContent = q.text;
+    qText.style.display = "block";
+    optionsEl.style.display = "grid";
+
+    setStatus("Pick an option. (Auto-check enabled)", "muted");
+
+    const order = ["A", "B", "C", "D"];
+    for (const letter of order) {
+      const opt = document.createElement("div");
+      opt.className = "opt";
+      opt.dataset.letter = letter;
+
+      const badge = document.createElement("div");
+      badge.className = "optBadge";
+      badge.textContent = letter;
+
+      const txt = document.createElement("div");
+      txt.className = "optText";
+      txt.textContent = q.options[letter];
+
+      opt.appendChild(badge);
+      opt.appendChild(txt);
+
+      opt.addEventListener("click", () => onPickOption(letter, opt));
+
+      optionsEl.appendChild(opt);
+    }
+  }
+
+  function disableOptions() {
+    optionsEl.querySelectorAll(".opt").forEach(el => {
+      el.classList.add("disabled");
+      el.style.pointerEvents = "none";
+    });
+  }
+
+  function onPickOption(letter, optEl) {
+    if (!running) return;
+    const q = viewList[viewPos];
+    if (!q) return;
+
+    // Count attempted (once per question)
+    if (!attemptedIds.has(q.id)) {
+      attemptedIds.add(q.id);
+      stats.attempted += 1;
+      chipAttempted.textContent = `Attempted: ${stats.attempted}`;
+    }
+
+    const isCorrect = (letter === q.correct);
+
+    if (isCorrect) {
+      // First-try?
+      if (firstTryEligible.has(q.id)) {
+        stats.firstTry += 1;
+        chipFirstTry.textContent = `First-try: ${stats.firstTry}`;
+      }
+      firstTryEligible.delete(q.id);
+
+      stats.correct += 1;
+      chipCorrect.textContent = `Correct: ${stats.correct}`;
+
+      optEl.classList.add("good");
+      setStatus("Correct ✅ Moving to next…", "good");
+
+      disableOptions();
+
+      // Advance after a short delay
+      setTimeout(() => {
+        viewPos += 1;
+        renderCurrent();
+      }, 450);
+
+    } else {
+      // Mark missed
+      wrongOnceIds.add(q.id);
+      missedIds.add(q.id);
+      updateMissedTabCount();
+
+      // Once wrong, it can never be first-try anymore
+      firstTryEligible.delete(q.id);
+
+      optEl.classList.add("bad");
+      setStatus("Wrong ❌ Try again (stay on same question).", "bad");
+    }
+  }
+
+  // ---------- EVENTS ----------
+  function onTabClick(setValue) {
+    activeSet = setValue;
+    markTabActive(setValue);
+    if (running) {
+      setViewToActiveSet();
+      renderCurrent();
+    } else {
+      // not running yet, just update hint
+      setStatus("Press Start to begin this set.", "muted");
+    }
+  }
+
+  async function init() {
+    debugBox.style.display = DEBUG ? "block" : "none";
+    log("Debug: init()");
+
+    qHeader.textContent = "Loading quiz file...";
+    setStatus("Loading Quiz_file.txt ...", "muted");
+
+    let raw = "";
+    try {
+      const res = await baseUrlSafeFetch(QUIZ_TXT_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status} while fetching ${QUIZ_TXT_URL}`);
+      raw = await res.text();
+    } catch (e) {
+      qHeader.textContent = "No questions loaded yet.";
+      setStatus("FAILED to load Quiz_file.txt. Check that it exists at Images/Quiz_file.txt", "bad");
+      if (DEBUG) log(String(e));
+      return;
+    }
+
+    const allQuestions = parseQuizText(raw);
+    log(`Parsed questions: ${allQuestions.length}`);
+
+    if (!allQuestions.length) {
+      qHeader.textContent = "No questions loaded yet.";
+      setStatus("Loaded text file, but parser found 0 questions. (Format mismatch)", "bad");
+      if (DEBUG) log("Parser found 0. Check text format exactly like your sample.");
+      return;
+    }
+
+    podcasts = buildPodcastsFromQuestions(allQuestions);
+    log(`Podcasts found: ${podcasts.length}`);
+
+    // Populate dropdown
+    podcastSelect.innerHTML = "";
+    podcasts.forEach((p, idx) => {
+      const opt = document.createElement("option");
+      opt.value = String(idx);
+      opt.textContent = p.label;
+      podcastSelect.appendChild(opt);
+    });
+
+    // default selection
+    podcastIndex = 0;
+    podcastSelect.value = "0";
+    resetRunStateForPodcast();
+
+    qHeader.textContent = "Loaded ✅";
+    setStatus("Select a podcast, pick a set, then press Start.", "good");
+  }
+
+  // Wiring tabs
+  setTabs.addEventListener("click", (e) => {
+    const t = e.target.closest(".tab");
+    if (!t) return;
+    const setValue = t.dataset.set;
+    if (setValue === "missed") onTabClick("missed");
+    else onTabClick(Number(setValue));
   });
 
-  startBtn.addEventListener("click", async () => {
-    if (!allQuestions.length) await loadPodcastQuestions(selectedPodcastId);
-    startQuiz();
+  podcastSelect.addEventListener("change", () => {
+    const idx = Number(podcastSelect.value);
+    if (!Number.isFinite(idx)) return;
+    podcastIndex = idx;
+    resetRunStateForPodcast();
+    setStatus("Podcast changed. Pick a set and press Start.", "muted");
   });
 
-  finishBtn.addEventListener("click", () => finishQuiz());
+  startBtn.addEventListener("click", () => {
+    const p = getActivePodcast();
+    if (!p) {
+      setStatus("No podcast loaded.", "bad");
+      return;
+    }
 
-  // auto-load the first podcast so it feels alive
-  loadPodcastQuestions(selectedPodcastId).catch(err => {
-    showMessage(`Load failed ❌\n${String(err.message || err)}`, "bad");
+    // Enforce exactly 50 as you described (but don’t hard-fail if not exactly)
+    if (p.questions.length < 1) {
+      setStatus("This podcast has 0 questions.", "bad");
+      return;
+    }
+
+    running = true;
+    setViewToActiveSet();
+    renderCurrent();
   });
-}
 
-init();
+  finishBtn.addEventListener("click", () => {
+    resetRunStateForPodcast();
+    setStatus("Finished. You can start again any time.", "muted");
+  });
+
+  // Start
+  document.addEventListener("DOMContentLoaded", init);
+})();
