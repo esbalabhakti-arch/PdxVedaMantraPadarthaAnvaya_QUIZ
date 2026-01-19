@@ -2,354 +2,299 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Veda Podcast Learning Check Quiz</title>
-
-  <!-- DOCX text extractor -->
-  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Veda Padārtha Anvaya Podcasts — Learning Check</title>
 
   <style>
     :root{
-      --bg1:#070914;
-      --bg2:#0b1020;
-
-      --card: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.14);
-
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.70);
-
-      --shadow: 0 18px 60px rgba(0,0,0,0.48);
-      --radius: 18px;
-
-      --pillOuter: rgba(168, 85, 247, 0.18);
-      --pillOuterBorder: rgba(210, 170, 255, 0.35);
-      --pillActive: rgba(168, 85, 247, 0.45);
-      --pillActiveBorder: rgba(210, 170, 255, 0.65);
-
-      --dangerBg: rgba(255, 60, 60, 0.10);
-      --dangerBorder: rgba(255, 60, 60, 0.35);
-      --okBg: rgba(40, 200, 120, 0.10);
-      --okBorder: rgba(40, 200, 120, 0.35);
+      --bg0:#05070d;
+      --bg1:#0b1020;
+      --card:rgba(255,255,255,0.06);
+      --card2:rgba(255,255,255,0.08);
+      --stroke:rgba(255,255,255,0.10);
+      --text:rgba(255,255,255,0.92);
+      --muted:rgba(255,255,255,0.72);
+      --muted2:rgba(255,255,255,0.55);
+      --accent:#7c5cff; /* subtle purple */
+      --accent2:rgba(124,92,255,0.18);
+      --good:#36d399;
+      --bad:#ff5c7a;
+      --shadow:0 18px 50px rgba(0,0,0,0.55);
+      --radius:22px;
     }
 
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color: var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
       background:
-        radial-gradient(1100px 700px at 20% 10%, rgba(155,231,255,0.18), transparent 58%),
-        radial-gradient(900px 600px at 80% 90%, rgba(140,120,255,0.10), transparent 58%),
-        linear-gradient(180deg, var(--bg1), var(--bg2) 45%, var(--bg1));
+        radial-gradient(900px 520px at 20% 10%, rgba(124,92,255,0.25), transparent 60%),
+        radial-gradient(900px 520px at 90% 15%, rgba(0,190,255,0.18), transparent 60%),
+        radial-gradient(900px 520px at 60% 90%, rgba(0,255,160,0.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       min-height:100vh;
     }
 
     .wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 18px 16px 50px;
+      max-width:1050px;
+      margin:26px auto 48px;
+      padding:0 18px;
     }
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      margin-bottom: 16px;
-    }
-
-    /* Banner */
-    .banner{
-      display:flex;
-      justify-content:center;
-      margin-bottom: 12px;
-    }
-    .bannerFrame{
-      width: 100%;
-      border-radius: 16px;
+    .bannerCard{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
       overflow:hidden;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.20);
+      padding:18px;
+      margin-bottom:18px;
     }
-    .bannerFrame img{
-      width: 100%;
-      height: 210px;
-      object-fit: cover;
+    .bannerImg{
       display:block;
+      width:min(980px, 100%);
+      height:auto;
+      margin:0 auto;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.08);
     }
 
-    h1{
-      margin:0;
-      font-size: 18px;
-      text-align:center;
-      letter-spacing: 0.5px;
-      color: rgba(210,170,255,0.95);
+    .panel{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
     }
 
-    .row{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:center;
-      margin-top: 14px;
+    .titlePill{
+      display:inline-block;
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.05);
+      font-weight:700;
+      letter-spacing:0.2px;
+      margin:0 auto 14px;
     }
 
-    label{
-      font-size: 12px;
-      color: var(--muted);
-      margin-right: 8px;
-    }
+    .row{display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:center;}
+    .rowLeft{justify-content:flex-start}
+
+    label{color:var(--muted); font-size:14px}
 
     select{
-      appearance:none;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 12px 12px;
-      font-size: 14px;
-      min-width: 360px;
-    }
-    select option{ background:#0b1020; }
-
-    .toggleRow{
-      display:flex;
-      justify-content:center;
-      margin-top: 14px;
+      width:min(780px, 100%);
+      padding:14px 14px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,0.25);
+      color:var(--text);
+      outline:none;
     }
 
-    .toggle{
-      display:flex;
-      gap:6px;
-      padding: 8px;
-      border-radius: 999px;
-      background: var(--pillOuter);
-      border: 1px solid var(--pillOuterBorder);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
-      backdrop-filter: blur(12px);
-      flex-wrap:wrap;
-      justify-content:center;
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+      padding:12px; border-radius:999px; border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.04);
     }
-    .toggle button{
-      border:0;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.22);
-      color: rgba(255,255,255,0.9);
+    .tab{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(0,0,0,0.20);
+      color:var(--muted);
       cursor:pointer;
-      font-size: 13px;
-      white-space:nowrap;
+      user-select:none;
+      transition:transform .05s ease, background .2s ease, color .2s ease, border-color .2s ease;
+      font-weight:600;
+      font-size:14px;
     }
-    .toggle button.active{
-      background: var(--pillActive);
-      box-shadow: inset 0 0 0 2px var(--pillActiveBorder);
+    .tab:hover{transform:translateY(-1px)}
+    .tab.active{
+      color:white;
+      background:var(--accent2);
+      border-color:rgba(124,92,255,0.65);
+      box-shadow:0 0 0 2px rgba(124,92,255,0.12) inset;
     }
 
-    .actions{
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      margin-top: 12px;
-      flex-wrap:wrap;
-    }
+    .btnRow{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px;}
     .btn{
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      padding: 10px 16px;
-      border-radius: 999px;
+      padding:12px 18px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
       cursor:pointer;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+      font-weight:700;
+      letter-spacing:0.2px;
     }
     .btn.primary{
-      background: rgba(168,85,247,0.35);
-      border-color: rgba(210,170,255,0.45);
+      background:rgba(124,92,255,0.22);
+      border-color:rgba(124,92,255,0.55);
     }
     .btn.danger{
-      background: rgba(255,60,60,0.25);
-      border-color: rgba(255,60,60,0.35);
+      background:rgba(255,92,122,0.15);
+      border-color:rgba(255,92,122,0.45);
     }
     .btn:disabled{
-      opacity: 0.45;
+      opacity:0.45;
       cursor:not-allowed;
     }
 
     .stats{
-      display:flex;
-      gap:10px;
-      justify-content:center;
-      flex-wrap:wrap;
-      margin-top: 12px;
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+      margin-top:10px;
     }
-    .pill{
-      background: rgba(0,0,0,0.20);
-      border: 1px solid rgba(255,255,255,0.12);
-      padding: 8px 12px;
-      border-radius: 999px;
-      color: rgba(255,255,255,0.80);
-      font-size: 13px;
+    .chip{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.04);
+      color:var(--muted);
+      font-weight:600;
+      font-size:13px;
     }
 
-    .qArea{
-      margin-top: 14px;
-      border-top: 1px solid rgba(255,255,255,0.10);
-      padding-top: 14px;
+    .divider{height:1px; background:rgba(255,255,255,0.08); margin:18px 0;}
+
+    .qHeader{
+      color:var(--muted);
+      font-weight:700;
+      font-size:14px;
+      margin-bottom:10px;
+      text-align:left;
+    }
+    .question{
+      font-size:22px;
+      font-weight:800;
+      line-height:1.25;
+      margin:4px 0 14px;
     }
 
-    .qMeta{
-      color: rgba(255,255,255,0.70);
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .qText{
-      font-size: 18px;
-      font-weight: 650;
-      line-height: 1.4;
-      margin-bottom: 12px;
-    }
-
-    /* Options = separate boxes */
     .options{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-bottom: 12px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:12px;
     }
+    @media (min-width: 860px){
+      .options{grid-template-columns:1fr 1fr;}
+    }
+
     .opt{
-      background: rgba(0,0,0,0.22);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 12px 12px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      border-radius:16px;
+      padding:14px 14px;
       cursor:pointer;
       display:flex;
-      gap:10px;
+      gap:12px;
       align-items:flex-start;
+      transition:transform .05s ease, border-color .2s ease, background .2s ease;
     }
-    .opt:hover{
-      border-color: rgba(210,170,255,0.35);
+    .opt:hover{transform:translateY(-1px); border-color:rgba(124,92,255,0.38)}
+    .opt.disabled{opacity:0.55; cursor:not-allowed}
+    .optBadge{
+      flex:0 0 auto;
+      width:28px; height:28px;
+      border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(124,92,255,0.18);
+      border:1px solid rgba(124,92,255,0.35);
+      font-weight:900;
+      color:white;
+      margin-top:1px;
     }
-    .opt.selected{
-      border-color: rgba(210,170,255,0.70);
-      box-shadow: inset 0 0 0 2px rgba(168,85,247,0.35);
+    .optText{color:var(--text); font-weight:650; line-height:1.25}
+
+    .opt.good{
+      border-color:rgba(54,211,153,0.70);
+      background:rgba(54,211,153,0.10);
     }
-    .opt .letter{
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: rgba(168,85,247,0.30);
-      border: 1px solid rgba(210,170,255,0.35);
-      font-weight: 700;
-      flex: 0 0 auto;
-      margin-top: 1px;
-    }
-    .opt .txt{
-      line-height: 1.4;
-      color: rgba(255,255,255,0.90);
+    .opt.bad{
+      border-color:rgba(255,92,122,0.70);
+      background:rgba(255,92,122,0.10);
     }
 
-    .feedback{
-      border-radius: 14px;
-      padding: 12px;
-      margin-top: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.20);
-      color: rgba(255,255,255,0.85);
-      white-space: pre-wrap;
+    .msg{
+      margin-top:14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      padding:12px 14px;
+      color:var(--muted);
+      font-weight:650;
     }
-    .feedback.ok{
-      background: var(--okBg);
-      border-color: var(--okBorder);
-    }
-    .feedback.bad{
-      background: var(--dangerBg);
-      border-color: var(--dangerBorder);
-    }
+    .msg.good{border-color:rgba(54,211,153,0.55); background:rgba(54,211,153,0.08); color:rgba(255,255,255,0.90)}
+    .msg.bad{border-color:rgba(255,92,122,0.55); background:rgba(255,92,122,0.08); color:rgba(255,255,255,0.90)}
 
-    .footer{
-      margin-top: 28px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,0.12);
+    .foot{
+      margin-top:18px;
       text-align:center;
-      font-size: 12.5px;
-      color: rgba(255,255,255,0.65);
+      color:var(--muted2);
+      font-size:13px;
     }
-
-    @media (max-width:640px){
-      .bannerFrame img{ height:140px; }
-      select{ min-width:260px; }
-    }
+    .foot a{color:rgba(124,92,255,0.92)}
   </style>
 </head>
 
 <body>
   <div class="wrap">
 
-    <!-- Banner (FIXED PATH + CASE) -->
-    <div class="banner">
-      <div class="bannerFrame">
-        <img id="bannerImg" src="Images/Vedic_podcast_banner_2.png" alt="Veda Podcast Banner">
-      </div>
+    <div class="bannerCard">
+      <img
+        id="bannerImg"
+        class="bannerImg"
+        src="Images/Vedic_podcast_banner_2.png"
+        alt="Veda Podcast Banner"
+        onerror="this.style.display='none';"
+      />
     </div>
 
-    <div class="card">
-      <h1>LEARNING CHECK QUIZ (Multiple Choice)</h1>
-
+    <div class="panel">
       <div class="row">
-        <div>
-          <label for="podcastSelect">Select Podcast</label>
-          <select id="podcastSelect"></select>
-        </div>
+        <div class="titlePill">LEARNING CHECK QUIZ (Multiple Choice)</div>
       </div>
 
-      <div class="toggleRow">
-        <div class="toggle" id="setToggle">
-          <button data-set="1" class="active">Set 1 (Q1–10)</button>
-          <button data-set="2">Set 2 (Q11–20)</button>
-          <button data-set="3">Set 3 (Q21–30)</button>
-          <button data-set="4">Set 4 (Q31–40)</button>
-          <button data-set="5">Set 5 (Q41–50)</button>
-          <button data-set="missed" id="btnMissed">Review Missed (0)</button>
-        </div>
+      <div class="row" style="margin-top:10px;">
+        <label for="podcastSelect" style="min-width:110px; text-align:center;">Select Podcast</label>
+        <select id="podcastSelect" aria-label="Select Podcast"></select>
       </div>
 
-      <div class="actions">
-        <button class="btn primary" id="btnStart">Start Quiz</button>
-        <button class="btn danger" id="btnFinish">Finish Quiz</button>
-        <button class="btn" id="btnCheck" disabled>Check Answer</button>
-        <button class="btn" id="btnNext" disabled>Next Question</button>
+      <div class="row" style="margin-top:14px;">
+        <div class="tabs" id="setTabs"></div>
+      </div>
+
+      <div class="btnRow">
+        <button class="btn primary" id="startBtn">Start Quiz</button>
+        <button class="btn danger" id="finishBtn">Finish Quiz</button>
+        <button class="btn" id="nextBtn" disabled>Next Question</button>
       </div>
 
       <div class="stats">
-        <div class="pill" id="statCorrect">Correct: 0</div>
-        <div class="pill" id="statAttempted">Attempted: 0</div>
-        <div class="pill" id="statFirstTry">First-try: 0</div>
-        <div class="pill" id="statMissedPool">In Review Missed pool: 0</div>
+        <div class="chip" id="statCorrect">Correct: 0</div>
+        <div class="chip" id="statAttempted">Attempted: 0</div>
+        <div class="chip" id="statFirstTry">First-try: 0</div>
+        <div class="chip" id="statMissed">In Review Missed pool: 0</div>
       </div>
 
-      <div class="qArea" id="qArea">
-        <div class="qMeta" id="qMeta">Select a podcast, pick a set, then press Start.</div>
-        <div class="qText" id="qText" style="display:none;"></div>
-        <div class="options" id="options" style="display:none;"></div>
-        <div class="feedback" id="feedback" style="display:none;"></div>
+      <div class="divider"></div>
+
+      <div id="quizArea">
+        <div class="msg" id="statusMsg">Select a podcast, pick a set, then press Start.</div>
       </div>
 
+      <div class="foot">
+        Acknowledgements: Shri Ram kumar Vaidyanathan, Portland, OR, USA<br/>
+        Contact: <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a>
+      </div>
     </div>
-
-    <div class="footer">
-      Acknowledgements: Shri Ram kumar Vaidyanathan, Portland, OR, USA<br/>
-      Contact: <a href="mailto:ramk21@gmail.com" style="color:rgba(210,170,255,0.9)">ramk21@gmail.com</a>
-    </div>
-
   </div>
 
+  <!-- Mammoth for DOCX -> raw text -->
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
