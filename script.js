@@ -1,8 +1,18 @@
+/* =========================================================
+   ✅ FIX FOR DOCX LOADING ON GITHUB PAGES (incl. Git LFS)
+   - Tries GitHub Pages path first (same-origin)
+   - Detects Git LFS pointer files and auto-falls back to:
+     https://media.githubusercontent.com/media/<owner>/<repo>/<branch>/<path>
+   - Shows clear diagnostics in the UI when failing
+   ========================================================= */
+
+/* ---- SET THESE THREE CORRECTLY ---- */
+const REPO_OWNER  = "esbalabhakti-arch";
+const REPO_NAME   = "PdxVedaMantraPadarthaAnvaya_QUIZ";
+const REPO_BRANCH = "main";
+
 /* -----------------------------
-   CONFIG: add podcasts here
-   IMPORTANT:
-   - Keep file paths RELATIVE to index.html
-   - Prefer putting DOCX under "Images/" if that’s where they live
+   PODCASTS (paths relative to repo root)
 -------------------------------- */
 const PODCASTS = [
   { id: "101", title: "101 — Intro 1", file: "Images/101_Intro_1_quiz.docx" },
@@ -11,10 +21,6 @@ const PODCASTS = [
   { id: "104", title: "104 — 2nd Panchadi (Part 1)", file: "Images/104_2nd_Panchadi_Part1_quiz.docx" },
 ];
 
-/**
- * Sets are defined as slices over the FULL podcast question list (typically 50).
- * Labels are short so they fit in one row.
- */
 const SETS = [
   { key: "set1", label: "1–10", start: 0, end: 10 },
   { key: "set2", label: "11–20", start: 10, end: 20 },
@@ -30,17 +36,15 @@ const SETS = [
 let selectedPodcastId = PODCASTS[0]?.id || null;
 let selectedSetKey = "set1";
 
-let allQuestions = [];          // parsed N for current podcast
-let activeQuestions = [];       // selected set slice OR missed pool
+let allQuestions = [];
+let activeQuestions = [];
 let qIndex = 0;
 
 let attempted = 0;
 let correct = 0;
 let firstTryCorrect = 0;
-
 let currentFirstAttempt = true;
 
-// Missed pool stores question objects (unique by stableKey)
 const missedPool = [];
 
 /* -----------------------------
@@ -60,10 +64,9 @@ const statFirstTry = document.getElementById("statFirstTry");
 const statMissed = document.getElementById("statMissed");
 
 /* -----------------------------
-   INIT UI
+   INIT
 -------------------------------- */
 function init() {
-  // Populate podcast dropdown
   podcastSelect.innerHTML = "";
   for (const p of PODCASTS) {
     const opt = document.createElement("option");
@@ -76,7 +79,6 @@ function init() {
   renderTabs();
   updateStats();
 
-  // Events
   podcastSelect.addEventListener("change", async () => {
     selectedPodcastId = podcastSelect.value;
     await loadPodcastQuestions(selectedPodcastId);
@@ -84,161 +86,169 @@ function init() {
   });
 
   startBtn.addEventListener("click", async () => {
-    if (!allQuestions.length) {
-      await loadPodcastQuestions(selectedPodcastId);
-    }
+    if (!allQuestions.length) await loadPodcastQuestions(selectedPodcastId);
     startQuiz();
   });
 
-  finishBtn.addEventListener("click", () => {
-    finishQuiz();
-  });
+  finishBtn.addEventListener("click", () => finishQuiz());
 
-  // Initial load
   loadPodcastQuestions(selectedPodcastId)
     .then(() => showMessage("Pick a set, then press Start.", ""))
     .catch((e) => {
       console.error(e);
-      showMessage("Could not load the quiz. Open DevTools → Console for details.", "bad");
+      showMessage("Could not load the quiz. See error details above.", "bad");
     });
 }
 
 /* -----------------------------
-   TABS
+   URL helpers
 -------------------------------- */
-function renderTabs() {
-  setTabs.innerHTML = "";
-  for (const s of SETS) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "tab" + (s.key === selectedSetKey ? " active" : "");
-    b.dataset.key = s.key;
-
-    if (s.key === "missed") {
-      b.textContent = `${s.label} (${missedPool.length})`;
-    } else {
-      b.textContent = s.label;
-    }
-
-    b.addEventListener("click", () => {
-      selectedSetKey = s.key;
-      renderTabs();
-      showMessage("Press Start to begin this set.", "");
-    });
-
-    setTabs.appendChild(b);
-  }
-}
-
-/* -----------------------------
-   LOADING + PARSING (more robust)
--------------------------------- */
-
-/**
- * Build a fully-qualified URL (important on GitHub Pages subpaths).
- */
 function resolveUrl(relPath) {
+  // Important on GitHub Pages subpaths
   return new URL(relPath, window.location.href).toString();
 }
 
-/**
- * Try fetching the DOCX with fallback path variants.
- * This helps when folder case differs (Images vs images) or paths change.
- */
-async function fetchWithFallback(relPath) {
-  const variants = [];
+function githubMediaUrl(repoPath) {
+  // Works well for LFS-backed files too
+  return `https://media.githubusercontent.com/media/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/${repoPath}`;
+}
 
-  // 1) as provided
-  variants.push(relPath);
+function githubRawUrl(repoPath) {
+  return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/${repoPath}`;
+}
 
-  // 2) common case variants
-  if (relPath.startsWith("Images/")) variants.push("images/" + relPath.slice("Images/".length));
-  if (relPath.startsWith("images/")) variants.push("Images/" + relPath.slice("images/".length));
+function looksLikeGitLFSPointer(u8) {
+  // LFS pointer is plain text; begins with "version https://git-lfs.github.com/spec"
+  const head = new TextDecoder().decode(u8.slice(0, 120));
+  return head.includes("git-lfs.github.com/spec");
+}
 
-  // 3) also try without leading "./"
-  variants.push(relPath.replace(/^\.\//, ""));
+async function fetchBinary(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  const ct = res.headers.get("content-type") || "";
+  if (!res.ok) {
+    throw new Error(`Fetch failed: ${res.status} ${res.statusText}\nURL: ${url}\nContent-Type: ${ct}`);
+  }
+  const ab = await res.arrayBuffer();
+  return { ab, ct, bytes: ab.byteLength, url };
+}
 
-  // de-dup
-  const uniq = [...new Set(variants)];
+async function fetchDocxSmart(repoRelativePath) {
+  // 1) Try GitHub Pages same-origin first
+  const pageUrl = resolveUrl(repoRelativePath);
 
+  // 2) Try case variants for Images folder
+  const variants = [...new Set([
+    repoRelativePath,
+    repoRelativePath.replace(/^Images\//, "images/"),
+    repoRelativePath.replace(/^images\//, "Images/"),
+  ])];
+
+  const attempts = [];
   let lastErr = null;
 
-  for (const v of uniq) {
-    const url = resolveUrl(v);
+  // Try pages URLs
+  for (const v of variants) {
+    const u = resolveUrl(v);
     try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) {
-        lastErr = new Error(`Fetch failed (${res.status}) for ${url}`);
-        continue;
+      const r = await fetchBinary(u);
+      attempts.push(`✅ OK (Pages): ${u}\n   bytes=${r.bytes}, type=${r.ct || "?"}`);
+
+      const u8 = new Uint8Array(r.ab);
+      if (looksLikeGitLFSPointer(u8)) {
+        attempts.push(`⚠️ Detected Git LFS pointer at Pages URL. Will try GitHub media URL…`);
+        break; // go to media fallback
       }
-      const ab = await res.arrayBuffer();
-      return { arrayBuffer: ab, usedUrl: url };
+      return { arrayBuffer: r.ab, attempts };
     } catch (e) {
+      attempts.push(`❌ FAIL (Pages): ${u}\n   ${String(e.message || e)}`);
       lastErr = e;
     }
   }
 
-  throw lastErr || new Error("Fetch failed for all fallback paths.");
+  // If we got here: either Pages failed, or LFS pointer detected.
+  const media = githubMediaUrl(repoRelativePath);
+  try {
+    const r = await fetchBinary(media);
+    attempts.push(`✅ OK (Media): ${media}\n   bytes=${r.bytes}, type=${r.ct || "?"}`);
+    return { arrayBuffer: r.ab, attempts };
+  } catch (e) {
+    attempts.push(`❌ FAIL (Media): ${media}\n   ${String(e.message || e)}`);
+    lastErr = e;
+  }
+
+  // Also try raw (sometimes helpful for non-LFS)
+  const raw = githubRawUrl(repoRelativePath);
+  try {
+    const r = await fetchBinary(raw);
+    attempts.push(`✅ OK (Raw): ${raw}\n   bytes=${r.bytes}, type=${r.ct || "?"}`);
+    return { arrayBuffer: r.ab, attempts };
+  } catch (e) {
+    attempts.push(`❌ FAIL (Raw): ${raw}\n   ${String(e.message || e)}`);
+    lastErr = e;
+  }
+
+  throw new Error(`All DOCX fetch attempts failed.\n\n${attempts.join("\n\n")}\n\nLast error:\n${String(lastErr?.message || lastErr)}`);
 }
 
+/* -----------------------------
+   Load + parse
+-------------------------------- */
 async function loadPodcastQuestions(podcastId) {
   const p = PODCASTS.find(x => x.id === podcastId);
   if (!p) throw new Error("Unknown podcast id: " + podcastId);
 
-  showMessage(`Loading: ${p.file}`, "");
+  showMessage(`Loading quiz DOCX…\n\nFile: ${p.file}\n\n(If it fails, I will show detailed URL attempts here.)`, "");
 
   allQuestions = [];
 
-  // Fetch DOCX (with fallback)
-  const { arrayBuffer, usedUrl } = await fetchWithFallback(p.file);
+  const { arrayBuffer, attempts } = await fetchDocxSmart(p.file);
 
-  // Mammoth extracts text from DOCX
+  // Mammoth expects valid docx bytes
   let rawText = "";
   try {
     const result = await mammoth.extractRawText({ arrayBuffer });
     rawText = (result?.value || "").replace(/\r/g, "");
   } catch (e) {
-    console.error(e);
-    throw new Error("Mammoth failed to read the DOCX. Is it a valid .docx file?");
+    throw new Error(
+      `Mammoth failed to read DOCX (not valid DOCX bytes).\n\n` +
+      `Fetch diagnostics:\n${attempts.join("\n\n")}\n\n` +
+      `Error:\n${String(e.message || e)}`
+    );
   }
 
-  // Parse
   const parsed = parseQuestionsFromText(rawText);
   allQuestions = parsed;
 
   if (!allQuestions.length) {
-    console.warn("Raw extracted text (first 4000 chars):\n", rawText.slice(0, 4000));
+    // Show extracted text snippet to tune parser later if needed
+    const preview = rawText.slice(0, 2500);
     showMessage(
-      `Loaded DOCX but parsed 0 questions ❌\n\nFile URL tried:\n${usedUrl}\n\n` +
-      `This usually means the DOCX text format doesn't match the parser patterns.\n` +
-      `Open DevTools → Console to see extracted text preview.`,
+      `DOCX downloaded, but parsed 0 questions.\n\n` +
+      `Fetch diagnostics:\n${attempts.join("\n\n")}\n\n` +
+      `Extracted text preview (first 2500 chars):\n` +
+      `${preview}`,
       "bad"
     );
   } else {
-    showMessage(`Loaded ${allQuestions.length} questions ✅  Pick a set and press Start.`, "good");
+    showMessage(
+      `Loaded ${allQuestions.length} questions ✅\n\nFetch diagnostics:\n${attempts.join("\n\n")}\n\nPick a set and press Start.`,
+      "good"
+    );
   }
 
   return allQuestions;
 }
 
-/**
- * More forgiving parser:
- * Supports:
- * - Question start: "1.", "1)", "1 -", "Q1.", "Q 1)"
- * - Options: "A.", "A)", "A -", also lowercase "a)"
- * - Options can sometimes be on the same line
- * - Correct answer: "Correct Answer: C", "Answer: C", "Ans: C", "Correct: C"
- * - Wrapped lines (question or option continuation)
- * - Ignores "Check:" lines (explanations)
- */
+/* -----------------------------
+   Parser (forgiving)
+-------------------------------- */
 function parseQuestionsFromText(text) {
-  // Normalize NBSP, weird spaces
   const normalized = (text || "")
     .replace(/\u00A0/g, " ")
     .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n"); // collapse huge gaps
+    .replace(/\n{3,}/g, "\n\n");
 
-  // Work with "paragraph-ish" chunks to reduce line-break sensitivity
   const chunks = normalized
     .split("\n")
     .map(s => s.trim())
@@ -254,8 +264,6 @@ function parseQuestionsFromText(text) {
 
   function finalize() {
     if (!cur) return;
-
-    // Sometimes options are fewer because they were inline; try to keep only good ones.
     if (cur.options.length === 4 && cur.correctIndex >= 0 && cur.correctIndex <= 3) {
       cur.stableKey = (cur.source || "") + "||" + cur.q;
       out.push(cur);
@@ -264,143 +272,81 @@ function parseQuestionsFromText(text) {
     lastWasOption = false;
   }
 
-  // Helper: split inline options on one line like "A) ... B) ... C) ... D) ..."
-  function trySplitInlineOptions(line) {
-    // Find positions of option markers
-    const markers = [];
-    const re = /(^|[\s])([A-Da-d])\s*[\.\)\-:]\s+/g;
-    let m;
-    while ((m = re.exec(line)) !== null) {
-      markers.push({ idx: m.index + (m[1] ? m[1].length : 0), letter: m[2] });
-    }
-    if (markers.length < 2) return null;
-
-    const parts = [];
-    for (let i = 0; i < markers.length; i++) {
-      const start = markers[i].idx;
-      const end = (i + 1 < markers.length) ? markers[i + 1].idx : line.length;
-      const seg = line.slice(start, end).trim();
-      const mm = seg.match(/^([A-Da-d])\s*[\.\)\-:]\s+(.*)$/);
-      if (!mm) continue;
-      parts.push({ letter: mm[1].toUpperCase(), text: (mm[2] || "").trim() });
-    }
-    if (parts.length >= 2) return parts;
-    return null;
-  }
-
-  for (let i = 0; i < chunks.length; i++) {
-    const line = chunks[i];
-
-    // ignore check/explanation lines
+  for (const line of chunks) {
     if (/^Check\s*:/i.test(line)) continue;
 
-    // Question start
     const qm = line.match(qStartRe);
     if (qm) {
       finalize();
-      cur = {
-        q: (qm[2] || "").trim(),
-        options: [],
-        correctIndex: -1,
-        source: "",
-      };
+      cur = { q: (qm[2] || "").trim(), options: [], correctIndex: -1, source: "" };
       lastWasOption = false;
       continue;
     }
+    if (!cur) continue;
 
-    if (!cur) {
-      // Skip text until first question
-      continue;
-    }
-
-    // Correct answer line
     const cm = line.match(correctRe);
     if (cm) {
       const letter = (cm[1] || "").toUpperCase();
-      cur.correctIndex = letter.charCodeAt(0) - "A".charCodeAt(0);
+      cur.correctIndex = letter.charCodeAt(0) - 65;
       lastWasOption = false;
       continue;
     }
 
-    // Correct answer embedded in a longer line, e.g. "... (Correct Answer: C)"
-    const embedded = line.match(/(?:Correct\s*Answer|Correct|Answer|Ans)\s*[:\-]\s*([A-D])\b/i);
-    if (embedded) {
-      const letter = (embedded[1] || "").toUpperCase();
-      cur.correctIndex = letter.charCodeAt(0) - "A".charCodeAt(0);
-      // continue parsing other content too
-      // (we won't `continue` here)
-    }
-
-    // Inline options on the same line
-    const inline = trySplitInlineOptions(line);
-    if (inline && cur.options.length === 0) {
-      // Only use this if we haven't started collecting options yet (avoid duplicates)
-      const sorted = inline
-        .sort((a, b) => a.letter.localeCompare(b.letter))
-        .slice(0, 4);
-
-      // Place them in A,B,C,D order if possible
-      const map = new Map(sorted.map(p => [p.letter, p.text]));
-      const letters = ["A","B","C","D"];
-      const opts = letters.map(L => map.get(L)).filter(Boolean);
-
-      if (opts.length >= 2) {
-        // If we got at least 2, accept (and later wrapping can append)
-        cur.options = [];
-        letters.forEach(L => {
-          if (map.has(L)) cur.options.push(map.get(L));
-        });
-        lastWasOption = true;
-        continue;
-      }
-    }
-
-    // Regular option line
     const om = line.match(optRe);
     if (om) {
-      const letter = (om[1] || "").toUpperCase();
-      const text = (om[2] || "").trim();
-
-      // Make sure options are appended in the order they appear in the doc
-      cur.options.push(text);
+      cur.options.push((om[2] || "").trim());
       lastWasOption = true;
       continue;
     }
 
-    // Wrapping/continuations:
-    // If we've started options, append to last option. Else append to question.
     if (cur.options.length > 0 && lastWasOption) {
       cur.options[cur.options.length - 1] = (cur.options[cur.options.length - 1] + " " + line).trim();
       continue;
     }
 
     if (cur.options.length === 0) {
-      // Question continuation
       cur.q = (cur.q + " " + line).trim();
       continue;
     }
-
-    // If options exist but lastWasOption is false, still treat as continuation of question (rare)
-    cur.q = (cur.q + " " + line).trim();
   }
 
   finalize();
 
-  // Post-clean: remove any accidental extras, trim
   for (const q of out) {
     q.q = (q.q || "").trim();
     q.options = (q.options || []).map(s => (s || "").trim());
   }
-
   return out;
 }
 
 /* -----------------------------
-   QUIZ FLOW
+   Tabs
+-------------------------------- */
+function renderTabs() {
+  setTabs.innerHTML = "";
+  for (const s of SETS) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tab" + (s.key === selectedSetKey ? " active" : "");
+    b.dataset.key = s.key;
+    b.textContent = (s.key === "missed") ? `${s.label} (${missedPool.length})` : s.label;
+
+    b.addEventListener("click", () => {
+      selectedSetKey = s.key;
+      renderTabs();
+      showMessage("Press Start to begin this set.", "");
+    });
+
+    setTabs.appendChild(b);
+  }
+}
+
+/* -----------------------------
+   Quiz flow
 -------------------------------- */
 function startQuiz() {
   if (!allQuestions.length) {
-    showMessage("No questions loaded yet.", "bad");
+    showMessage("No questions loaded yet.\n\n(Use the message above to see exactly which DOCX URL failed.)", "bad");
     return;
   }
 
@@ -417,28 +363,26 @@ function startQuiz() {
 
   qIndex = 0;
   currentFirstAttempt = true;
-
   renderQuestion();
 }
 
 function buildActiveList() {
   if (selectedSetKey === "missed") return missedPool.slice();
-
   const s = SETS.find(x => x.key === selectedSetKey);
   if (!s) return [];
   return allQuestions.slice(s.start, s.end);
 }
 
 function finishQuiz() {
-  const msg =
+  showMessage(
     `Session summary ✅\n` +
     `• Attempted: ${attempted}\n` +
     `• Correct: ${correct}\n` +
     `• First-try correct: ${firstTryCorrect}\n` +
     `• Missed pool: ${missedPool.length}\n\n` +
-    `Pick another set and press Start.`;
-
-  showMessage(msg, "good");
+    `Pick another set and press Start.`,
+    "good"
+  );
 }
 
 function renderQuestion() {
@@ -466,7 +410,7 @@ function renderQuestion() {
   const opts = document.createElement("div");
   opts.className = "options";
 
-  const letters = ["A", "B", "C", "D"];
+  const letters = ["A","B","C","D"];
   qObj.options.forEach((optText, idx) => {
     const card = document.createElement("div");
     card.className = "opt";
@@ -484,7 +428,6 @@ function renderQuestion() {
     card.appendChild(t);
 
     card.addEventListener("click", () => onPickOption(idx, card, qObj));
-
     opts.appendChild(card);
   });
 
@@ -497,12 +440,6 @@ function renderQuestion() {
   quizArea.appendChild(msg);
 }
 
-/**
- * Behavior you requested:
- * - Immediately indicate correct/wrong
- * - If correct → auto next question (no button)
- * - If wrong → stay on same question until correct
- */
 function onPickOption(idx, cardEl, qObj) {
   const allOptEls = [...quizArea.querySelectorAll(".opt")];
 
@@ -512,17 +449,13 @@ function onPickOption(idx, cardEl, qObj) {
   const isCorrect = idx === qObj.correctIndex;
 
   if (isCorrect) {
-    // Mark correct
     cardEl.classList.add("good");
     allOptEls.forEach(el => el.classList.add("disabled"));
     correct++;
-
     if (currentFirstAttempt) firstTryCorrect++;
-
     updateStats();
-    setFeedback(pickEncouragement(), "good");
+    setFeedback("Correct ✅", "good");
 
-    // Auto-advance after a short pause
     setTimeout(() => {
       qIndex++;
       if (qIndex >= activeQuestions.length) {
@@ -536,12 +469,8 @@ function onPickOption(idx, cardEl, qObj) {
     }, 650);
 
   } else {
-    // Wrong: stay here until correct
     cardEl.classList.add("bad");
-
-    // Put into missed pool only if wrong on first attempt
     if (currentFirstAttempt) addToMissed(qObj);
-
     currentFirstAttempt = false;
     setFeedback("Not this one ❌ Try again.", "bad");
   }
@@ -570,25 +499,11 @@ function showMessage(text, kind) {
   quizArea.appendChild(msg);
 }
 
-/* -----------------------------
-   STATS + MOTIVATION
--------------------------------- */
 function updateStats() {
   statCorrect.textContent = `Correct: ${correct}`;
   statAttempted.textContent = `Attempted: ${attempted}`;
   statFirstTry.textContent = `First-try: ${firstTryCorrect}`;
   statMissed.textContent = `Missed pool: ${missedPool.length}`;
-}
-
-function pickEncouragement() {
-  const arr = [
-    "Correct ✅",
-    "Nice ✅",
-    "Perfect ✅",
-    "Great ✅",
-    "Yes ✅",
-  ];
-  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 /* -----------------------------
