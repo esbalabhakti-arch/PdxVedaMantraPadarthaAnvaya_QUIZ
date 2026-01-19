@@ -21,7 +21,6 @@
       --shadow:0 18px 50px rgba(0,0,0,0.55);
       --radius:22px;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -35,32 +34,26 @@
       min-height:100vh;
     }
 
-    .wrap{
-      max-width:1050px;
-      margin:18px auto 44px;
-      padding:0 18px;
-    }
-
-    /* Sleek banner: no big black box, minimal padding */
+    /* ✅ Full-width banner (edge-to-edge) */
     .bannerWrap{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      margin:6px 0 14px;
-      padding:0;
-      background:transparent;
-      border:none;
-      box-shadow:none;
+      width:100%;
+      height:140px;              /* make it thicker */
+      overflow:hidden;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      background:rgba(0,0,0,0.18);
     }
     .bannerImg{
+      width:100%;
+      height:100%;
+      object-fit:cover;          /* stretch to sides, crop as needed */
       display:block;
-      width:min(980px, 100%);
-      max-height:200px;
-      object-fit:contain;
-      height:auto;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.08);
-      background:rgba(0,0,0,0.10);
+      filter:saturate(1.05) contrast(1.02);
+    }
+
+    .wrap{
+      max-width:1050px;
+      margin:16px auto 44px;
+      padding:0 18px;
     }
 
     .panel{
@@ -69,6 +62,7 @@
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       padding:22px;
+      margin-top:16px;
     }
 
     .titlePill{
@@ -90,7 +84,6 @@
       align-items:center;
       justify-content:center;
     }
-
     label{color:var(--muted); font-size:14px}
 
     select{
@@ -103,7 +96,7 @@
       outline:none;
     }
 
-    /* Tabs: force single row; allow horizontal scroll instead of wrapping */
+    /* ✅ Sets in one row, scroll if needed (no wrapping into rows) */
     .tabs{
       display:flex;
       gap:8px;
@@ -169,10 +162,6 @@
       background:rgba(255,92,122,0.15);
       border-color:rgba(255,92,122,0.45);
     }
-    .btn:disabled{
-      opacity:0.45;
-      cursor:not-allowed;
-    }
 
     .stats{
       display:flex;
@@ -230,6 +219,7 @@
     }
     .opt:hover{transform:translateY(-1px); border-color:rgba(124,92,255,0.38)}
     .opt.disabled{opacity:0.55; cursor:not-allowed}
+
     .optBadge{
       flex:0 0 auto;
       width:28px; height:28px;
@@ -276,18 +266,17 @@
 </head>
 
 <body>
+  <div class="bannerWrap">
+    <img
+      id="bannerImg"
+      class="bannerImg"
+      src="Images/Vedic_podcast_banner_2.png"
+      alt="Veda Podcast Banner"
+      onerror="this.style.display='none';"
+    />
+  </div>
+
   <div class="wrap">
-
-    <div class="bannerWrap">
-      <img
-        id="bannerImg"
-        class="bannerImg"
-        src="Images/Vedic_podcast_banner_2.png"
-        alt="Veda Podcast Banner"
-        onerror="this.style.display='none';"
-      />
-    </div>
-
     <div class="panel">
       <div class="row">
         <div class="titlePill">LEARNING CHECK QUIZ (Multiple Choice)</div>
