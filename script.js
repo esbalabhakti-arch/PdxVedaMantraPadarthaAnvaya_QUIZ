@@ -1,20 +1,27 @@
 /* -----------------------------
    CONFIG: add podcasts here
+   IMPORTANT:
+   - Keep file paths RELATIVE to index.html
+   - Prefer putting DOCX under "Images/" if that’s where they live
 -------------------------------- */
 const PODCASTS = [
   { id: "101", title: "101 — Intro 1", file: "Images/101_Intro_1_quiz.docx" },
   { id: "102", title: "102 — Intro 2", file: "Images/102_Intro_2_quiz.docx" },
-  { id: "103", title: "103 — 1st Pañchadi", file: "Images/103_1st_Panchadi_quiz.docx" },
-  { id: "104", title: "104 — 2nd Pañchadi (Part 1)", file: "Images/104_2nd_Panchadi_Part1_quiz.docx" },
+  { id: "103", title: "103 — 1st Panchadi", file: "Images/103_1st_Panchadi_quiz.docx" },
+  { id: "104", title: "104 — 2nd Panchadi (Part 1)", file: "Images/104_2nd_Panchadi_Part1_quiz.docx" },
 ];
 
+/**
+ * Sets are defined as slices over the FULL podcast question list (typically 50).
+ * Labels are short so they fit in one row.
+ */
 const SETS = [
-  { key: "set1", label: "Set 1 (Q1–10)", start: 0, end: 10 },
-  { key: "set2", label: "Set 2 (Q11–20)", start: 10, end: 20 },
-  { key: "set3", label: "Set 3 (Q21–30)", start: 20, end: 30 },
-  { key: "set4", label: "Set 4 (Q31–40)", start: 30, end: 40 },
-  { key: "set5", label: "Set 5 (Q41–50)", start: 40, end: 50 },
-  { key: "missed", label: "Review Missed (0)", start: 0, end: 0 },
+  { key: "set1", label: "1–10", start: 0, end: 10 },
+  { key: "set2", label: "11–20", start: 10, end: 20 },
+  { key: "set3", label: "21–30", start: 20, end: 30 },
+  { key: "set4", label: "31–40", start: 30, end: 40 },
+  { key: "set5", label: "41–50", start: 40, end: 50 },
+  { key: "missed", label: "Missed", start: 0, end: 0 },
 ];
 
 /* -----------------------------
@@ -23,8 +30,8 @@ const SETS = [
 let selectedPodcastId = PODCASTS[0]?.id || null;
 let selectedSetKey = "set1";
 
-let allQuestions = [];          // parsed 50 for current podcast
-let activeQuestions = [];       // 10 for selected set OR missed pool
+let allQuestions = [];          // parsed N for current podcast
+let activeQuestions = [];       // selected set slice OR missed pool
 let qIndex = 0;
 
 let attempted = 0;
@@ -32,9 +39,9 @@ let correct = 0;
 let firstTryCorrect = 0;
 
 let currentFirstAttempt = true;
-let lockedUntilCorrect = false;
 
-const missedPool = [];          // stores question objects (unique by stableKey)
+// Missed pool stores question objects (unique by stableKey)
+const missedPool = [];
 
 /* -----------------------------
    DOM
@@ -44,10 +51,8 @@ const setTabs = document.getElementById("setTabs");
 
 const startBtn = document.getElementById("startBtn");
 const finishBtn = document.getElementById("finishBtn");
-const nextBtn = document.getElementById("nextBtn");
 
 const quizArea = document.getElementById("quizArea");
-const statusMsg = document.getElementById("statusMsg");
 
 const statCorrect = document.getElementById("statCorrect");
 const statAttempted = document.getElementById("statAttempted");
@@ -68,14 +73,14 @@ function init() {
   }
   podcastSelect.value = selectedPodcastId;
 
-  // Tabs
   renderTabs();
+  updateStats();
 
   // Events
   podcastSelect.addEventListener("change", async () => {
     selectedPodcastId = podcastSelect.value;
     await loadPodcastQuestions(selectedPodcastId);
-    resetRunUIOnly();
+    showMessage("Pick a set, then press Start.", "");
   });
 
   startBtn.addEventListener("click", async () => {
@@ -89,26 +94,18 @@ function init() {
     finishQuiz();
   });
 
-  nextBtn.addEventListener("click", () => {
-    if (lockedUntilCorrect) return;
-    qIndex++;
-    if (qIndex >= activeQuestions.length) {
-      showMessage("Finished this set. Pick another set — or Review Missed 💪", "good");
-      nextBtn.disabled = true;
-      return;
-    }
-    renderQuestion();
-  });
-
   // Initial load
   loadPodcastQuestions(selectedPodcastId)
-    .then(() => resetRunUIOnly())
+    .then(() => showMessage("Pick a set, then press Start.", ""))
     .catch((e) => {
       console.error(e);
       showMessage("Could not load the quiz. Open DevTools → Console for details.", "bad");
     });
 }
 
+/* -----------------------------
+   TABS
+-------------------------------- */
 function renderTabs() {
   setTabs.innerHTML = "";
   for (const s of SETS) {
@@ -116,14 +113,17 @@ function renderTabs() {
     b.type = "button";
     b.className = "tab" + (s.key === selectedSetKey ? " active" : "");
     b.dataset.key = s.key;
-    b.textContent = s.key === "missed"
-      ? `Review Missed (${missedPool.length})`
-      : s.label;
+
+    if (s.key === "missed") {
+      b.textContent = `${s.label} (${missedPool.length})`;
+    } else {
+      b.textContent = s.label;
+    }
 
     b.addEventListener("click", () => {
       selectedSetKey = s.key;
       renderTabs();
-      resetRunUIOnly();
+      showMessage("Press Start to begin this set.", "");
     });
 
     setTabs.appendChild(b);
@@ -131,21 +131,66 @@ function renderTabs() {
 }
 
 /* -----------------------------
-   LOADING + PARSING (robust)
+   LOADING + PARSING (more robust)
 -------------------------------- */
+
+/**
+ * Build a fully-qualified URL (important on GitHub Pages subpaths).
+ */
+function resolveUrl(relPath) {
+  return new URL(relPath, window.location.href).toString();
+}
+
+/**
+ * Try fetching the DOCX with fallback path variants.
+ * This helps when folder case differs (Images vs images) or paths change.
+ */
+async function fetchWithFallback(relPath) {
+  const variants = [];
+
+  // 1) as provided
+  variants.push(relPath);
+
+  // 2) common case variants
+  if (relPath.startsWith("Images/")) variants.push("images/" + relPath.slice("Images/".length));
+  if (relPath.startsWith("images/")) variants.push("Images/" + relPath.slice("images/".length));
+
+  // 3) also try without leading "./"
+  variants.push(relPath.replace(/^\.\//, ""));
+
+  // de-dup
+  const uniq = [...new Set(variants)];
+
+  let lastErr = null;
+
+  for (const v of uniq) {
+    const url = resolveUrl(v);
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) {
+        lastErr = new Error(`Fetch failed (${res.status}) for ${url}`);
+        continue;
+      }
+      const ab = await res.arrayBuffer();
+      return { arrayBuffer: ab, usedUrl: url };
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+
+  throw lastErr || new Error("Fetch failed for all fallback paths.");
+}
+
 async function loadPodcastQuestions(podcastId) {
   const p = PODCASTS.find(x => x.id === podcastId);
   if (!p) throw new Error("Unknown podcast id: " + podcastId);
 
-  showMessage(`Loading questions from: ${p.file} ...`, "");
+  showMessage(`Loading: ${p.file}`, "");
+
   allQuestions = [];
 
-  const res = await fetch(p.file, { cache: "no-store" });
-  if (!res.ok) {
-    throw new Error(`Fetch failed (${res.status}) for ${p.file}`);
-  }
-
-  const arrayBuffer = await res.arrayBuffer();
+  // Fetch DOCX (with fallback)
+  const { arrayBuffer, usedUrl } = await fetchWithFallback(p.file);
 
   // Mammoth extracts text from DOCX
   let rawText = "";
@@ -154,129 +199,205 @@ async function loadPodcastQuestions(podcastId) {
     rawText = (result?.value || "").replace(/\r/g, "");
   } catch (e) {
     console.error(e);
-    throw new Error("Mammoth failed to read DOCX (is the file a valid .docx?)");
+    throw new Error("Mammoth failed to read the DOCX. Is it a valid .docx file?");
   }
 
+  // Parse
   const parsed = parseQuestionsFromText(rawText);
   allQuestions = parsed;
 
   if (!allQuestions.length) {
-    console.warn("Raw extracted text:\n", rawText.slice(0, 3000));
-    showMessage(`Error loading quiz ❌  Parsed 0 questions from ${p.file}.`, "bad");
+    console.warn("Raw extracted text (first 4000 chars):\n", rawText.slice(0, 4000));
+    showMessage(
+      `Loaded DOCX but parsed 0 questions ❌\n\nFile URL tried:\n${usedUrl}\n\n` +
+      `This usually means the DOCX text format doesn't match the parser patterns.\n` +
+      `Open DevTools → Console to see extracted text preview.`,
+      "bad"
+    );
   } else {
-    showMessage(`Loaded ${allQuestions.length} questions ✅  Pick a set, then press Start.`, "good");
+    showMessage(`Loaded ${allQuestions.length} questions ✅  Pick a set and press Start.`, "good");
   }
 
   return allQuestions;
 }
 
 /**
- * Robust parser:
- * - Question start: "1. ..." or "1) ..." (with optional leading spaces)
- * - Options: "A. ..." or "A) ..." or "A - ..."
- * - Correct: "Correct Answer: C" (case-insensitive; spaces tolerant)
- * - "Check:" lines ignored
- *
- * It also tolerates option text wrapping onto the next line.
+ * More forgiving parser:
+ * Supports:
+ * - Question start: "1.", "1)", "1 -", "Q1.", "Q 1)"
+ * - Options: "A.", "A)", "A -", also lowercase "a)"
+ * - Options can sometimes be on the same line
+ * - Correct answer: "Correct Answer: C", "Answer: C", "Ans: C", "Correct: C"
+ * - Wrapped lines (question or option continuation)
+ * - Ignores "Check:" lines (explanations)
  */
 function parseQuestionsFromText(text) {
-  const lines = text
+  // Normalize NBSP, weird spaces
+  const normalized = (text || "")
+    .replace(/\u00A0/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n"); // collapse huge gaps
+
+  // Work with "paragraph-ish" chunks to reduce line-break sensitivity
+  const chunks = normalized
     .split("\n")
-    .map(l => l.replace(/\u00A0/g, " ").trimEnd()) // normalize nbsp
-    .map(l => l.trim())
-    .filter(l => l.length > 0);
-
-  const isQStart = (l) => /^\s*\d+\s*[\.\)]\s+/.test(l);
-  const isOpt = (l) => /^[A-D]\s*[\.\)\-:]\s+/.test(l);
-  const isCorrect = (l) => /^Correct\s*Answer\s*:\s*[A-D]\s*$/i.test(l);
-  const getCorrectLetter = (l) => (l.match(/([A-D])\s*$/i) || [])[1]?.toUpperCase();
-
-  const stripQPrefix = (l) => l.replace(/^\s*\d+\s*[\.\)]\s+/, "").trim();
-  const stripOptPrefix = (l) => l.replace(/^[A-D]\s*[\.\)\-:]\s+/, "").trim();
+    .map(s => s.trim())
+    .filter(Boolean);
 
   const out = [];
   let cur = null;
+  let lastWasOption = false;
+
+  const qStartRe = /^(?:Q\s*)?(\d+)\s*[\.\)\-:]\s+(.*)$/i;
+  const optRe = /^([A-Da-d])\s*[\.\)\-:]\s+(.*)$/;
+  const correctRe = /^(?:Correct\s*Answer|Correct\s*Option|Correct|Answer|Ans)\s*[:\-]\s*([A-D])\b/i;
 
   function finalize() {
     if (!cur) return;
 
-    // must have 4 options + correct
+    // Sometimes options are fewer because they were inline; try to keep only good ones.
     if (cur.options.length === 4 && cur.correctIndex >= 0 && cur.correctIndex <= 3) {
-      // stable key helps missed uniqueness
       cur.stableKey = (cur.source || "") + "||" + cur.q;
       out.push(cur);
     }
     cur = null;
+    lastWasOption = false;
   }
 
-  for (let i = 0; i < lines.length; i++) {
-    const l = lines[i];
+  // Helper: split inline options on one line like "A) ... B) ... C) ... D) ..."
+  function trySplitInlineOptions(line) {
+    // Find positions of option markers
+    const markers = [];
+    const re = /(^|[\s])([A-Da-d])\s*[\.\)\-:]\s+/g;
+    let m;
+    while ((m = re.exec(line)) !== null) {
+      markers.push({ idx: m.index + (m[1] ? m[1].length : 0), letter: m[2] });
+    }
+    if (markers.length < 2) return null;
 
-    // ignore "Check:" explanation lines (they can be long)
-    if (/^Check\s*:/i.test(l)) continue;
+    const parts = [];
+    for (let i = 0; i < markers.length; i++) {
+      const start = markers[i].idx;
+      const end = (i + 1 < markers.length) ? markers[i + 1].idx : line.length;
+      const seg = line.slice(start, end).trim();
+      const mm = seg.match(/^([A-Da-d])\s*[\.\)\-:]\s+(.*)$/);
+      if (!mm) continue;
+      parts.push({ letter: mm[1].toUpperCase(), text: (mm[2] || "").trim() });
+    }
+    if (parts.length >= 2) return parts;
+    return null;
+  }
 
-    if (isQStart(l)) {
+  for (let i = 0; i < chunks.length; i++) {
+    const line = chunks[i];
+
+    // ignore check/explanation lines
+    if (/^Check\s*:/i.test(line)) continue;
+
+    // Question start
+    const qm = line.match(qStartRe);
+    if (qm) {
       finalize();
       cur = {
-        q: stripQPrefix(l),
+        q: (qm[2] || "").trim(),
         options: [],
         correctIndex: -1,
-        source: "", // optional
+        source: "",
       };
+      lastWasOption = false;
       continue;
     }
 
-    // If we see "[(Source: ...)]" inside the question line, keep it.
-    if (cur && cur.q && cur.q.includes("Source:")) {
-      // already included in q text; do nothing
-    }
-
-    // options
-    if (cur && isOpt(l)) {
-      cur.options.push(stripOptPrefix(l));
+    if (!cur) {
+      // Skip text until first question
       continue;
     }
 
-    // correct answer
-    if (cur && isCorrect(l)) {
-      const letter = getCorrectLetter(l);
-      if (letter) cur.correctIndex = letter.charCodeAt(0) - "A".charCodeAt(0);
+    // Correct answer line
+    const cm = line.match(correctRe);
+    if (cm) {
+      const letter = (cm[1] || "").toUpperCase();
+      cur.correctIndex = letter.charCodeAt(0) - "A".charCodeAt(0);
+      lastWasOption = false;
       continue;
     }
 
-    // Option wrapping: if we are inside a question and last thing was an option, append wrapped line
-    if (cur && cur.options.length > 0 && !isQStart(l) && !isOpt(l) && !isCorrect(l)) {
-      // append to last option (this fixes "options became one line" style issues)
-      cur.options[cur.options.length - 1] = (cur.options[cur.options.length - 1] + " " + l).trim();
+    // Correct answer embedded in a longer line, e.g. "... (Correct Answer: C)"
+    const embedded = line.match(/(?:Correct\s*Answer|Correct|Answer|Ans)\s*[:\-]\s*([A-D])\b/i);
+    if (embedded) {
+      const letter = (embedded[1] || "").toUpperCase();
+      cur.correctIndex = letter.charCodeAt(0) - "A".charCodeAt(0);
+      // continue parsing other content too
+      // (we won't `continue` here)
+    }
+
+    // Inline options on the same line
+    const inline = trySplitInlineOptions(line);
+    if (inline && cur.options.length === 0) {
+      // Only use this if we haven't started collecting options yet (avoid duplicates)
+      const sorted = inline
+        .sort((a, b) => a.letter.localeCompare(b.letter))
+        .slice(0, 4);
+
+      // Place them in A,B,C,D order if possible
+      const map = new Map(sorted.map(p => [p.letter, p.text]));
+      const letters = ["A","B","C","D"];
+      const opts = letters.map(L => map.get(L)).filter(Boolean);
+
+      if (opts.length >= 2) {
+        // If we got at least 2, accept (and later wrapping can append)
+        cur.options = [];
+        letters.forEach(L => {
+          if (map.has(L)) cur.options.push(map.get(L));
+        });
+        lastWasOption = true;
+        continue;
+      }
+    }
+
+    // Regular option line
+    const om = line.match(optRe);
+    if (om) {
+      const letter = (om[1] || "").toUpperCase();
+      const text = (om[2] || "").trim();
+
+      // Make sure options are appended in the order they appear in the doc
+      cur.options.push(text);
+      lastWasOption = true;
       continue;
     }
 
-    // Question wrapping (sometimes question spans multiple lines before options start)
-    if (cur && cur.options.length === 0 && !isOpt(l) && !isCorrect(l) && !isQStart(l)) {
-      cur.q = (cur.q + " " + l).trim();
+    // Wrapping/continuations:
+    // If we've started options, append to last option. Else append to question.
+    if (cur.options.length > 0 && lastWasOption) {
+      cur.options[cur.options.length - 1] = (cur.options[cur.options.length - 1] + " " + line).trim();
       continue;
     }
+
+    if (cur.options.length === 0) {
+      // Question continuation
+      cur.q = (cur.q + " " + line).trim();
+      continue;
+    }
+
+    // If options exist but lastWasOption is false, still treat as continuation of question (rare)
+    cur.q = (cur.q + " " + line).trim();
   }
 
   finalize();
+
+  // Post-clean: remove any accidental extras, trim
+  for (const q of out) {
+    q.q = (q.q || "").trim();
+    q.options = (q.options || []).map(s => (s || "").trim());
+  }
+
   return out;
 }
 
 /* -----------------------------
    QUIZ FLOW
 -------------------------------- */
-function resetRunUIOnly() {
-  qIndex = 0;
-  currentFirstAttempt = true;
-  lockedUntilCorrect = false;
-  nextBtn.disabled = true;
-  renderTabs();
-
-  // Don’t reset global stats here (stats are per session until Finish)
-  // Just show readiness
-  showMessage("Select a podcast, pick a set, then press Start.", "");
-}
-
 function startQuiz() {
   if (!allQuestions.length) {
     showMessage("No questions loaded yet.", "bad");
@@ -285,43 +406,39 @@ function startQuiz() {
 
   activeQuestions = buildActiveList();
   if (!activeQuestions.length) {
-    showMessage(selectedSetKey === "missed"
-      ? "Review Missed is empty 🎉 Make a mistake (once) to populate it."
-      : "This set has no questions (unexpected).", "bad");
+    showMessage(
+      selectedSetKey === "missed"
+        ? "Missed pool is empty 🎉 (It fills when you answer something wrong once.)"
+        : "This set has no questions (unexpected).",
+      "bad"
+    );
     return;
   }
 
   qIndex = 0;
   currentFirstAttempt = true;
-  lockedUntilCorrect = false;
-  nextBtn.disabled = true;
 
   renderQuestion();
 }
 
 function buildActiveList() {
-  if (selectedSetKey === "missed") {
-    // copy of pool (in current order)
-    return missedPool.slice();
-  }
+  if (selectedSetKey === "missed") return missedPool.slice();
+
   const s = SETS.find(x => x.key === selectedSetKey);
-  const slice = allQuestions.slice(s.start, s.end);
-  return slice;
+  if (!s) return [];
+  return allQuestions.slice(s.start, s.end);
 }
 
 function finishQuiz() {
-  // Simple summary + keep missed pool intact across sessions
   const msg =
-    `Nice work ✅  Session summary:\n` +
+    `Session summary ✅\n` +
     `• Attempted: ${attempted}\n` +
     `• Correct: ${correct}\n` +
     `• First-try correct: ${firstTryCorrect}\n` +
-    `• In Review Missed pool: ${missedPool.length}\n\n` +
-    `Try another Set — or hit Review Missed to clean up mistakes 💪`;
+    `• Missed pool: ${missedPool.length}\n\n` +
+    `Pick another set and press Start.`;
 
   showMessage(msg, "good");
-  quizArea.scrollIntoView({ behavior: "smooth", block: "start" });
-  nextBtn.disabled = true;
 }
 
 function renderQuestion() {
@@ -329,18 +446,16 @@ function renderQuestion() {
   if (!qObj) return;
 
   currentFirstAttempt = true;
-  lockedUntilCorrect = false;
-  nextBtn.disabled = true;
 
   const setLabel = selectedSetKey === "missed"
-    ? "Review Missed"
+    ? `Missed (${activeQuestions.length})`
     : (SETS.find(x => x.key === selectedSetKey)?.label || "Set");
 
   quizArea.innerHTML = "";
 
   const header = document.createElement("div");
   header.className = "qHeader";
-  header.textContent = `${setLabel} • Question ${qIndex + 1} of ${activeQuestions.length}`;
+  header.textContent = `${setLabel} • Q ${qIndex + 1} / ${activeQuestions.length}`;
   quizArea.appendChild(header);
 
   const qEl = document.createElement("div");
@@ -359,7 +474,7 @@ function renderQuestion() {
 
     const badge = document.createElement("div");
     badge.className = "optBadge";
-    badge.textContent = letters[idx];
+    badge.textContent = letters[idx] || "";
 
     const t = document.createElement("div");
     t.className = "optText";
@@ -378,51 +493,57 @@ function renderQuestion() {
   const msg = document.createElement("div");
   msg.className = "msg";
   msg.id = "feedbackMsg";
-  msg.textContent = "Pick an option — I’ll tell you immediately if it’s correct 🙂";
+  msg.textContent = "Pick an option — I’ll tell you immediately.";
   quizArea.appendChild(msg);
 }
 
+/**
+ * Behavior you requested:
+ * - Immediately indicate correct/wrong
+ * - If correct → auto next question (no button)
+ * - If wrong → stay on same question until correct
+ */
 function onPickOption(idx, cardEl, qObj) {
-  if (lockedUntilCorrect) return;
+  const allOptEls = [...quizArea.querySelectorAll(".opt")];
 
   attempted++;
   updateStats();
 
-  const allOptEls = [...quizArea.querySelectorAll(".opt")];
-
   const isCorrect = idx === qObj.correctIndex;
 
-  // Visual marking
   if (isCorrect) {
+    // Mark correct
     cardEl.classList.add("good");
     allOptEls.forEach(el => el.classList.add("disabled"));
-    lockedUntilCorrect = false;
-    nextBtn.disabled = false;
-
-    if (currentFirstAttempt) {
-      firstTryCorrect++;
-    }
-
     correct++;
-    updateStats();
 
+    if (currentFirstAttempt) firstTryCorrect++;
+
+    updateStats();
     setFeedback(pickEncouragement(), "good");
+
+    // Auto-advance after a short pause
+    setTimeout(() => {
+      qIndex++;
+      if (qIndex >= activeQuestions.length) {
+        showMessage(
+          `Finished ✅\n\nAttempted: ${attempted}\nCorrect: ${correct}\nFirst-try: ${firstTryCorrect}\nMissed pool: ${missedPool.length}\n\nPick another set and press Start.`,
+          "good"
+        );
+        return;
+      }
+      renderQuestion();
+    }, 650);
+
   } else {
+    // Wrong: stay here until correct
     cardEl.classList.add("bad");
 
-    // Put into missed pool ONLY if wrong on FIRST attempt
-    if (currentFirstAttempt) {
-      addToMissed(qObj);
-    }
+    // Put into missed pool only if wrong on first attempt
+    if (currentFirstAttempt) addToMissed(qObj);
 
     currentFirstAttempt = false;
-    lockedUntilCorrect = true;
-
-    // allow another try: unlock but keep "must be correct to proceed"
-    setTimeout(() => {
-      lockedUntilCorrect = false;
-      setFeedback("Not this one. Have another go 💡", "bad");
-    }, 250);
+    setFeedback("Not this one ❌ Try again.", "bad");
   }
 }
 
@@ -442,11 +563,9 @@ function setFeedback(text, kind) {
 }
 
 function showMessage(text, kind) {
-  // status message shown in quiz area when not in a question
   quizArea.innerHTML = "";
   const msg = document.createElement("div");
   msg.className = "msg" + (kind ? ` ${kind}` : "");
-  msg.id = "statusMsg";
   msg.textContent = text;
   quizArea.appendChild(msg);
 }
@@ -458,16 +577,16 @@ function updateStats() {
   statCorrect.textContent = `Correct: ${correct}`;
   statAttempted.textContent = `Attempted: ${attempted}`;
   statFirstTry.textContent = `First-try: ${firstTryCorrect}`;
-  statMissed.textContent = `In Review Missed pool: ${missedPool.length}`;
+  statMissed.textContent = `Missed pool: ${missedPool.length}`;
 }
 
 function pickEncouragement() {
   const arr = [
-    "Correct ✅ Nice!",
-    "Yes ✅ Keep going!",
-    "Perfect ✅ You’re on it!",
-    "Correct ✅ Solid listening!",
-    "Great ✅ Next one!",
+    "Correct ✅",
+    "Nice ✅",
+    "Perfect ✅",
+    "Great ✅",
+    "Yes ✅",
   ];
   return arr[Math.floor(Math.random() * arr.length)];
 }
