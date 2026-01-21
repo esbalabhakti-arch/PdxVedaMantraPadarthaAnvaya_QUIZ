@@ -1,6 +1,6 @@
 1.
 According to the talk, what are the Vedas described as for self-realization?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Helpful guides but not definitive
 B. The only pramāṇas
 C. One among many pramāṇas
@@ -10,7 +10,7 @@ Check: The speaker states, “Vedas are the only pramāṇas for our self-realiz
 ________________________________________
 2.
 In the cited Veda stuti verse, what is said to be obtained by doing Veda-enjoined anuṣṭhānas?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Only mokṣa
 B. Only dharma
 C. Puruṣārthas like dharma, artha, kāma, and also mokṣa through knowledge
@@ -20,7 +20,7 @@ Check: The speaker explains the verse as yielding dharma/artha/kāma and ultimat
 ________________________________________
 3.
 Which four human goals (puruṣārtha) are explicitly listed in the explanation?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Dharma, artha, kāma, yāga
 B. Dharma, artha, kāma, mokṣa
 C. Artha, kāma, jñāna, mokṣa
@@ -30,7 +30,7 @@ Check: The talk directly lists “dharma, artha, kāma” and the final goal “
 ________________________________________
 4.
 What is stated as fundamental for performing anuṣṭhānam effectively?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Wealth
 B. Social status
 C. Deha ārogyam (bodily health)
@@ -40,7 +40,7 @@ Check: The speaker says deha ārogyam is very important for anuṣṭhānam.
 ________________________________________
 5.
 Which line is quoted to emphasize that health is the basis for dharma/artha/kāma/mokṣa?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Saha nāv avatu
 B. Dharmārtha-kāma-mokṣāṇām ārogyaṃ mūlam uttamam
 C. Om pūrṇam adaḥ
@@ -50,7 +50,7 @@ Check: This exact line is quoted in the talk as the health foundation statement.
 ________________________________________
 6.
 Why is Sūrya/Āditya upāsanā emphasized in this session?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. It guarantees wealth
 B. It is critical for deha ārogyam (health and wellbeing)
 C. It replaces all rituals
@@ -60,7 +60,7 @@ Check: The speaker ties Sūrya upāsanā directly to health.
 ________________________________________
 7.
 In daily sandhyāvandanam, how is Sūrya described in the cited statement?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. As the best among planets
 B. As Brahman
 C. As a ritual fire
@@ -70,7 +70,7 @@ Check: The talk quotes: “asāvādityo brahma…”
 ________________________________________
 8.
 What is the quoted declaration involving Sūrya and the individual self?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Om namo nārāyaṇāya
 B. Asāvādityo brahma brahmaivāhamasmi
 C. Om bhadram karṇebhiḥ
@@ -80,7 +80,7 @@ Check: The exact sandhyā line is quoted in the talk.
 ________________________________________
 9.
 Sūrya Bhagavān is described as what kind of devatā?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Parokṣa devatā
 B. Pratyakṣa devatā
 C. Guptā devatā
@@ -90,7 +90,7 @@ Check: The talk explicitly calls Sūrya “pratyakṣa devatā.”
 ________________________________________
 10.
 What universal role is attributed to Sūrya Bhagavān?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Destroyer of the world
 B. Nourisher of the entire world
 C. Teacher of all mantras
@@ -100,7 +100,7 @@ Check: The speaker calls Sūrya the nourisher of the entire world.
 ________________________________________
 11.
 Where does Aruṇam occur, according to the speaker?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Taittirīya Saṃhitā
 B. Taittirīya Brāhmaṇa
 C. Taittirīya Āraṇyaka
@@ -110,7 +110,7 @@ Check: The speaker states: Aruṇam comes in the Taittirīya Āraṇyakam.
 ________________________________________
 12.
 Which of the following is presented as the first broad classification of Vedic textual layers?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Saṃhitā, Brāhmaṇa, Āraṇyaka
 B. Itihāsa, Purāṇa, Smṛti
 C. Nyāya, Mīmāṃsā, Vedānta
@@ -120,7 +120,7 @@ Check: The summary lists these three layers as the main outline of Veda.
 ________________________________________
 13.
 What does the speaker say the Saṃhitā portion primarily consists of?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Yajña brick layouts
 B. Mantra-rūpam (mantras)
 C. Only philosophical discussion
@@ -130,7 +130,7 @@ Check: Saṃhitā is described as the mantra-form of the Vedas.
 ________________________________________
 14.
 What is the Brāhmaṇa portion said to explain?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Only meditation techniques
 B. Mantras and how to use them in anuṣṭhānam (prayogam)
 C. Only grammar rules
@@ -140,7 +140,7 @@ Check: The speaker says Brāhmaṇam explains mantras and their ritual applicati
 ________________________________________
 15.
 Which examples of homa are explicitly given when describing Brāhmaṇam?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Agnihotra and Darśapūrṇamāsa
 B. Kuśmāṇḍa homa and Rudra homa
 C. Aśvamedha and Rājasūya
@@ -150,7 +150,7 @@ Check: The speaker explicitly mentions Kuśmāṇḍa homa and Rudra homa.
 ________________________________________
 16.
 What is said to be the main character of the Āraṇyaka portion?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Only ritual performance
 B. Upāsanā mārga: internalization and meditation on Saṃhitā mantras
 C. Only social laws
@@ -160,7 +160,7 @@ Check: Āraṇyakam is described as upāsanā and nididhyāsanam-like internaliz
 ________________________________________
 17.
 The end portion of the Āraṇyaka is also called what?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Saṃhitā
 B. Brāhmaṇa
 C. Upaniṣads
@@ -170,7 +170,7 @@ Check: The speaker states the end portion of Āraṇyakam is the Upaniṣads.
 ________________________________________
 18.
 How are Saṃhitā, Brāhmaṇa, Āraṇyaka mapped onto the triad śravaṇam–mananam–nididhyāsanam?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Saṃhitā=mananam, Brāhmaṇa=nididhyāsanam, Āraṇyaka=śravaṇam
 B. Saṃhitā=śravaṇam, Brāhmaṇa=mananam, Āraṇyaka=nididhyāsanam
 C. Saṃhitā=nididhyāsanam, Brāhmaṇa=śravaṇam, Āraṇyaka=mananam
@@ -180,7 +180,7 @@ Check: The summary explicitly provides this correspondence.
 ________________________________________
 19.
 What is the described activity associated with Saṃhitā in the śravaṇam–mananam–nididhyāsanam mapping?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Brick arrangement planning
 B. Listening/learning and repeating (adhyayanam)
 C. Funeral performance
@@ -190,7 +190,7 @@ Check: Saṃhitā is linked to śravaṇam: listen and repeat (adhyayanam).
 ________________________________________
 20.
 In the same mapping, what does the Āraṇyaka portion emphasize?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. External ritual actions only
 B. Internalizing and meditating upon mantras (upāsanā)
 C. Only collecting mantras
@@ -200,7 +200,7 @@ Check: Āraṇyakam is described as internalization/meditation: upāsanā, nidid
 ________________________________________
 21.
 In another classification, Vedic literature is divided into which two broad parts?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Smṛti and Śruti
 B. Vedapūrva and Vedānta
 C. Āgama and Nigama
@@ -210,7 +210,7 @@ Check: The summary states Vedapūrva (karmakāṇḍa) and Vedānta.
 ________________________________________
 22.
 What is Vedapūrva identified as?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Upaniṣads only
 B. Karma-kāṇḍa
 C. Philosophy only
@@ -220,7 +220,7 @@ Check: The speaker says Veda-pūrva is karma-kāṇḍam.
 ________________________________________
 23.
 Which components are included in the karma-kāṇḍa per the speaker’s explanation?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Only Saṃhitā
 B. Saṃhitā, Brāhmaṇa, Āraṇyaka
 C. Only Upaniṣads
@@ -230,7 +230,7 @@ Check: The speaker lists these three as forming karma-kāṇḍa (Veda-pūrva).
 ________________________________________
 24.
 Where is Vedānta located according to the speaker?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Beginning of Saṃhitā
 B. Middle of Brāhmaṇa
 C. End portion of the Āraṇyaka as Upaniṣads
@@ -240,7 +240,7 @@ Check: Vedānta is the Upaniṣads at the end of Āraṇyakas.
 ________________________________________
 25.
 How many praśnas does the Taittirīya Āraṇyaka have, according to the session?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. 8
 B. 9
 C. 10
@@ -250,7 +250,7 @@ Check: The speaker states Taittirīya Āraṇyakam has ten praśnams.
 ________________________________________
 26.
 What alternative grouping is mentioned for the Taittirīya Āraṇyaka in some editions?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Six anuvākams
 B. Eight prapāṭhakams
 C. Twelve kāṇḍas
@@ -260,7 +260,7 @@ Check: The talk says some classify it as eight prapāṭhakams.
 ________________________________________
 27.
 What does the speaker say a “praśnam” or “prapāṭhakam” is?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. A meter
 B. A hymn
 C. A chapter
@@ -270,7 +270,7 @@ Check: The speaker states praśnam/prapāṭhakam is a chapter.
 ________________________________________
 28.
 What is the first praśna called, and what is it essentially?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Śikṣāvallī; phonetics
 B. Aruṇam; Aruṇa-ketuka chayanānam
 C. Pravargyabrāhmaṇa; ritual explanation
@@ -280,7 +280,7 @@ Check: The talk says first praśna is Aruṇam, basically Aruṇa-ketuka chayan�
 ________________________________________
 29.
 What is Aruṇam said to be important for?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Worship of Agni
 B. Worship of Sūrya Bhagavān
 C. Worship of Soma
@@ -290,7 +290,7 @@ Check: The speaker calls Aruṇam an important mantra to worship Sūrya.
 ________________________________________
 30.
 Which topics are listed as being in the second praśna?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Only Upaniṣadic mahāvākyas
 B. Svādhyāya brāhmaṇa, sandhyopāsanā mantras, rakṣā-guṇa mantras, Kuśmāṇḍa homa mantras
 C. Only pravargya karma
@@ -300,7 +300,7 @@ Check: The speaker lists these items as contents of the second praśna.
 ________________________________________
 31.
 In the third praśna, “chayana” is explained as referring to what?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. A type of chant
 B. Arrangement/preparation of bricks for yajña
 C. A meditation posture
@@ -310,7 +310,7 @@ Check: The speaker defines chayana as arranging bricks for a yajña.
 ________________________________________
 32.
 Which additional mantras are said to be included in the third praśna?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Only ghoṣa-śānti
 B. Pratigraha and brahmamedhā mantras
 C. Only sandhyopāsanā
@@ -320,7 +320,7 @@ Check: The summary mentions pratigraha and brahmamedhā mantras in the third pra
 ________________________________________
 33.
 The fourth praśna is identified as which ritual section?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Kaṭu praśnam
 B. Pravargya karma
 C. Saṃvatsara vrata
@@ -330,7 +330,7 @@ Check: The speaker says the fourth praśna is pravargya karma.
 ________________________________________
 34.
 Pravargya karma is said to be used especially in which context?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Daily sandhyā only
 B. Somayāgas
 C. Funeral rites
@@ -340,7 +340,7 @@ Check: The speaker states pravargya is used in Soma-yāgas.
 ________________________________________
 35.
 Which types of śānti mantras are said to be present in the fourth praśna?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Bhadraṃ Karṇebhiḥ only
 B. Pañca-śānti and ghoṣa-śānti
 C. Saha nāv avatu and ghoṣa-śānti
@@ -350,7 +350,7 @@ Check: The fourth praśna includes pañca-śānti and ghoṣa-śānti mantras.
 ________________________________________
 36.
 What is the fifth praśna said to contain?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Pravargya brāhmaṇa explaining pravargya karma mantras
 B. Śikṣāvallī chanting rules
 C. Bhṛguvallī only
@@ -360,7 +360,7 @@ Check: The speaker says the fifth praśna explains pravargya karma from the four
 ________________________________________
 37.
 The sixth praśna contains what type of mantras according to the talk?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Sandhyopāsanā mantras
 B. Aparakriyā mantras used in pitṛmedha prayoga
 C. Gāyatrī upāsanā
@@ -370,7 +370,7 @@ Check: The sixth praśna is described as containing aparakriyā mantras for pit�
 ________________________________________
 38.
 Swami Omkārānanda is cited as saying the sixth praśna is also called what?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Nārāyaṇavallī
 B. Kaṭu praśnam
 C. Śikṣā praśnam
@@ -380,7 +380,7 @@ Check: The talk explicitly states Swami Omkārānanda calls it Kaṭu praśnam.
 ________________________________________
 39.
 Which praśna is identified as Śikṣāvallī?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Sixth
 B. Seventh
 C. Eighth
@@ -390,7 +390,7 @@ Check: The speaker says the seventh praśna is Śikṣāvallī.
 ________________________________________
 40.
 Which praśna is identified as Ānandavallī?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Seventh
 B. Eighth
 C. Ninth
@@ -400,7 +400,7 @@ Check: The speaker states the eighth praśna is Ānandavallī.
 ________________________________________
 41.
 Which praśna is identified as Bhṛguvallī?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Seventh
 B. Eighth
 C. Ninth
@@ -410,7 +410,7 @@ Check: The talk states the ninth praśna is Bhṛguvallī.
 ________________________________________
 42.
 What is the tenth praśna identified as?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Ānandavallī
 B. Mahā Nārāyaṇa Upaniṣad
 C. Śikṣāvallī
@@ -420,7 +420,7 @@ Check: The speaker says the tenth praśna is Mahā Nārāyaṇa Upaniṣad.
 ________________________________________
 43.
 What alternative name is given for the Mahā Nārāyaṇa Upaniṣad in the talk?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Bhṛguvallī
 B. Nārāyaṇa-vallī
 C. Kaṭu praśnam
@@ -430,7 +430,7 @@ Check: The speaker explicitly says it is also called Nārāyaṇa-vallī.
 ________________________________________
 44.
 Which statement best matches the talk’s description of Brāhmaṇam?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. It is exclusively philosophical
 B. It explains how Saṃhitā mantras are used in ritual practice (prayogam)
 C. It is unrelated to mantras
@@ -440,7 +440,7 @@ Check: The talk defines Brāhmaṇam by ritual application/explanation of mantra
 ________________________________________
 45.
 Which statement best matches the talk’s description of Āraṇyakam?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. It is only for ritual priests
 B. It is mostly the upāsanā mārga: internalizing and meditating on mantras
 C. It is a list of deities only
@@ -450,7 +450,7 @@ Check: Āraṇyakam is described as upāsanā and meditation-focused internaliza
 ________________________________________
 46.
 According to the session, Aruṇam is connected to worship of which deity?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Agni
 B. Sūrya/Āditya
 C. Rudra only
@@ -460,7 +460,7 @@ Check: The summary says Aruṇam involves Aruṇa mantras connected to worship o
 ________________________________________
 47.
 Which praśna is said to include protection-related mantras (rakṣā-guṇa mantras)?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. First
 B. Second
 C. Fourth
@@ -470,7 +470,7 @@ Check: Rakṣā-guṇa mantras are listed under the second praśna.
 ________________________________________
 48.
 What is the session’s closing śānti mantra (as shown in the files)?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Bhadraṃ Karṇebhiḥ
 B. Saha nāv avatu
 C. Pūrṇam adaḥ pūrṇam idam
@@ -480,7 +480,7 @@ Check: The talk closes with “ॐ पूर्णमदः पूर्णम�
 ________________________________________
 49.
 Which Guru-stuti idea is explicitly translated in the summary’s opening lines?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. Guru is equal only to Indra
 B. Guru is verily the supreme Brahman
 C. Guru is only a ritual specialist
@@ -490,7 +490,7 @@ Check: The translation states: “The Guru is verily the supreme Brahman.”
 ________________________________________
 50.
 What is Dakṣiṇāmūrti described as in the Guru salutation translation?
-[(Source: Intro_1)]
+[(Source: 101_Intro_1)]
 A. The king of gods
 B. The physician of those afflicted by samsāra and treasure of knowledge
 C. The lord of rains
@@ -501,7 +501,7 @@ ________________________________________
 
 1.
 Aruṇam is identified as the first praśna of which Vedic text?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Taittirīya Saṃhitā
 B. Taittirīya Brāhmaṇa
 C. Taittirīya Āraṇyaka
@@ -511,7 +511,7 @@ Check: The speaker clearly states that Aruṇam is the first praśnam of the Tai
 ________________________________________
 2.
 Why are Āraṇyakams traditionally meant to be chanted in a forest (āraṇyam)?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Forests contain sacred trees
 B. Forest chanting increases mantra power
 C. They require a secluded, distraction-free environment
@@ -521,7 +521,7 @@ Check: The speaker explains that āraṇyam implies a secluded, isolated place s
 ________________________________________
 3.
 How is the traditional idea of āraṇyam interpreted in modern life?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Visiting temples regularly
 B. Chanting only outdoors
 C. Using a quiet, isolated corner of one’s home
@@ -531,7 +531,7 @@ Check: The talk explicitly interprets āraṇyam as a peaceful corner of one’s
 ________________________________________
 4.
 One explanation for the name “Aruṇam” is that the ṛṣis of these mantras were called what?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Āraṇyaka
 B. Aruṇaḥ
 C. Ādityaḥ
@@ -541,7 +541,7 @@ Check: The 131st pañcati mentions “Aruṇakanda ṛṣayaḥ,” indicating t
 ________________________________________
 5.
 What is the second explanation given for why the text is called Aruṇam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. It praises the rising sun
 B. It belongs to Sūrya worship
 C. It deals with the Aruṇaketuka yajña
@@ -551,7 +551,7 @@ Check: The speaker explicitly says Aruṇam talks about Aruṇaketuka yajñam.
 ________________________________________
 6.
 In which pañcati is the reference to “Aruṇakanda ṛṣayaḥ” found?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. First pañcati
 B. 32nd pañcati
 C. 131st pañcati
@@ -561,7 +561,7 @@ Check: The talk clearly references the 131st pañcati.
 ________________________________________
 7.
 How many pañcatis does Aruṇam contain in total?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. 108
 B. 120
 C. 131
@@ -571,7 +571,7 @@ Check: The speaker repeatedly states that Aruṇam has 132 pañcatis.
 ________________________________________
 8.
 Approximately how many words are there in one pañcati?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. 25
 B. 40
 C. 50
@@ -581,7 +581,7 @@ Check: A pañcati is described as a group of roughly 50 words.
 ________________________________________
 9.
 Why may a pañcati not end with a complete sentence?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Due to poetic license
 B. Because meaning continues across pañcatis
 C. Because pañcatis are word-count based pedagogical units
@@ -591,7 +591,7 @@ Check: The speaker explains pañcatis are divided by word count, not sentence st
 ________________________________________
 10.
 What is the primary pedagogical advantage of dividing the text into pañcatis?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Musical alignment
 B. Easier memorization and retention
 C. Faster recitation
@@ -601,7 +601,7 @@ Check: The division aids memory and practice during adhyayanam and abhyāsam.
 ________________________________________
 11.
 What is the teaching method where the teacher chants once and the student repeats?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Tiruvai
 B. Abhyāsa
 C. Chandai
@@ -611,7 +611,7 @@ Check: Chandai is explicitly defined as teacher-led repetition.
 ________________________________________
 12.
 What is the name for personal practice done after chandai?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Saṃhitā
 B. Tiruvai
 C. Pārāyaṇam
@@ -621,7 +621,7 @@ Check: Tiruvai is described as self-practice following chandai.
 ________________________________________
 13.
 Into how many anuvākams are the 132 pañcatis grouped?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. 16
 B. 24
 C. 32
@@ -631,7 +631,7 @@ Check: The speaker clearly states there are 32 anuvākams.
 ________________________________________
 14.
 What is typically recited at the end of each anuvākam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Rudram
 B. Gāyatrī mantra
 C. Praise to Śrī Sūrya Nārāyaṇa with “Om Namo Nārāyaṇāya”
@@ -641,7 +641,7 @@ Check: This post-anuvāka recitation is explicitly mentioned.
 ________________________________________
 15.
 At what structural level is this Sūrya Nārāyaṇa salutation generally done?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Every mantra
 B. Every pañcati
 C. Every anuvākam
@@ -651,7 +651,7 @@ Check: The speaker notes it is generally done at the anuvākam level.
 ________________________________________
 16.
 Which additional texts are sometimes chanted at the end of Aruṇam depending on tradition?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Rudra Namakam and Camakam
 B. Puruṣa Sūktam and Nārāyaṇa Sūktam
 C. Sūrya Navagraha Sūktam and Āditya Hṛdayam
@@ -661,7 +661,7 @@ Check: These are explicitly listed as optional regional practices.
 ________________________________________
 17.
 What is the central theme of anuvākams 1–6?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Creation
 B. Sun as kāla-svarūpa
 C. Mokṣa
@@ -671,7 +671,7 @@ Check: The first six anuvākams describe the Sun as embodiment of time.
 ________________________________________
 18.
 Which anuvākam describes the Sun in Aṣṭamūrti form?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Sixth
 B. Seventh
 C. Eighth
@@ -681,7 +681,7 @@ Check: The seventh anuvākam is stated to explain Aṣṭamūrti.
 ________________________________________
 19.
 What additional subject is described in the seventh anuvākam besides Aṣṭamūrti?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Mount Kailāsa
 B. Sapta Samudras
 C. Mahā Meru
@@ -691,7 +691,7 @@ Check: Mahā Meru is explicitly mentioned.
 ________________________________________
 20.
 Which anuvākam discusses death and ways to avoid it?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Seventh
 B. Eighth
 C. Ninth
@@ -701,7 +701,7 @@ Check: The eighth anuvākam is said to address death and avoidance.
 ________________________________________
 21.
 The ninth anuvākam focuses specifically on which concept?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Mokṣa
 B. Kāla
 C. Apamṛtyu
@@ -711,7 +711,7 @@ Check: Apamṛtyu (untimely death) and full lifespan are discussed.
 ________________________________________
 22.
 How are pairs like day–night and hot–cold interpreted in the tenth anuvākam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. As material opposites
 B. As illusion
 C. As Śiva–Śakti divine couple
@@ -721,7 +721,7 @@ Check: The duals are explained as ŚivaŚakti dampati.
 ________________________________________
 23.
 Which anuvākam introduces Gāyatrī and Śrī Vidyā upāsanā?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Tenth
 B. Eleventh
 C. Twelfth
@@ -731,7 +731,7 @@ Check: The 11th anuvākam is explicitly stated.
 ________________________________________
 24.
 What is the range of anuvākams that include Rudragaṇas and Bhūmadevī mantras?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. 1–6
 B. 7–11
 C. 12–22
@@ -741,7 +741,7 @@ Check: Anuvākams 12 to 22 cover these topics.
 ________________________________________
 25.
 Which section ends with Mantrapuṣpam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. 1–6
 B. 7–11
 C. 12–22
@@ -751,7 +751,7 @@ Check: The speaker explicitly says this block ends with Mantrapuṣpam.
 ________________________________________
 26.
 Which anuvākams deal with Aruṇaketuka yajña chayanam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. 12–22
 B. 23–26
 C. 27–31
@@ -761,7 +761,7 @@ Check: The Aruṇaketuka yajña chayanam is assigned to anuvākams 23–26.
 ________________________________________
 27.
 What is the main subject of anuvākams 27–31?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Death rituals
 B. Kāla worship
 C. Mokṣa-sādhana and Vaiśravaṇa yajña
@@ -771,7 +771,7 @@ Check: Mokṣa means and Vaiśravaṇa yajña are explicitly mentioned.
 ________________________________________
 28.
 Which anuvākam concludes the entire Aruṇam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. 30
 B. 31
 C. 32
@@ -781,7 +781,7 @@ Check: The 32nd anuvākam concludes with Saṃvatsaravrata.
 ________________________________________
 29.
 What vrata is associated with the final anuvākam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Ekādaśī
 B. Saṃvatsaravrata
 C. Cāturmāsya
@@ -791,7 +791,7 @@ Check: Saṃvatsaravrata is explicitly named.
 ________________________________________
 30.
 Which śānti mantra begins the Aruṇam praśna?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Saha nāv avatu
 B. Pūrṇam adaḥ
 C. Bhadraṃ Karṇebhiḥ
@@ -801,7 +801,7 @@ Check: Aruṇam begins with “Bhadraṃ Karṇebhiḥ.”
 ________________________________________
 31.
 Which praśnas begin with “Saha nāv avatu”?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. First three praśnas
 B. Āraṇyaka only
 C. Taittirīya Upaniṣad (7–9)
@@ -811,7 +811,7 @@ Check: Praśnas 7–9 (Upaniṣad) begin with that śānti mantra.
 ________________________________________
 32.
 Why is the śānti mantra repeated within the first pañcati of Aruṇam?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. For poetic emphasis
 B. For general peace again
 C. Specifically for Aruṇaketuka yajña without obstacles
@@ -821,7 +821,7 @@ Check: The second chanting is specific to Aruṇaketuka anuṣṭhānam.
 ________________________________________
 33.
 What does the first chanting of the śānti mantra primarily aim for?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Ritual completion
 B. General removal of obstacles
 C. Mokṣa
@@ -831,7 +831,7 @@ Check: The first chanting is for general nivāraṇam.
 ________________________________________
 34.
 How many types of obstacles does the śānti mantra address?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Two
 B. Three
 C. Four
@@ -841,7 +841,7 @@ Check: Three types of obstacles are listed.
 ________________________________________
 35.
 What is meant by ādhyātmika obstacles?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Environmental problems
 B. Natural disasters
 C. Obstacles from oneself and close relations
@@ -851,7 +851,7 @@ Check: Illness of self or family is given as example.
 ________________________________________
 36.
 Which example is given for ādhibhautika obstacles?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Earthquake
 B. Flood
 C. Power outage during chanting
@@ -861,7 +861,7 @@ Check: Power failure is explicitly mentioned as an example.
 ________________________________________
 37.
 Ādhidaivika obstacles include which of the following?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Laziness
 B. Wild animals
 C. Floods and earthquakes
@@ -871,7 +871,7 @@ Check: Natural calamities are cited as ādhidaivika.
 ________________________________________
 38.
 What collective term is used for these three categories of obstacles?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Triguṇa
 B. Tridoṣa
 C. Tāpatraya
@@ -881,7 +881,7 @@ Check: The three obstacles together are called tāpatrayam.
 ________________________________________
 39.
 For how long is freedom from tāpatraya primarily sought?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Entire lifetime
 B. Until enlightenment
 C. Until completion of the anuṣṭhānam
@@ -891,7 +891,7 @@ Check: The speaker specifies “until we conclude our anuṣṭhānam.”
 ________________________________________
 40.
 Which activity is repeatedly cited as being affected by obstacles?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Travel
 B. Trade
 C. Adhyayanam and pārāyaṇam
@@ -901,7 +901,7 @@ Check: These are the central concerns of the śānti mantra.
 ________________________________________
 41.
 What does anuṣṭhānam refer to in this context?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Daily chores
 B. Vedic ritual or observance
 C. Temple visit
@@ -911,7 +911,7 @@ Check: It refers to ritual performance such as yajña or recitation.
 ________________________________________
 42.
 Why is obstacle-free study emphasized before detailed mantra explanation?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. For tradition
 B. For ritual correctness
 C. To ensure uninterrupted learning and practice
@@ -921,7 +921,7 @@ Check: The entire śānti framework supports uninterrupted adhyayanam.
 ________________________________________
 43.
 What will be taken up in detail in the next recording according to the speaker?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Aruṇaketuka yajña chayanam
 B. Full meaning of the first pañcati
 C. Mokṣa-sādhana
@@ -931,7 +931,7 @@ Check: The speaker explicitly defers detailed meaning to the next session.
 ________________________________________
 44.
 Which mantra is recited again at the end of the session?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Bhadraṃ Karṇebhiḥ
 B. Saha nāv avatu
 C. Pūrṇam adaḥ
@@ -941,7 +941,7 @@ Check: The session concludes with “Pūrṇam adaḥ.”
 ________________________________________
 45.
 What is the overall pedagogical aim of this introductory session?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Ritual instruction
 B. Structural orientation to Aruṇam
 C. Chanting practice
@@ -951,7 +951,7 @@ Check: The session outlines structure, naming, and arrangement of Aruṇam.
 ________________________________________
 46.
 Which element is emphasized more than mantra meaning in this session?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Grammar
 B. Phonetics
 C. Organization and framework
@@ -961,7 +961,7 @@ Check: The talk focuses on structure before meaning.
 ________________________________________
 47.
 Why is Aruṇam placed before the Upaniṣads in the Āraṇyaka?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Historical reason
 B. Ritual sequence
 C. It is the first praśnam
@@ -971,7 +971,7 @@ Check: Aruṇam is structurally the first praśnam.
 ________________________________________
 48.
 Which concept connects Aruṇam strongly to Sūrya worship?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Navagrahas
 B. Kāla-svarūpa of Sun
 C. Soma rituals
@@ -981,7 +981,7 @@ Check: Sun as embodiment of time is a dominant theme.
 ________________________________________
 49.
 What aspect of Vedic learning does the pañcati system primarily support?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Debate
 B. Writing
 C. Oral memorization
@@ -991,7 +991,7 @@ Check: Pañcatis are designed for oral retention and practice.
 ________________________________________
 50.
 Which single idea best summarizes the purpose of the śānti mantra in this session?
-[(Source: Intro_2)]
+[(Source: 102_Intro_2)]
 A. Ritual completion
 B. Invocation of deities
 C. Temporary freedom from obstacles to complete study and ritual
@@ -1001,7 +1001,7 @@ Check: The śānti mantra’s purpose is obstacle-free completion of adhyayanam 
 
 1.
 What is the primary purpose of chanting “śāntiḥ” three times at the beginning of the session?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. To praise the Trimūrti
 B. To invoke sacred rivers
 C. To remove the three types of miseries (tāpatraya nivāraṇārtham)
@@ -1011,7 +1011,7 @@ Check: The speaker explicitly states that the triple “śāntiḥ” is for rem
 ________________________________________
 2.
 Why is the śānti mantra repeated again as part of the first pañcati?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. To increase its poetic beauty
 B. To align with musical chanting rules
 C. To remove obstacles specifically in the adhyayanam or pārāyaṇam of Aruṇam
@@ -1021,7 +1021,7 @@ Check: The repetition is specifically for nivāraṇam of obstacles in studying 
 ________________________________________
 3.
 What does “bhadram” mean in the mantra “bhadraṃ karṇebhiḥ śṛṇuyāma”?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Loud
 B. Continuous
 C. Auspicious or noble
@@ -1031,7 +1031,7 @@ Check: The word “bhadram” is explained as auspicious, good, or noble.
 ________________________________________
 4.
 In the phrase “śṛṇuyāma devāḥ,” who are primarily being addressed as “Devāḥ”?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Only Indra
 B. The chanting students
 C. Devas in general, including those named later
@@ -1041,7 +1041,7 @@ Check: The speaker notes that “Devāḥ” can mean Devas in general and also 
 ________________________________________
 5.
 What sense faculty is explicitly mentioned first in the śānti mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Speech
 B. Touch
 C. Hearing
@@ -1051,7 +1051,7 @@ Check: The mantra begins with “bhadraṃ karṇebhiḥ śṛṇuyāma” – h
 ________________________________________
 6.
 What does “paśyema” signify in the mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Let us speak
 B. Let us remember
 C. Let us see
@@ -1061,7 +1061,7 @@ Check: “Paśyema” is translated as “let us see.”
 ________________________________________
 7.
 Who are addressed as “yajatrāḥ” in the mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Ritual priests
 B. Those worthy of worship (the Devas)
 C. Sacred texts
@@ -1071,7 +1071,7 @@ Check: The speaker clarifies that “yajatrāḥ” refers to those worthy of wo
 ________________________________________
 8.
 Why are words like “aṅgaiḥ” and “tanūbhiḥ” used in plural form?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. To follow poetic meter
 B. To indicate multiple rituals
 C. To signify a collective prayer for all chanters
@@ -1081,7 +1081,7 @@ Check: The plural indicates the prayer is collective, not merely individual.
 ________________________________________
 9.
 What does “sthira” imply when describing the limbs?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Beautiful
 B. Flexible
 C. Firm and strong
@@ -1091,7 +1091,7 @@ Check: “Sthiraiḥ” is explained as very firm and strong.
 ________________________________________
 10.
 What is the intention behind praying for strong limbs and healthy bodies?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. For physical prowess
 B. For worldly enjoyment
 C. To worship and praise the Devas properly
@@ -1101,7 +1101,7 @@ Check: Health is sought so worship and adhyayanam can be performed properly.
 ________________________________________
 11.
 What does “devahitaṃ yad āyuḥ” refer to?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Life chosen by humans
 B. Life extended through penance
 C. Lifespan ordained by the Devas
@@ -1111,7 +1111,7 @@ Check: The phrase means the lifespan fixed or ordained by the gods.
 ________________________________________
 12.
 What is the primary prayer regarding lifespan in this mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. To exceed the ordained lifespan
 B. To shorten life to avoid suffering
 C. To live the full ordained lifespan healthily
@@ -1121,7 +1121,7 @@ Check: The chanter prays to live the full destined span in good health.
 ________________________________________
 13.
 Which lifespan durations are mentioned in the explanation as found in śāstra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. 60, 90, 120
 B. 80, 100, 108
 C. 100, 116, 120
@@ -1131,7 +1131,7 @@ Check: The speaker explicitly mentions 100, 116, and 120 years.
 ________________________________________
 14.
 What planetary motion is linked to the explanation of the 60-year cycle?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Sūrya
 B. Soma
 C. Bṛhaspati
@@ -1141,7 +1141,7 @@ Check: Bṛhaspati’s approximately 12-year zodiac cycle is discussed.
 ________________________________________
 15.
 Why is ṣaṣṭyabda pūrti performed at 60 years?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. It marks retirement
 B. It completes five Bṛhaspati cycles
 C. It is mentioned in the Vedas explicitly
@@ -1151,7 +1151,7 @@ Check: Five 12-year cycles of Bṛhaspati complete 60 years.
 ________________________________________
 16.
 What does “svasti” mean in the invocations to specific deities?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Wealth
 B. Knowledge
 C. Auspiciousness or well-being
@@ -1161,7 +1161,7 @@ Check: “Svasti” is glossed as maṅgalam or kalyāṇam.
 ________________________________________
 17.
 Which deity is described as “vṛddhaśravaḥ”?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Pūṣan
 B. Bṛhaspati
 C. Indra
@@ -1171,7 +1171,7 @@ Check: “Vṛddhaśravaḥ” (of great fame) is an epithet of Indra here.
 ________________________________________
 18.
 What is the role of Pūṣan as explained in the mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Warrior deity
 B. Nourisher and knower of all
 C. Remover of obstacles
@@ -1181,7 +1181,7 @@ Check: Pūṣan is a form of Sūrya who nourishes and knows everything (viśvave
 ________________________________________
 19.
 Among the twelve Ādityas, Pūṣan is identified as a form of which deity?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Agni
 B. Indra
 C. Sūrya
@@ -1191,7 +1191,7 @@ Check: Pūṣan is described as one form of Sūrya.
 ________________________________________
 20.
 Who is referred to as Tārkṣya in the mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Indra
 B. Bṛhaspati
 C. Garuḍa
@@ -1201,7 +1201,7 @@ Check: Tārkṣyaḥ is identified as Garuḍa Bhagavān.
 ________________________________________
 21.
 What is the meaning of “ariṣṭanemiḥ”?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Swift mover
 B. Lord of winds
 C. One who removes obstacles and ensures a smooth journey
@@ -1211,7 +1211,7 @@ Check: Ariṣṭanemiḥ is explained using the analogy of a chariot wheel rim.
 ________________________________________
 22.
 Why is Garuḍa particularly relevant to the path of adhyayanam?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. He grants wealth
 B. He removes obstacles on the path
 C. He teaches mantras
@@ -1221,7 +1221,7 @@ Check: Garuḍa is invoked to ensure obstacle-free progress in study.
 ________________________________________
 23.
 Which deity is requested to grant medhā-śakti?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Indra
 B. Pūṣan
 C. Tārkṣya
@@ -1231,7 +1231,7 @@ Check: Bṛhaspati, the Devaguru, is prayed to for intellectual power.
 ________________________________________
 24.
 What is the specific concern addressed by praying for medhā-śakti?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Physical health
 B. Wealth acquisition
 C. Remembering and not forgetting mantras
@@ -1241,7 +1241,7 @@ Check: The speaker explicitly links medhā-śakti to retention of mantras.
 ________________________________________
 25.
 At what point does the standard śānti mantra normally conclude?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. With invocation of Indra
 B. With praise of Bṛhaspati
 C. With “ॐ शान्तिः शान्तिः शान्तिः”
@@ -1251,7 +1251,7 @@ Check: The standard ending is triple “śāntiḥ,” before waters are address
 ________________________________________
 26.
 What new element is introduced uniquely in the first pañcati after the śānti mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Fire
 B. Wind
 C. Water
@@ -1261,7 +1261,7 @@ Check: The pañcati transitions into a prayer for waters (Āpaḥ).
 ________________________________________
 27.
 What does “Āpaḥ” mean?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Fire
 B. Waters
 C. Food
@@ -1271,7 +1271,7 @@ Check: “Āpaḥ” is explicitly translated as waters.
 ________________________________________
 28.
 Why is water given special importance among the pañcabhūtas here?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. It symbolizes purity only
 B. It is needed for all Vedic rituals
 C. It represents Soma
@@ -1281,7 +1281,7 @@ Check: Every japa and karma begins with water (ācamana, prokṣaṇa).
 ________________________________________
 29.
 What ritual act is performed first in Vedic practice using water?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Homa
 B. Japa
 C. Ācamana
@@ -1291,7 +1291,7 @@ Check: Ācamana is specifically mentioned as requiring water.
 ________________________________________
 30.
 What does “apām apām apaḥ” convey according to traditional explanation?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Sacred rivers only
 B. Limited supply of water
 C. Again and again, abundance of waters
@@ -1301,7 +1301,7 @@ Check: It is glossed as “again and again waters,” indicating abundance.
 ________________________________________
 31.
 Who is quoted as explaining “apām apām apaḥ” in this session?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Śaṅkara
 B. Swami Omkārānanda
 C. Yāska
@@ -1311,7 +1311,7 @@ Check: Swami Omkārānanda is explicitly referenced.
 ________________________________________
 32.
 What does “sarvāḥ” indicate in the water mantra?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Pure
 B. Flowing
 C. All, from everywhere
@@ -1321,7 +1321,7 @@ Check: “Sarvāḥ” is explained as all waters, from everywhere.
 ________________________________________
 33.
 What does “asmāt” signify in the phrase “asmāt asmāt”?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. From oneself
 B. From the Devas
 C. From here
@@ -1331,7 +1331,7 @@ Check: “Asmāt” is explained as “from here.”
 ________________________________________
 34.
 What does “amutah” refer to?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Earth only
 B. This body
 C. The other world, such as svargaloka
@@ -1341,7 +1341,7 @@ Check: “Amutah” is explained as from the other world.
 ________________________________________
 35.
 What is the combined intent of “asmāt… amutah”?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. To restrict water usage
 B. To obtain waters from all realms
 C. To invoke rain gods
@@ -1351,7 +1351,7 @@ Check: The prayer seeks water from earth and higher worlds alike.
 ________________________________________
 36.
 What practical concern does the water prayer aim to eliminate?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Impurity
 B. Floods
 C. Scarcity of water
@@ -1361,7 +1361,7 @@ Check: The speaker repeatedly emphasizes “no scarcity of water.”
 ________________________________________
 37.
 Which ritual action involves sprinkling water for purification?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Homa
 B. Prokṣaṇa
 C. Upanayana
@@ -1371,7 +1371,7 @@ Check: Prokṣaṇa is explicitly mentioned as sprinkling with water.
 ________________________________________
 38.
 Why are sacred rivers invoked into water during rituals?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. For symbolism only
 B. To sanctify the water used in rituals
 C. To remember geography
@@ -1381,7 +1381,7 @@ Check: Invocation sanctifies the water for ritual use.
 ________________________________________
 39.
 What is the overarching structure of the first pañcati as summarized by the speaker?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Praise → Fire → Wind
 B. Health → Wealth → Power
 C. Auspicious perception → Health → Longevity → Deity blessings → Water
@@ -1391,7 +1391,7 @@ Check: The speaker summarizes the progression explicitly in this order.
 ________________________________________
 40.
 What is NOT listed as a prayer intention in the conclusion of the first pañcati?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Hearing good things
 B. Seeing good things
 C. Gaining material wealth
@@ -1401,7 +1401,7 @@ Check: Wealth is not mentioned; focus is on health, perception, worship, and wat
 ________________________________________
 41.
 Which activity is the healthy lifespan specifically meant to support?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Travel
 B. Trade
 C. Worship and adhyayanam
@@ -1411,7 +1411,7 @@ Check: Longevity is sought so one may continue worship.
 ________________________________________
 42.
 Which four deities are explicitly invoked for svasti?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Agni, Vāyu, Sūrya, Soma
 B. Indra, Pūṣan, Tārkṣya, Bṛhaspati
 C. Viṣṇu, Śiva, Brahmā, Indra
@@ -1421,7 +1421,7 @@ Check: These four are named in sequence in the mantra.
 ________________________________________
 43.
 What is the function of Veda Padārtha Anvaya emphasized in this session?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Memorization of chants
 B. Musical recitation
 C. Systematic connection of words and meanings
@@ -1431,7 +1431,7 @@ Check: The summary explicitly states the focus on Padārtha Anvaya.
 ________________________________________
 44.
 Why does the speaker analyze each word individually?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. To increase duration of teaching
 B. To deepen understanding of the mantras
 C. To correct pronunciation
@@ -1441,7 +1441,7 @@ Check: The goal is deeper understanding through word-meaning connection.
 ________________________________________
 45.
 What is the relationship between water and all Vedic karmas as stated?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Optional component
 B. Symbolic element
 C. Essential prerequisite
@@ -1451,7 +1451,7 @@ Check: Every karma begins with water, making it essential.
 ________________________________________
 46.
 Which phrase best captures the collective nature of the prayers in the pañcati?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Singular verbs
 B. Use of first-person plural forms
 C. Address to one deity
@@ -1461,7 +1461,7 @@ Check: Plural forms indicate collective intent.
 ________________________________________
 47.
 What does the speaker say will be taken up in later pañcatis?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. More śānti mantras
 B. Grammar rules
 C. Further explanation of “why waters”
@@ -1471,7 +1471,7 @@ Check: He explicitly defers deeper discussion of waters.
 ________________________________________
 48.
 Which closing mantra is recited at the end of the session?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Śrī Sūkta
 B. Nārāyaṇa Sūkta
 C. Pūrṇam adaḥ
@@ -1481,7 +1481,7 @@ Check: “ॐ pūrṇam adaḥ pūrṇam idam” is recited in closing.
 ________________________________________
 49.
 What is the immediate purpose of invoking Devas before addressing water?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. To change topic
 B. To ensure well-being and obstacle-free study
 C. To conclude the mantra
@@ -1491,7 +1491,7 @@ Check: Devas are invoked for svasti before practical ritual needs.
 ________________________________________
 50.
 Which single theme best unifies the entire first pañcati?
-[(Source: 1st_Panchadi)]
+[(Source: 103_1st_Panchadi)]
 A. Cosmic creation
 B. Removal of obstacles to sustained worship
 C. Social harmony
@@ -1500,7 +1500,7 @@ Correct Answer: B
 Check: Every prayer supports obstacle-free, healthy continuation of worship and adhyayanam.
 
 1. What is the primary thematic focus of the second pañcati discussed in this session?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Fire rituals alone
 B. Collection of mantras
 C. Ritual and philosophical significance of water
@@ -1509,7 +1509,7 @@ Correct Answer: C
 Check: The speaker explicitly states that the second pañcati focuses on the importance, role, and philosophy of water in ritual contexts.
 ________________________________________
 2. Why are waters addressed again in the second pañcati after being collected in the first pañcati?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. To discard them ritually
 B. To philosophically negate them
 C. To energize them with divine support
@@ -1518,7 +1518,7 @@ Correct Answer: C
 Check: The second pañcati invokes Agni, Vāyu, and Sūrya to energize and bless the already collected waters.
 ________________________________________
 3. Which ritual activities are said to be impossible without water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Japa and svādhyāya only
 B. Pūjā, yajña, and purification rites
 C. Meditation alone
@@ -1527,7 +1527,7 @@ Correct Answer: B
 Check: The summary explicitly lists pūjā, yajña, ācamana, śuddhi, and related rites as impossible without water.
 ________________________________________
 4. Which act is mentioned as the very first step in ritual performance involving water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Puṇyāhavācana
 B. Kalaśa-sthāpanam
 C. Ācamana
@@ -1536,7 +1536,7 @@ Correct Answer: C
 Check: The speaker clearly outlines ācamana as the starting point of ritual sequence.
 ________________________________________
 5. Which three deities are jointly invoked in the opening mantra of the second pañcati?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Indra, Varuṇa, Soma
 B. Agni, Vāyu, Sūrya
 C. Brahmā, Viṣṇu, Śiva
@@ -1545,7 +1545,7 @@ Correct Answer: B
 Check: The mantra begins with “अग्निर्वायुश्च सूर्यश्च”.
 ________________________________________
 6. What does the term “सह संचस्कारधीया” convey in the context of the mantra?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Separation from ritual
 B. Mental withdrawal
 C. Performing the ritual with consecratory intent
@@ -1554,7 +1554,7 @@ Correct Answer: C
 Check: The phrase is explained as performing the ritual together with intent (dhiyā).
 ________________________________________
 7. The implied purpose of invoking Agni, Vāyu, and Sūrya is primarily for:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Destruction of impurities only
 B. Ritual prosperity and growth (ṛddhi)
 C. Ending karmic bondage
@@ -1563,7 +1563,7 @@ Correct Answer: B
 Check: The explanation explicitly mentions “ṛddhi” as abundance and prosperity.
 ________________________________________
 8. In the imagery used, Vāyu is compared to what?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Rivers
 B. Messengers
 C. Horses carrying clouds
@@ -1572,7 +1572,7 @@ Correct Answer: C
 Check: Vāyu is described as horses (aśvāḥ) carrying water in cloud form.
 ________________________________________
 9. Who is referred to as “रश्मिपतिः” in the explanation?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Agni
 B. Indra
 C. Sūrya
@@ -1581,7 +1581,7 @@ Correct Answer: C
 Check: Rāśmipati is explained as Sūrya, the lord of rays.
 ________________________________________
 10. What protective role do the sun’s rays perform in relation to waters?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Evaporation
 B. Concealment
 C. Guidance and protection of clouds
@@ -1590,7 +1590,7 @@ Correct Answer: C
 Check: The rays are said to protect and guide water-clouds.
 ________________________________________
 11. The word “अद्रुगाः” characterizes waters as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Dangerous
 B. Neutral
 C. Harmless and benevolent
@@ -1599,7 +1599,7 @@ Correct Answer: C
 Check: Adrugāḥ is explicitly glossed as non-injurious and beneficial.
 ________________________________________
 12. “मारीच्यात्मानः” indicates that waters have whose inner principle?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Vāyu
 B. Soma
 C. Agni
@@ -1608,7 +1608,7 @@ Correct Answer: C
 Check: Agni (tejas) is described as the ātmā of waters.
 ________________________________________
 13. Which cosmological sequence supports Agni being the source of water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Earth → Water → Fire
 B. Fire → Water → Earth
 C. Water → Space → Air
@@ -1617,7 +1617,7 @@ Correct Answer: B
 Check: “तेजसः आपः” is directly quoted.
 ________________________________________
 14. From which text is the element-creation sequence cited?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Bhagavad Gītā
 B. Tattvabodha
 C. Yoga Sūtra
@@ -1626,7 +1626,7 @@ Correct Answer: B
 Check: Tattvabodha is explicitly named.
 ________________________________________
 15. Panchīkaraṇa is invoked to explain that:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Elements are independent
 B. Only one element exists
 C. Each element contains portions of others
@@ -1635,7 +1635,7 @@ Correct Answer: C
 Check: The explanation clearly outlines mixed elemental composition.
 ________________________________________
 16. According to Panchīkaraṇa, what fraction of water remains “pure water”?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. One-fourth
 B. One-half
 C. One-eighth
@@ -1644,7 +1644,7 @@ Correct Answer: B
 Check: Water is described as half water plus one-eighth of others.
 ________________________________________
 17. The term “देव्यो” addresses waters as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Physical substances
 B. Rivers
 C. Divine goddesses
@@ -1653,7 +1653,7 @@ Correct Answer: C
 Check: Jalābhimāni devatās are addressed as goddesses.
 ________________________________________
 18. “भुवनसुवरीः” identifies waters as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Destroyers of the world
 B. Ornament of heaven
 C. Creators/sustainers of the world
@@ -1662,7 +1662,7 @@ Correct Answer: C
 Check: Earth is said to arise from waters.
 ________________________________________
 19. Which Upaniṣadic idea supports waters being world-creators?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Akāśa is supreme
 B. Earth arises from waters
 C. Fire creates space
@@ -1671,7 +1671,7 @@ Correct Answer: B
 Check: “अद्भ्यः पृथ्वी” is explicitly referenced.
 ________________________________________
 20. The phrase “पुत्रवत् त्वयमे सुताः” is primarily a prayer for:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Wealth
 B. Longevity
 C. Progeny
@@ -1680,7 +1680,7 @@ Correct Answer: C
 Check: It is explained as a request for children.
 ________________________________________
 21. Why is progeny requested from the waters?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. For social status
 B. For economic growth
 C. To continue dharmic practices
@@ -1689,7 +1689,7 @@ Correct Answer: C
 Check: Continuation of dharmānusṭhāna is explicitly stated.
 ________________________________________
 22. The word “सुताः” in this mantra is clarified to mean:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Sons
 B. Rivers
 C. Bless / grant
@@ -1698,7 +1698,7 @@ Correct Answer: C
 Check: The speaker clarifies it does not literally mean “son”.
 ________________________________________
 23. Which Sandhyāvandanam mantra is referenced for comparison?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Gayatrī mantra
 B. Āpo hi ṣṭhā mayo bhuvaḥ
 C. Śanno devīḥ
@@ -1707,7 +1707,7 @@ Correct Answer: B
 Check: The comparison is explicitly made.
 ________________________________________
 24. The Jalābhimāni devatās are primarily associated with which element?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Fire
 B. Air
 C. Water
@@ -1716,7 +1716,7 @@ Correct Answer: C
 Check: Jalābhimāni literally refers to presiding deities of water.
 ________________________________________
 25. Which part of the pañcati is deferred for explanation to the next recording?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Opening mantra
 B. Adrugāḥ explanation
 C. “महानाम्ने महा मनः …” portion
@@ -1725,7 +1725,7 @@ Correct Answer: C
 Check: The speaker explicitly postpones this section.
 ________________________________________
 26. How many times does the speaker chant up to “पुत्रवत् त्वयमे सुताः”?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Once
 B. Twice
 C. Thrice
@@ -1734,7 +1734,7 @@ Correct Answer: B
 Check: The transcription explicitly states it is chanted twice.
 ________________________________________
 27. The Aruṇaketuka yajña is described as being performed with:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Dry offerings
 B. Symbolic fire only
 C. Energized waters
@@ -1743,7 +1743,7 @@ Correct Answer: C
 Check: Waters are infused with mantra energy.
 ________________________________________
 28. Which element is said to be born directly from Agni?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Earth
 B. Water
 C. Air
@@ -1752,7 +1752,7 @@ Correct Answer: B
 Check: “तेजसः आपः” is cited.
 ________________________________________
 29. The role of Vāyu in relation to water movement is described as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Destroying clouds
 B. Creating rivers
 C. Carrying clouds everywhere
@@ -1761,7 +1761,7 @@ Correct Answer: C
 Check: Vāyu is likened to horses moving cloud-waters.
 ________________________________________
 30. The waters are said to bless practitioners with which quality besides progeny?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Injury
 B. Disease
 C. Prosperity
@@ -1770,7 +1770,7 @@ Correct Answer: C
 Check: Waters are described as beneficent and auspicious.
 ________________________________________
 31. Which deity is described as both Marīci and an Āditya?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Agni
 B. Soma
 C. Sūrya
@@ -1779,7 +1779,7 @@ Correct Answer: C
 Check: Marīci is explained as a name of Sūrya as well.
 ________________________________________
 32. The description of waters as “only blessing us” is derived from which term?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Suvarīḥ
 B. Adrugāḥ
 C. Devyaḥ
@@ -1788,7 +1788,7 @@ Correct Answer: B
 Check: Adrugāḥ is glossed as non-injurious.
 ________________________________________
 33. The cosmological explanation links ritual meaning with:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Astrology
 B. Mythology alone
 C. Philosophical element theory
@@ -1797,7 +1797,7 @@ Correct Answer: C
 Check: Tattvabodha and pañcīkaraṇa are used.
 ________________________________________
 34. Which act involves invoking devatās into a vessel of water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Ācamana
 B. Kalaśa-sthāpanam
 C. Svasti-vācana
@@ -1806,7 +1806,7 @@ Correct Answer: B
 Check: Kalaśa-sthāpanam is explicitly mentioned.
 ________________________________________
 35. Why is water linked to health in the explanation?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. As medicine
 B. As nourishment
 C. As prerequisite for ritual purity
@@ -1815,7 +1815,7 @@ Correct Answer: C
 Check: Health and ritual purity are linked through water usage.
 ________________________________________
 36. Which mantra marks the formal closing of the session?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Gayatrī
 B. Pūrṇam adaḥ
 C. Śrī Sūkta
@@ -1824,7 +1824,7 @@ Correct Answer: B
 Check: The Pūrṇam mantra is recited at the end.
 ________________________________________
 37. The invocation “हरिः ॐ” primarily signifies:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. End of yajña
 B. Teacher salutation
 C. Auspicious closure
@@ -1833,7 +1833,7 @@ Correct Answer: C
 Check: It appears as a closing auspicious utterance.
 ________________________________________
 38. The guru invocation at the beginning emphasizes the guru as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Social guide
 B. Ritual performer
 C. Identical with Brahman
@@ -1842,7 +1842,7 @@ Correct Answer: C
 Check: “गुरुः साक्षात् परं ब्रह्म” is explicitly recited.
 ________________________________________
 39. The waters are invoked as feminine divinities primarily because:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Rivers are feminine nouns
 B. They nurture and create
 C. Grammar rules
@@ -1851,7 +1851,7 @@ Correct Answer: B
 Check: Their creative, life-sustaining role is emphasized.
 ________________________________________
 40. The phrase “भुवनम्” refers to:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Heaven only
 B. Ritual ground
 C. The world/earth
@@ -1860,7 +1860,7 @@ Correct Answer: C
 Check: It is glossed as the world we inhabit.
 ________________________________________
 41. The second pañcati is said to be a continuation of what action from the first pañcati?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Fire lighting
 B. Water collection
 C. Guru salutation
@@ -1869,7 +1869,7 @@ Correct Answer: B
 Check: Waters collected earlier are now energized.
 ________________________________________
 42. The phrase “सह” in the opening line emphasizes:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Separation
 B. Individual effort
 C. Togetherness with deities
@@ -1878,7 +1878,7 @@ Correct Answer: C
 Check: “Saha” is explained as together with Agni, Vāyu, Sūrya.
 ________________________________________
 43. Which element is explicitly stated to contain portions of all others?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Space
 B. Fire
 C. Water
@@ -1887,7 +1887,7 @@ Correct Answer: C
 Check: Water’s mixed composition is detailed.
 ________________________________________
 44. The ritual aim of infusing mantra into water is to make it:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Symbolic only
 B. Physically heavier
 C. Energetic
@@ -1896,7 +1896,7 @@ Correct Answer: C
 Check: The term “energetic” is explicitly used.
 ________________________________________
 45. Which deity is called the “ātman” of waters?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Indra
 B. Varuṇa
 C. Agni
@@ -1905,7 +1905,7 @@ Correct Answer: C
 Check: Agni is repeatedly identified as inner principle.
 ________________________________________
 46. The second pañcati’s prayer for progeny is linked to which broader goal?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Political continuity
 B. Economic expansion
 C. Dharmic continuity
@@ -1914,7 +1914,7 @@ Correct Answer: C
 Check: Continuation of dharma is explicitly stated.
 ________________________________________
 47. The speaker states he will summarize the entire pañcati:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Immediately
 B. In writing
 C. In the next recording
@@ -1923,7 +1923,7 @@ Correct Answer: C
 Check: He explicitly defers it.
 ________________________________________
 48. The phrase “रश्मि” literally refers to:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Wind
 B. Ray
 C. Fire
@@ -1932,7 +1932,7 @@ Correct Answer: B
 Check: Rāśmi is glossed as ray.
 ________________________________________
 49. The waters are requested to be “only blessing” because they are:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Temporary
 B. Neutral
 C. Adrugāḥ
@@ -1941,7 +1941,7 @@ Correct Answer: C
 Check: Adrugāḥ means non-injurious.
 ________________________________________
 50. The ultimate function of this pañcati within ritual is to:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Replace yajña
 B. Negate ritualism
 C. Prepare and empower waters for yajña
@@ -1950,7 +1950,7 @@ Correct Answer: C
 Check: The entire explanation centers on energizing ritual waters.
 
 1. What is the primary thematic focus of the second pañcati discussed in this session?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Fire rituals alone
 B. Collection of mantras
 C. Ritual and philosophical significance of water
@@ -1959,7 +1959,7 @@ Correct Answer: C
 Check: The speaker explicitly states that the second pañcati focuses on the importance, role, and philosophy of water in ritual contexts.
 ________________________________________
 2. Why are waters addressed again in the second pañcati after being collected in the first pañcati?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. To discard them ritually
 B. To philosophically negate them
 C. To energize them with divine support
@@ -1968,7 +1968,7 @@ Correct Answer: C
 Check: The second pañcati invokes Agni, Vāyu, and Sūrya to energize and bless the already collected waters.
 ________________________________________
 3. Which ritual activities are said to be impossible without water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Japa and svādhyāya only
 B. Pūjā, yajña, and purification rites
 C. Meditation alone
@@ -1977,7 +1977,7 @@ Correct Answer: B
 Check: The summary explicitly lists pūjā, yajña, ācamana, śuddhi, and related rites as impossible without water.
 ________________________________________
 4. Which act is mentioned as the very first step in ritual performance involving water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Puṇyāhavācana
 B. Kalaśa-sthāpanam
 C. Ācamana
@@ -1986,7 +1986,7 @@ Correct Answer: C
 Check: The speaker clearly outlines ācamana as the starting point of ritual sequence.
 ________________________________________
 5. Which three deities are jointly invoked in the opening mantra of the second pañcati?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Indra, Varuṇa, Soma
 B. Agni, Vāyu, Sūrya
 C. Brahmā, Viṣṇu, Śiva
@@ -1995,7 +1995,7 @@ Correct Answer: B
 Check: The mantra begins with “अग्निर्वायुश्च सूर्यश्च”.
 ________________________________________
 6. What does the term “सह संचस्कारधीया” convey in the context of the mantra?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Separation from ritual
 B. Mental withdrawal
 C. Performing the ritual with consecratory intent
@@ -2004,7 +2004,7 @@ Correct Answer: C
 Check: The phrase is explained as performing the ritual together with intent (dhiyā).
 ________________________________________
 7. The implied purpose of invoking Agni, Vāyu, and Sūrya is primarily for:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Destruction of impurities only
 B. Ritual prosperity and growth (ṛddhi)
 C. Ending karmic bondage
@@ -2013,7 +2013,7 @@ Correct Answer: B
 Check: The explanation explicitly mentions “ṛddhi” as abundance and prosperity.
 ________________________________________
 8. In the imagery used, Vāyu is compared to what?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Rivers
 B. Messengers
 C. Horses carrying clouds
@@ -2022,7 +2022,7 @@ Correct Answer: C
 Check: Vāyu is described as horses (aśvāḥ) carrying water in cloud form.
 ________________________________________
 9. Who is referred to as “रश्मिपतिः” in the explanation?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Agni
 B. Indra
 C. Sūrya
@@ -2031,7 +2031,7 @@ Correct Answer: C
 Check: Rāśmipati is explained as Sūrya, the lord of rays.
 ________________________________________
 10. What protective role do the sun’s rays perform in relation to waters?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Evaporation
 B. Concealment
 C. Guidance and protection of clouds
@@ -2040,7 +2040,7 @@ Correct Answer: C
 Check: The rays are said to protect and guide water-clouds.
 ________________________________________
 11. The word “अद्रुगाः” characterizes waters as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Dangerous
 B. Neutral
 C. Harmless and benevolent
@@ -2049,7 +2049,7 @@ Correct Answer: C
 Check: Adrugāḥ is explicitly glossed as non-injurious and beneficial.
 ________________________________________
 12. “मारीच्यात्मानः” indicates that waters have whose inner principle?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Vāyu
 B. Soma
 C. Agni
@@ -2058,7 +2058,7 @@ Correct Answer: C
 Check: Agni (tejas) is described as the ātmā of waters.
 ________________________________________
 13. Which cosmological sequence supports Agni being the source of water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Earth → Water → Fire
 B. Fire → Water → Earth
 C. Water → Space → Air
@@ -2067,7 +2067,7 @@ Correct Answer: B
 Check: “तेजसः आपः” is directly quoted.
 ________________________________________
 14. From which text is the element-creation sequence cited?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Bhagavad Gītā
 B. Tattvabodha
 C. Yoga Sūtra
@@ -2076,7 +2076,7 @@ Correct Answer: B
 Check: Tattvabodha is explicitly named.
 ________________________________________
 15. Panchīkaraṇa is invoked to explain that:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Elements are independent
 B. Only one element exists
 C. Each element contains portions of others
@@ -2085,7 +2085,7 @@ Correct Answer: C
 Check: The explanation clearly outlines mixed elemental composition.
 ________________________________________
 16. According to Panchīkaraṇa, what fraction of water remains “pure water”?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. One-fourth
 B. One-half
 C. One-eighth
@@ -2094,7 +2094,7 @@ Correct Answer: B
 Check: Water is described as half water plus one-eighth of others.
 ________________________________________
 17. The term “देव्यो” addresses waters as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Physical substances
 B. Rivers
 C. Divine goddesses
@@ -2103,7 +2103,7 @@ Correct Answer: C
 Check: Jalābhimāni devatās are addressed as goddesses.
 ________________________________________
 18. “भुवनसुवरीः” identifies waters as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Destroyers of the world
 B. Ornament of heaven
 C. Creators/sustainers of the world
@@ -2112,7 +2112,7 @@ Correct Answer: C
 Check: Earth is said to arise from waters.
 ________________________________________
 19. Which Upaniṣadic idea supports waters being world-creators?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Akāśa is supreme
 B. Earth arises from waters
 C. Fire creates space
@@ -2121,7 +2121,7 @@ Correct Answer: B
 Check: “अद्भ्यः पृथ्वी” is explicitly referenced.
 ________________________________________
 20. The phrase “पुत्रवत् त्वयमे सुताः” is primarily a prayer for:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Wealth
 B. Longevity
 C. Progeny
@@ -2130,7 +2130,7 @@ Correct Answer: C
 Check: It is explained as a request for children.
 ________________________________________
 21. Why is progeny requested from the waters?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. For social status
 B. For economic growth
 C. To continue dharmic practices
@@ -2139,7 +2139,7 @@ Correct Answer: C
 Check: Continuation of dharmānusṭhāna is explicitly stated.
 ________________________________________
 22. The word “सुताः” in this mantra is clarified to mean:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Sons
 B. Rivers
 C. Bless / grant
@@ -2148,7 +2148,7 @@ Correct Answer: C
 Check: The speaker clarifies it does not literally mean “son”.
 ________________________________________
 23. Which Sandhyāvandanam mantra is referenced for comparison?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Gayatrī mantra
 B. Āpo hi ṣṭhā mayo bhuvaḥ
 C. Śanno devīḥ
@@ -2157,7 +2157,7 @@ Correct Answer: B
 Check: The comparison is explicitly made.
 ________________________________________
 24. The Jalābhimāni devatās are primarily associated with which element?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Fire
 B. Air
 C. Water
@@ -2166,7 +2166,7 @@ Correct Answer: C
 Check: Jalābhimāni literally refers to presiding deities of water.
 ________________________________________
 25. Which part of the pañcati is deferred for explanation to the next recording?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Opening mantra
 B. Adrugāḥ explanation
 C. “महानाम्ने महा मनः …” portion
@@ -2175,7 +2175,7 @@ Correct Answer: C
 Check: The speaker explicitly postpones this section.
 ________________________________________
 26. How many times does the speaker chant up to “पुत्रवत् त्वयमे सुताः”?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Once
 B. Twice
 C. Thrice
@@ -2184,7 +2184,7 @@ Correct Answer: B
 Check: The transcription explicitly states it is chanted twice.
 ________________________________________
 27. The Aruṇaketuka yajña is described as being performed with:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Dry offerings
 B. Symbolic fire only
 C. Energized waters
@@ -2193,7 +2193,7 @@ Correct Answer: C
 Check: Waters are infused with mantra energy.
 ________________________________________
 28. Which element is said to be born directly from Agni?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Earth
 B. Water
 C. Air
@@ -2202,7 +2202,7 @@ Correct Answer: B
 Check: “तेजसः आपः” is cited.
 ________________________________________
 29. The role of Vāyu in relation to water movement is described as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Destroying clouds
 B. Creating rivers
 C. Carrying clouds everywhere
@@ -2211,7 +2211,7 @@ Correct Answer: C
 Check: Vāyu is likened to horses moving cloud-waters.
 ________________________________________
 30. The waters are said to bless practitioners with which quality besides progeny?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Injury
 B. Disease
 C. Prosperity
@@ -2220,7 +2220,7 @@ Correct Answer: C
 Check: Waters are described as beneficent and auspicious.
 ________________________________________
 31. Which deity is described as both Marīci and an Āditya?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Agni
 B. Soma
 C. Sūrya
@@ -2229,7 +2229,7 @@ Correct Answer: C
 Check: Marīci is explained as a name of Sūrya as well.
 ________________________________________
 32. The description of waters as “only blessing us” is derived from which term?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Suvarīḥ
 B. Adrugāḥ
 C. Devyaḥ
@@ -2238,7 +2238,7 @@ Correct Answer: B
 Check: Adrugāḥ is glossed as non-injurious.
 ________________________________________
 33. The cosmological explanation links ritual meaning with:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Astrology
 B. Mythology alone
 C. Philosophical element theory
@@ -2247,7 +2247,7 @@ Correct Answer: C
 Check: Tattvabodha and pañcīkaraṇa are used.
 ________________________________________
 34. Which act involves invoking devatās into a vessel of water?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Ācamana
 B. Kalaśa-sthāpanam
 C. Svasti-vācana
@@ -2256,7 +2256,7 @@ Correct Answer: B
 Check: Kalaśa-sthāpanam is explicitly mentioned.
 ________________________________________
 35. Why is water linked to health in the explanation?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. As medicine
 B. As nourishment
 C. As prerequisite for ritual purity
@@ -2265,7 +2265,7 @@ Correct Answer: C
 Check: Health and ritual purity are linked through water usage.
 ________________________________________
 36. Which mantra marks the formal closing of the session?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Gayatrī
 B. Pūrṇam adaḥ
 C. Śrī Sūkta
@@ -2274,7 +2274,7 @@ Correct Answer: B
 Check: The Pūrṇam mantra is recited at the end.
 ________________________________________
 37. The invocation “हरिः ॐ” primarily signifies:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. End of yajña
 B. Teacher salutation
 C. Auspicious closure
@@ -2283,7 +2283,7 @@ Correct Answer: C
 Check: It appears as a closing auspicious utterance.
 ________________________________________
 38. The guru invocation at the beginning emphasizes the guru as:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Social guide
 B. Ritual performer
 C. Identical with Brahman
@@ -2292,7 +2292,7 @@ Correct Answer: C
 Check: “गुरुः साक्षात् परं ब्रह्म” is explicitly recited.
 ________________________________________
 39. The waters are invoked as feminine divinities primarily because:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Rivers are feminine nouns
 B. They nurture and create
 C. Grammar rules
@@ -2301,7 +2301,7 @@ Correct Answer: B
 Check: Their creative, life-sustaining role is emphasized.
 ________________________________________
 40. The phrase “भुवनम्” refers to:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Heaven only
 B. Ritual ground
 C. The world/earth
@@ -2310,7 +2310,7 @@ Correct Answer: C
 Check: It is glossed as the world we inhabit.
 ________________________________________
 41. The second pañcati is said to be a continuation of what action from the first pañcati?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Fire lighting
 B. Water collection
 C. Guru salutation
@@ -2319,7 +2319,7 @@ Correct Answer: B
 Check: Waters collected earlier are now energized.
 ________________________________________
 42. The phrase “सह” in the opening line emphasizes:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Separation
 B. Individual effort
 C. Togetherness with deities
@@ -2328,7 +2328,7 @@ Correct Answer: C
 Check: “Saha” is explained as together with Agni, Vāyu, Sūrya.
 ________________________________________
 43. Which element is explicitly stated to contain portions of all others?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Space
 B. Fire
 C. Water
@@ -2337,7 +2337,7 @@ Correct Answer: C
 Check: Water’s mixed composition is detailed.
 ________________________________________
 44. The ritual aim of infusing mantra into water is to make it:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Symbolic only
 B. Physically heavier
 C. Energetic
@@ -2346,7 +2346,7 @@ Correct Answer: C
 Check: The term “energetic” is explicitly used.
 ________________________________________
 45. Which deity is called the “ātman” of waters?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Indra
 B. Varuṇa
 C. Agni
@@ -2355,7 +2355,7 @@ Correct Answer: C
 Check: Agni is repeatedly identified as inner principle.
 ________________________________________
 46. The second pañcati’s prayer for progeny is linked to which broader goal?
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Political continuity
 B. Economic expansion
 C. Dharmic continuity
@@ -2364,7 +2364,7 @@ Correct Answer: C
 Check: Continuation of dharma is explicitly stated.
 ________________________________________
 47. The speaker states he will summarize the entire pañcati:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Immediately
 B. In writing
 C. In the next recording
@@ -2373,7 +2373,7 @@ Correct Answer: C
 Check: He explicitly defers it.
 ________________________________________
 48. The phrase “रश्मि” literally refers to:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Wind
 B. Ray
 C. Fire
@@ -2382,7 +2382,7 @@ Correct Answer: B
 Check: Rāśmi is glossed as ray.
 ________________________________________
 49. The waters are requested to be “only blessing” because they are:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Temporary
 B. Neutral
 C. Adrugāḥ
@@ -2391,7 +2391,7 @@ Correct Answer: C
 Check: Adrugāḥ means non-injurious.
 ________________________________________
 50. The ultimate function of this pañcati within ritual is to:
-[(Source: 2nd_Panchadi_Part1)]
+[(Source: 104_2nd_Panchadi_Part1)]
 A. Replace yajña
 B. Negate ritualism
 C. Prepare and empower waters for yajña
@@ -2400,7 +2400,7 @@ Correct Answer: C
 Check: The entire explanation centers on energizing ritual waters.
 ________________________________________
 1. Up to which mantra portion had already been explained in the previous recording?
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. महानाम्नी-र्महामा॒नाः
 B. महसो महसस्स्वः
 C. देवीः पर्जन्य सुवरीः
@@ -2409,7 +2409,7 @@ Correct Answer: D
 Check: The speaker explicitly states explanation was completed up to “पुत्रवत्वाय मे सुत”.
 ________________________________________
 2. The primary purpose of revisiting the second pañcati in this recording is to:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Correct chanting errors
 B. Introduce a new yajña
 C. Explain the remaining quarter of the mantra
@@ -2418,7 +2418,7 @@ Correct Answer: C
 Check: The discourse resumes from the unexplained final section of the mantra.
 ________________________________________
 3. “सह संचस्कारर्धिया” is interpreted as performing the yajña with:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Individual effort alone
 B. Mental renunciation
 C. Support of Agni, Vāyu, and Sūrya
@@ -2427,7 +2427,7 @@ Correct Answer: C
 Check: The speaker reiterates divine assistance for sañcaskāra.
 ________________________________________
 4. “रुद्ध्याय” in this context specifically means:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Liberation
 B. Purification
 C. Prosperity
@@ -2436,7 +2436,7 @@ Correct Answer: C
 Check: Ruddhaya is directly glossed as prosperity.
 ________________________________________
 5. Waters are again addressed as “अद्रुहः” to emphasize that they are:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Passive
 B. Harmless
 C. Stationary
@@ -2445,7 +2445,7 @@ Correct Answer: B
 Check: Adruga is repeatedly explained as non-injurious.
 ________________________________________
 6. The comparison of waters to horses highlights their:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Strength
 B. Obedience
 C. Speed of movement
@@ -2454,7 +2454,7 @@ Correct Answer: C
 Check: Waters are said to “travel fast like horses”.
 ________________________________________
 7. Which deity is identified as the “Ātman” of the waters?
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Vāyu
 B. Sūrya
 C. Agni
@@ -2463,7 +2463,7 @@ Correct Answer: C
 Check: “मरीच्यात्मानः” is explained as Agni being the inner principle.
 ________________________________________
 8. Protection of waters during their movement is attributed to:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Moonlight
 B. Fire sparks
 C. Sun rays
@@ -2472,7 +2472,7 @@ Correct Answer: C
 Check: “रश्मिपतयः” refers to protection by solar rays.
 ________________________________________
 9. “देवी-र्भुवन सुवरीः” identifies waters as:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Destroyers of worlds
 B. Causes of the universe
 C. Symbols of yajña
@@ -2481,7 +2481,7 @@ Correct Answer: B
 Check: Waters are described as the cause of the universe.
 ________________________________________
 10. The blessing “पुत्रवत्वाय मे सुत” is requested primarily to:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Increase population
 B. Gain wealth
 C. Continue Dharma
@@ -2490,7 +2490,7 @@ Correct Answer: C
 Check: Progeny is sought for sustaining dharmic continuity.
 ________________________________________
 11. The mantra section newly explained in this recording begins with:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. देवीः पर्जन्य सुवरीः
 B. महानाम्नी-र्महामा॒नाः
 C. पुत्रवत्वाय मे सुत
@@ -2499,7 +2499,7 @@ Correct Answer: B
 Check: The speaker explicitly introduces this phrase as the continuation.
 ________________________________________
 12. “महानाम्नीः” signifies that water:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Has one sacred name
 B. Is unnamed
 C. Is praised by many names
@@ -2508,7 +2508,7 @@ Correct Answer: C
 Check: Multiple names like āpaḥ, jalam, udakam are listed.
 ________________________________________
 13. Which of the following is NOT listed as a name for water?
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Jalam
 B. Udakam
 C. Salilam
@@ -2517,7 +2517,7 @@ Correct Answer: D
 Check: Tejas (fire) is not listed as a name of water.
 ________________________________________
 14. “महामानाः” emphasizes that waters are:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Rare
 B. Feared
 C. Highly revered
@@ -2526,7 +2526,7 @@ Correct Answer: C
 Check: Waters are described as always worshipped first and honored.
 ________________________________________
 15. Why are waters invoked first in all pūjās and yajñas?
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. They symbolize renunciation
 B. They replace fire
 C. All devatās are invoked through them
@@ -2535,7 +2535,7 @@ Correct Answer: C
 Check: Devatā invocation always happens in water (kalaśa).
 ________________________________________
 16. “महसो महसस्स्वः” conveys that:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Fire alone is supreme
 B. Waters represent all devatās
 C. Air is primary
@@ -2544,7 +2544,7 @@ Correct Answer: B
 Check: Water itself stands for the invoked devatā in any pūjā.
 ________________________________________
 17. Regardless of which devatā is worshipped, what remains constant?
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. The mantra meter
 B. The fire shape
 C. The use of water
@@ -2553,7 +2553,7 @@ Correct Answer: C
 Check: The speaker stresses water is always required.
 ________________________________________
 18. The term “स्वः” here implies:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Oblation formula
 B. Heaven
 C. Silence
@@ -2562,7 +2562,7 @@ Correct Answer: A
 Check: Swāhā is used to signify offering through water.
 ________________________________________
 19. “देवीः पर्जन्य सुवरीः” redefines waters as:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Oceanic
 B. Riverine
 C. Rain-producing
@@ -2571,7 +2571,7 @@ Correct Answer: C
 Check: Parjanya refers to rain clouds.
 ________________________________________
 20. Difference between “भुवन सुवरीः” and “पर्जन्य सुवरीः” is that they denote:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Earth vs. fire
 B. Creation vs. rainfall
 C. Ritual vs. philosophy
@@ -2580,7 +2580,7 @@ Correct Answer: B
 Check: One is cause of universe, the other source of rain.
 ________________________________________
 21. The repeated prayer for progeny at the end emphasizes:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Material desire
 B. Biological continuity
 C. Dharmic responsibility
@@ -2589,7 +2589,7 @@ Correct Answer: C
 Check: Progeny is linked to sustaining Dharma.
 ________________________________________
 22. The overall second pañcati can best be summarized as:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Fire worship
 B. Praise and invocation of waters
 C. Mantra grammar lesson
@@ -2598,7 +2598,7 @@ Correct Answer: B
 Check: Entire pañcati is devoted to glorifying waters.
 ________________________________________
 23. Waters are said to be the medium through which devatās are worshipped because:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. They replace idols
 B. They absorb mantras
 C. They symbolically embody the devatā
@@ -2607,7 +2607,7 @@ Correct Answer: C
 Check: Water itself represents the devatā.
 ________________________________________
 24. The Kalasam is significant because it:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Stores fire
 B. Represents yajña vedi
 C. Holds waters in which devatās are invoked
@@ -2616,7 +2616,7 @@ Correct Answer: C
 Check: All devatā invocation occurs in the water-filled kalaśa.
 ________________________________________
 25. The second pañcati concludes with a sense of:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Renunciation
 B. Gratitude
 C. Expectation of boons
@@ -2625,7 +2625,7 @@ Correct Answer: C
 Check: After praise, blessings are requested.
 ________________________________________
 26. From the third pañcati onward, the waters will be asked to:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Increase heat
 B. Remove obstacles
 C. Create fire
@@ -2634,7 +2634,7 @@ Correct Answer: B
 Check: Speaker previews obstacle-removal prayers next.
 ________________________________________
 27. The logical flow of the second pañcati is:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Request → Praise → Blessing
 B. Praise → Identity → Request
 C. Philosophy → Grammar → Ritual
@@ -2643,7 +2643,7 @@ Correct Answer: B
 Check: Waters are praised, defined, then requested.
 ________________________________________
 28. “महानाम्नीः” and “महामानाः” together imply:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Fear and reverence
 B. Many names and great honor
 C. Ritual secrecy
@@ -2652,7 +2652,7 @@ Correct Answer: B
 Check: Multiple names and high reverence are emphasized.
 ________________________________________
 29. Even when performing Viṣṇu or Śiva pūjā, what remains unchanged?
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. The deity
 B. The mantra
 C. The water medium
@@ -2661,7 +2661,7 @@ Correct Answer: C
 Check: Water remains the universal medium.
 ________________________________________
 30. The repetition of progeny prayer suggests it is:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Optional
 B. Central to the pañcati
 C. Symbolic only
@@ -2670,7 +2670,7 @@ Correct Answer: B
 Check: It appears twice, highlighting importance.
 ________________________________________
 31. Waters are called “Deviḥ” primarily because they:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Are feminine nouns
 B. Act as divine agencies
 C. Flow naturally
@@ -2679,7 +2679,7 @@ Correct Answer: B
 Check: They are Jalābhimāni devatās.
 ________________________________________
 32. The essence of Aruṇa Ketuka Chayanam relies heavily on:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Firewood
 B. Water sanctification
 C. Stone altars
@@ -2688,7 +2688,7 @@ Correct Answer: B
 Check: Waters are central and repeatedly emphasized.
 ________________________________________
 33. The mantra structure reflects Vedic thought by combining:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Grammar and poetry
 B. Ritual action and cosmology
 C. History and mythology
@@ -2697,7 +2697,7 @@ Correct Answer: B
 Check: Ritual usage and metaphysical meaning are intertwined.
 ________________________________________
 34. “पर्जन्य” specifically refers to:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Rivers
 B. Oceans
 C. Rain clouds
@@ -2706,7 +2706,7 @@ Correct Answer: C
 Check: Parjanya is explained as rain-bearing clouds.
 ________________________________________
 35. By praising waters as rain-sources, the mantra acknowledges their role in:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Ritual fire
 B. Agricultural fertility
 C. Temple architecture
@@ -2715,7 +2715,7 @@ Correct Answer: B
 Check: Rain ensures fertility and sustenance.
 ________________________________________
 36. The repetition of water praise before requesting favors reflects:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Fear of waters
 B. Vedic etiquette
 C. Lack of content
@@ -2724,7 +2724,7 @@ Correct Answer: B
 Check: Praise precedes request as ritual propriety.
 ________________________________________
 37. The second pañcati is primarily a prayer addressed to:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Fire alone
 B. Sun alone
 C. Waters as divine entities
@@ -2733,7 +2733,7 @@ Correct Answer: C
 Check: Entire mantra addresses waters.
 ________________________________________
 38. The explanation emphasizes that water is:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Optional in rituals
 B. Central to all worship
 C. Used only for purification
@@ -2742,7 +2742,7 @@ Correct Answer: B
 Check: Water is described as indispensable.
 ________________________________________
 39. The concluding Pūrṇam mantra signifies:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Beginning of ritual
 B. Completeness and closure
 C. Invocation of devatās
@@ -2751,7 +2751,7 @@ Correct Answer: B
 Check: Pūrṇam mantra marks ritual completion.
 ________________________________________
 40. The speaker’s summary of the second pañcati highlights which dominant theme?
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Fire supremacy
 B. Water glorification
 C. Mantra phonetics
@@ -2760,7 +2760,7 @@ Correct Answer: B
 Check: The summary repeatedly stresses praising waters.
 ________________________________________
 41. The repeated invocation of Agni, Vāyu, and Sūrya establishes:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Elemental hierarchy
 B. Ritual synergy of elements
 C. Astronomical order
@@ -2769,7 +2769,7 @@ Correct Answer: B
 Check: The triad works together in sañcaskāra.
 ________________________________________
 42. The speaker states that waters are praised before asking for favors because:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. They are feared
 B. They are neutral
 C. Gratitude precedes request
@@ -2778,7 +2778,7 @@ Correct Answer: C
 Check: Praise precedes petitions in Vedic practice.
 ________________________________________
 43. The next pañcati will focus on:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Creation
 B. Element theory
 C. Removal of obstacles
@@ -2787,7 +2787,7 @@ Correct Answer: C
 Check: Speaker explicitly previews this.
 ________________________________________
 44. The second pañcati is structurally complete when it:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Ends with praise
 B. Ends with request
 C. Transitions to obstacles
@@ -2796,7 +2796,7 @@ Correct Answer: B
 Check: It culminates in progeny prayer.
 ________________________________________
 45. Water is considered “Mahamanaha” because it is:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Rare
 B. Difficult to obtain
 C. Universally worshipped
@@ -2805,7 +2805,7 @@ Correct Answer: C
 Check: Always honored and invoked first.
 ________________________________________
 46. The second pañcati reinforces the idea that:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Fire is supreme
 B. Rituals are optional
 C. Water mediates all divine contact
@@ -2814,7 +2814,7 @@ Correct Answer: C
 Check: Devatā worship happens through water.
 ________________________________________
 47. The overall pedagogical method used by the speaker is:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Literal translation only
 B. Question-answer
 C. Step-by-step mantra exposition
@@ -2823,7 +2823,7 @@ Correct Answer: C
 Check: Each phrase is unpacked sequentially.
 ________________________________________
 48. The repeated closing mantras indicate:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Anxiety
 B. Auspicious conclusion
 C. Chanting error
@@ -2832,7 +2832,7 @@ Correct Answer: B
 Check: Standard Vedic closure.
 ________________________________________
 49. The philosophical status of water in this pañcati can best be described as:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. Material resource
 B. Symbolic aid
 C. Divine principle
@@ -2841,13 +2841,14 @@ Correct Answer: C
 Check: Waters are treated as divine entities.
 ________________________________________
 50. The second pañcati ultimately prepares the practitioner to:
-[(Source: 2nd_Panchadi_Part2)]
+[(Source: 105_2nd_Panchadi_Part2)]
 A. End ritual practice
 B. Perform obstacle-removal prayers
 C. Transition to fire worship
 D. Abandon water rites
 Correct Answer: B
 Check: The next pañcati builds upon this praise.
+
 
 
 
