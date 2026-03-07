@@ -13,10 +13,6 @@
 
   <style>
     :root {
-      --bg1: #06101d;
-      --bg2: #0c1830;
-      --panel: rgba(255,255,255,0.06);
-      --panel-2: rgba(255,255,255,0.08);
       --gold: #e4bf7a;
       --gold-soft: #f3d8a3;
       --text: #f7f1e7;
@@ -57,7 +53,6 @@
       margin: 0 0 8px;
     }
 
-    /* This crops away the black bands baked into the PNG */
     .banner-frame {
       width: min(100%, 1180px);
       height: 260px;
@@ -386,44 +381,205 @@
       }
     }
 
+    /* SMART MOBILE COMPACT MODE */
     @media (max-width: 620px) {
       .page-shell {
-        width: min(100% - 10px, 100%);
-        padding-top: 5px;
+        width: min(100% - 8px, 100%);
+        padding-top: 4px;
       }
 
       .banner-frame {
-        height: 150px;
+        height: 118px;
         border-radius: 10px;
-      }
-
-      .controls-inline,
-      .status-row {
-        grid-template-columns: 1fr;
+        margin-bottom: 2px;
       }
 
       .compact-panel {
-        padding: 9px;
+        padding: 8px;
+        border-radius: 14px;
+        margin-bottom: 6px;
+      }
+
+      .title-row {
+        margin-bottom: 6px;
+      }
+
+      .title-row h1 {
+        font-size: 0.98rem;
+        line-height: 1.1;
+      }
+
+      .title-row p {
+        font-size: 0.78rem;
+        line-height: 1.15;
+        margin-top: 2px;
+      }
+
+      /* force all four top sections into one row */
+      .controls-inline {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
       }
 
       .control-box {
-        min-height: auto;
+        min-height: 82px;
+        padding: 6px 6px;
+        border-radius: 10px;
+        gap: 4px;
+      }
+
+      .control-box h3 {
+        font-size: 0.54rem;
+        line-height: 1.05;
+        text-align: center;
+        min-height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .button-row {
+        gap: 4px;
+        justify-content: center;
+      }
+
+      .button-row button {
+        padding: 5px 6px;
+        font-size: 0.54rem;
+        border-radius: 8px;
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .status-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      .status-chip {
+        min-height: 42px;
+        padding: 5px 6px;
+        border-radius: 10px;
+      }
+
+      .status-chip .label {
+        font-size: 0.58rem;
+      }
+
+      .status-chip .value {
+        font-size: 0.78rem;
+      }
+
+      .message {
+        margin-top: 5px;
+        min-height: 12px;
+        font-size: 0.68rem;
       }
 
       .flashcard-stage {
-        min-height: 340px;
+        min-height: 300px;
+        margin-top: 0;
+      }
+
+      .card-wrap {
+        width: 100%;
       }
 
       .flashcard {
-        min-height: 320px;
+        min-height: 290px;
       }
 
       .card-face {
-        padding: 14px 12px;
+        padding: 12px 10px;
+        border-radius: 16px;
+      }
+
+      .card-head .mini {
+        font-size: 0.68rem;
+      }
+
+      .card-head h2 {
+        font-size: 0.95rem;
       }
 
       .devanagari-line {
-        font-size: clamp(1.18rem, 5vw, 1.72rem);
+        font-size: clamp(1.05rem, 4.6vw, 1.45rem);
+        line-height: 1.6;
+        max-width: 98%;
+      }
+
+      .meaning-block .panchadi {
+        font-size: 0.78rem;
+        margin-bottom: 6px;
+      }
+
+      .meaning-block .meaning {
+        font-size: 0.82rem;
+        line-height: 1.5;
+      }
+
+      .card-foot .hint {
+        font-size: 0.68rem;
+      }
+
+      .footer-nav {
+        margin-top: 6px;
+        gap: 6px;
+      }
+
+      .footer-nav button {
+        font-size: 0.74rem;
+        padding: 6px 10px;
+      }
+    }
+
+    /* extra small phones */
+    @media (max-width: 390px) {
+      .banner-frame {
+        height: 104px;
+      }
+
+      .title-row h1 {
+        font-size: 0.90rem;
+      }
+
+      .title-row p {
+        font-size: 0.72rem;
+      }
+
+      .control-box {
+        min-height: 78px;
+        padding: 5px 5px;
+      }
+
+      .control-box h3 {
+        font-size: 0.50rem;
+      }
+
+      .button-row button {
+        font-size: 0.50rem;
+        padding: 4px 5px;
+      }
+
+      .status-chip .label {
+        font-size: 0.54rem;
+      }
+
+      .status-chip .value {
+        font-size: 0.74rem;
+      }
+
+      .flashcard {
+        min-height: 278px;
+      }
+
+      .devanagari-line {
+        font-size: clamp(0.96rem, 4.3vw, 1.25rem);
+      }
+
+      .meaning-block .meaning {
+        font-size: 0.78rem;
       }
     }
   </style>
