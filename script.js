@@ -1,519 +1,510 @@
-/* 20260119_txt_based_quiz_v1 */
+const EXCEL_FILE_PATH = "Images/Panchadis_Meaning_summaries.xlsx";
+const STORAGE_KEY = "veda_flashcards_saved_stack_v1";
 
-(() => {
-  const QUIZ_TXT_URL = "./Images/Quiz_file.txt";   // you said you'll upload here
-  const DEBUG = false; // set true if you want debug visible
+const state = {
+  allCards: [],
+  activeCards: [],
+  currentIndex: 0,
+  currentMode: "sequential", // sequential | random
+  currentView: "all",        // all | saved
+  isFlipped: false,
+  savedIds: new Set()
+};
 
-  // ---------- DOM ----------
-  const podcastSelect = document.getElementById("podcastSelect");
-  const setTabs = document.getElementById("setTabs");
-  const startBtn = document.getElementById("startBtn");
-  const finishBtn = document.getElementById("finishBtn");
+const el = {
+  flashcardStage: document.getElementById("flashcardStage"),
+  loadingBox: document.getElementById("loadingBox"),
+  messageBox: document.getElementById("messageBox"),
 
-  const qHeader = document.getElementById("qHeader");
-  const qText = document.getElementById("qText");
-  const optionsEl = document.getElementById("options");
-  const statusBox = document.getElementById("statusBox");
-  const debugBox = document.getElementById("debugBox");
+  modeSequentialBtn: document.getElementById("modeSequentialBtn"),
+  modeRandomBtn: document.getElementById("modeRandomBtn"),
 
-  const chipCorrect = document.getElementById("chipCorrect");
-  const chipAttempted = document.getElementById("chipAttempted");
-  const chipFirstTry = document.getElementById("chipFirstTry");
-  const chipMissedPool = document.getElementById("chipMissedPool");
+  viewAllBtn: document.getElementById("viewAllBtn"),
+  viewSavedBtn: document.getElementById("viewSavedBtn"),
 
-  // ---------- STATE ----------
-  let podcasts = []; // [{ key, label, questions: [...] }]
-  let podcastIndex = 0;
+  saveCardBtn: document.getElementById("saveCardBtn"),
+  removeSavedBtn: document.getElementById("removeSavedBtn"),
 
-  let activeSet = 0; // 0..4 or "missed"
-  let running = false;
+  restartBtn: document.getElementById("restartBtn"),
+  flipTopBtn: document.getElementById("flipTopBtn"),
+  flipBottomBtn: document.getElementById("flipBottomBtn"),
 
-  let viewList = []; // questions currently being played (set slice or missed)
-  let viewPos = 0;
+  prevBtn: document.getElementById("prevBtn"),
+  nextBtn: document.getElementById("nextBtn"),
 
-  let stats = {
-    correct: 0,
-    attempted: 0,
-    firstTry: 0,
-  };
+  statusMode: document.getElementById("statusMode"),
+  statusView: document.getElementById("statusView"),
+  statusProgress: document.getElementById("statusProgress"),
+  statusSavedCount: document.getElementById("statusSavedCount")
+};
 
-  // per podcast tracking
-  let attemptedIds = new Set();   // question unique id that was attempted at least once
-  let firstTryEligible = new Set(); // question ids not yet tried (for first-try)
-  let missedIds = new Set();      // question ids that were answered wrong at least once
-  let wrongOnceIds = new Set();   // question ids wrong at least once (same as missedIds, but kept explicit)
+function normalizeText(value) {
+  return String(value ?? "").trim();
+}
 
-  // ---------- UTILS ----------
-  function log(msg) {
-    if (!DEBUG) return;
-    debugBox.style.display = "block";
-    debugBox.textContent += (msg + "\n");
+function normalizedKey(value) {
+  return normalizeText(value).toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function safeNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
+  return copy;
+}
 
-  function baseUrlSafeFetch(url) {
-    // cache-bust so GitHub Pages doesn't serve stale content
-    const u = new URL(url, window.location.href);
-    u.searchParams.set("cb", Date.now().toString());
-    return fetch(u.toString(), { cache: "no-store" });
+function showMessage(msg = "") {
+  el.messageBox.textContent = msg;
+}
+
+function saveSavedSetToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...state.savedIds]));
+}
+
+function loadSavedSetFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const arr = JSON.parse(raw);
+    if (Array.isArray(arr)) {
+      state.savedIds = new Set(arr);
+    }
+  } catch (err) {
+    console.warn("Could not read saved stack from localStorage.", err);
   }
+}
 
-  function normalizePodcastKeyFromSource(sourceFile) {
-    // example:
-    // 101_Intro_1_transcription.docx -> 101_Intro_1
-    // 101_Intro_1_summary.docx       -> 101_Intro_1
-    // 104_2nd_Panchadi_Part1_transcription.docx -> 104_2nd_Panchadi_Part1
-    let s = (sourceFile || "").trim();
-
-    // strip trailing bracket noise just in case
-    s = s.replace(/[\]\)]$/g, "");
-    s = s.replace(/^\s*[\[\(]\s*/g, "");
-
-    // keep only filename part if something like path appears
-    s = s.split("/").pop();
-
-    // remove extension
-    s = s.replace(/\.docx$/i, "");
-
-    // remove a single trailing _transcription or _summary
-    s = s.replace(/_(transcription|summary)$/i, "");
-
-    return s.trim();
+async function fetchWorkbook() {
+  const response = await fetch(EXCEL_FILE_PATH, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Could not load Excel file: ${EXCEL_FILE_PATH}`);
   }
+  const arrayBuffer = await response.arrayBuffer();
+  return XLSX.read(arrayBuffer, { type: "array" });
+}
 
-  function labelFromPodcastKey(key) {
-    // "101_Intro_1" -> "101 — Intro 1"
-    // "104_2nd_Panchadi_Part1" -> "104 — 2nd Panchadi Part1"
-    const parts = key.split("_").filter(Boolean);
-    if (parts.length === 0) return key;
-    const num = parts[0];
-    const rest = parts.slice(1).join(" ");
-    return rest ? `${num} — ${rest}` : `${num}`;
-  }
+function findLineByLineSheet(workbook) {
+  const candidates = workbook.SheetNames || [];
+  let best = candidates.find(name => normalizedKey(name) === "linebyline");
+  if (best) return best;
 
-  function getActivePodcast() {
-    return podcasts[podcastIndex] || null;
-  }
+  best = candidates.find(name => normalizedKey(name).includes("linebyline"));
+  if (best) return best;
 
-  function updateMissedTabCount() {
-    const missedTab = setTabs.querySelector('.tab[data-set="missed"]');
-    if (missedTab) missedTab.textContent = `Missed (${missedIds.size})`;
-    chipMissedPool.textContent = `Missed pool: ${missedIds.size}`;
-  }
+  return candidates[0] || null;
+}
 
-  function resetRunStateForPodcast() {
-    running = false;
-    activeSet = 0;
-    viewList = [];
-    viewPos = 0;
+function findHeaderRow(rows) {
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i].map(normalizeText);
+    const joined = row.map(normalizedKey);
 
-    stats = { correct: 0, attempted: 0, firstTry: 0 };
+    const hasP = joined.includes("p");
+    const hasSanskrit = joined.some(x => x.includes("sanskritline"));
+    const hasMeaning =
+      joined.some(x => x.includes("impliedmeaning")) ||
+      joined.some(x => x.includes("meaning")) ||
+      joined.some(x => x.includes("description"));
 
-    attemptedIds = new Set();
-    wrongOnceIds = new Set();
-    missedIds = new Set();
-
-    // firstTryEligible gets filled from the chosen viewList when Start happens
-    firstTryEligible = new Set();
-
-    chipCorrect.textContent = "Correct: 0";
-    chipAttempted.textContent = "Attempted: 0";
-    chipFirstTry.textContent = "First-try: 0";
-    chipMissedPool.textContent = "Missed pool: 0";
-
-    updateMissedTabCount();
-
-    qHeader.textContent = "Ready.";
-    qText.style.display = "none";
-    optionsEl.style.display = "none";
-    statusBox.textContent = "Load the quiz by pressing Start.";
-    clearOptions();
-  }
-
-  function clearOptions() {
-    optionsEl.innerHTML = "";
-  }
-
-  function setStatus(text, tone = "muted") {
-    statusBox.textContent = text;
-    if (tone === "good") {
-      statusBox.style.borderColor = "rgba(54,211,153,0.50)";
-      statusBox.style.color = "rgba(255,255,255,0.92)";
-      statusBox.style.background = "rgba(54,211,153,0.08)";
-    } else if (tone === "bad") {
-      statusBox.style.borderColor = "rgba(255,92,122,0.50)";
-      statusBox.style.color = "rgba(255,255,255,0.92)";
-      statusBox.style.background = "rgba(255,92,122,0.08)";
-    } else {
-      statusBox.style.borderColor = "rgba(255,255,255,0.10)";
-      statusBox.style.color = "rgba(255,255,255,0.72)";
-      statusBox.style.background = "rgba(0,0,0,0.20)";
+    if (hasP && hasSanskrit && hasMeaning) {
+      return i;
     }
   }
+  return -1;
+}
 
-  function markTabActive(setValue) {
-    setTabs.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    const sel = setTabs.querySelector(`.tab[data-set="${setValue}"]`);
-    if (sel) sel.classList.add("active");
+function mapHeaders(headerRow) {
+  const headerMap = {};
+  headerRow.forEach((cell, idx) => {
+    const key = normalizedKey(cell);
+    headerMap[key] = idx;
+  });
+
+  const pCol =
+    headerMap["p"] ??
+    headerMap["panchadi"] ??
+    headerMap["panchadinumber"] ??
+    null;
+
+  const sanskritCol =
+    headerMap["sanskritline"] ??
+    headerMap["line"] ??
+    headerMap["devanagariline"] ??
+    null;
+
+  const impliedMeaningCol =
+    headerMap["impliedmeaning"] ??
+    null;
+
+  const descriptionCol =
+    headerMap["descriptionspeakerexplanation"] ??
+    headerMap["description"] ??
+    null;
+
+  return { pCol, sanskritCol, impliedMeaningCol, descriptionCol };
+}
+
+function parseCardsFromWorkbook(workbook) {
+  const sheetName = findLineByLineSheet(workbook);
+  if (!sheetName) {
+    throw new Error("No worksheet found in the Excel file.");
   }
 
-  // ---------- PARSER ----------
-  function parseQuizText(raw) {
-    // Your file uses separator lines: ________________________________________
-    const blocks = raw
-      .split(/_{10,}/g)
-      .map(b => b.trim())
-      .filter(Boolean);
+  const sheet = workbook.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json(sheet, {
+    header: 1,
+    raw: false,
+    defval: ""
+  });
 
-    const questions = [];
-
-    for (const b of blocks) {
-      // Quickly skip if no "Correct Answer:"
-      if (!/Correct\s*Answer\s*:\s*[A-D]/i.test(b)) continue;
-
-      const lines = b.split(/\r?\n/).map(x => x.trim()).filter(x => x.length > 0);
-
-      // Source line format: [(Source: xxx.docx)]
-      const sourceMatch = b.match(/\[\(Source:\s*([^)]+)\)\]/i);
-      const sourceFile = sourceMatch ? sourceMatch[1].trim() : "";
-
-      // Find correct answer
-      const correctMatch = b.match(/Correct\s*Answer\s*:\s*([A-D])/i);
-      const correct = correctMatch ? correctMatch[1].toUpperCase() : "";
-
-      // Extract options A-D
-      const options = {};
-      for (const L of lines) {
-        const m = L.match(/^([A-D])\.\s*(.+)$/);
-        if (m) options[m[1].toUpperCase()] = m[2].trim();
-      }
-
-      // Question number: first line like "1." or "1."
-      let qNum = "";
-      const numMatch = lines[0] && lines[0].match(/^(\d+)\.?$/);
-      if (numMatch) qNum = numMatch[1];
-
-      // Question text: everything between number line and source line, excluding options/correct/check
-      // We’ll build from the raw block for reliability.
-      // Approach: remove option lines, remove Correct Answer line, remove Check line, remove Source line, remove the leading number line.
-      let text = b;
-
-      // remove check line (can be long)
-      text = text.replace(/^Check:\s*.*$/gmi, "");
-
-      // remove Correct Answer line
-      text = text.replace(/^Correct\s*Answer\s*:\s*[A-D]\s*$/gmi, "");
-
-      // remove options lines
-      text = text.replace(/^[A-D]\.\s*.*$/gmi, "");
-
-      // remove source line
-      text = text.replace(/\[\(Source:\s*([^)]+)\)\]\s*/gi, "");
-
-      // remove leading number line
-      text = text.replace(/^\s*\d+\.\s*$/m, "");
-
-      text = text
-        .split(/\r?\n/)
-        .map(x => x.trim())
-        .filter(Boolean)
-        .join(" ");
-
-      // final sanity
-      if (!text || !correct || !options.A || !options.B || !options.C || !options.D) continue;
-
-      const q = {
-        id: `${sourceFile}__${qNum}__${text.slice(0, 40)}`, // stable enough
-        qNum: qNum || "",
-        text,
-        sourceFile,
-        correct,
-        options: {
-          A: options.A,
-          B: options.B,
-          C: options.C,
-          D: options.D
-        }
-      };
-
-      questions.push(q);
-    }
-
-    return questions;
+  const headerRowIndex = findHeaderRow(rows);
+  if (headerRowIndex < 0) {
+    throw new Error("Could not find the header row in the line-by-line sheet.");
   }
 
-  function buildPodcastsFromQuestions(allQuestions) {
-    const map = new Map(); // key -> { key, label, questions }
+  const headers = rows[headerRowIndex];
+  const { pCol, sanskritCol, impliedMeaningCol, descriptionCol } = mapHeaders(headers);
 
-    for (const q of allQuestions) {
-      const key = normalizePodcastKeyFromSource(q.sourceFile);
-      const label = labelFromPodcastKey(key);
+  if (pCol === null || sanskritCol === null || (impliedMeaningCol === null && descriptionCol === null)) {
+    throw new Error("Required columns are missing. Need Panchadi, Sanskrit line, and meaning column.");
+  }
 
-      if (!map.has(key)) map.set(key, { key, label, questions: [] });
-      map.get(key).questions.push(q);
+  const dataRows = rows.slice(headerRowIndex + 1);
+
+  const parsed = [];
+  let sourceRowNumber = headerRowIndex + 2;
+
+  for (const row of dataRows) {
+    const panchadi = safeNumber(row[pCol]);
+    const sanskritLine = normalizeText(row[sanskritCol]);
+    const impliedMeaning = impliedMeaningCol !== null ? normalizeText(row[impliedMeaningCol]) : "";
+    const descriptionMeaning = descriptionCol !== null ? normalizeText(row[descriptionCol]) : "";
+
+    const meaningToUse = impliedMeaning || descriptionMeaning;
+
+    if (!panchadi || !sanskritLine || !meaningToUse) {
+      sourceRowNumber++;
+      continue;
     }
 
-    // Sort podcasts by numeric prefix if present
-    const arr = Array.from(map.values());
-    arr.sort((a, b) => {
-      const an = parseInt(a.key.split("_")[0], 10);
-      const bn = parseInt(b.key.split("_")[0], 10);
-      if (!isNaN(an) && !isNaN(bn)) return an - bn;
-      return a.key.localeCompare(b.key);
+    parsed.push({
+      id: `p${panchadi}_r${sourceRowNumber}`,
+      panchadiNumber: panchadi,
+      sanskritLine,
+      meaning: meaningToUse,
+      sourceRow: sourceRowNumber
     });
 
-    // Within each podcast, keep original order (file already in order)
-    return arr;
+    sourceRowNumber++;
   }
 
-  // ---------- QUIZ VIEW ----------
-  function setViewToActiveSet() {
-    const p = getActivePodcast();
-    if (!p) return;
+  // Sort so that it goes from 1st Panchadi -> last Panchadi,
+  // while preserving original row order inside the same Panchadi.
+  parsed.sort((a, b) => {
+    if (a.panchadiNumber !== b.panchadiNumber) {
+      return a.panchadiNumber - b.panchadiNumber;
+    }
+    return a.sourceRow - b.sourceRow;
+  });
 
-    if (activeSet === "missed") {
-      viewList = p.questions.filter(q => missedIds.has(q.id));
+  return parsed;
+}
+
+function buildActiveCards() {
+  let baseCards = [];
+
+  if (state.currentView === "saved") {
+    baseCards = state.allCards.filter(card => state.savedIds.has(card.id));
+  } else {
+    baseCards = [...state.allCards];
+  }
+
+  if (state.currentMode === "random") {
+    state.activeCards = shuffleArray(baseCards);
+  } else {
+    state.activeCards = baseCards;
+  }
+
+  state.currentIndex = 0;
+  state.isFlipped = false;
+
+  updateUI();
+  renderCard();
+}
+
+function getCurrentCard() {
+  if (!state.activeCards.length) return null;
+  return state.activeCards[state.currentIndex] || null;
+}
+
+function renderEmptyState(title, message) {
+  el.flashcardStage.innerHTML = `
+    <div class="empty-state">
+      <h2>${title}</h2>
+      <p>${message}</p>
+    </div>
+  `;
+}
+
+function renderCard() {
+  const card = getCurrentCard();
+
+  if (!state.allCards.length) {
+    renderEmptyState(
+      "No flash cards found",
+      "The Excel file was loaded, but no usable rows were found in the line-by-line sheet."
+    );
+    return;
+  }
+
+  if (!card) {
+    if (state.currentView === "saved") {
+      renderEmptyState(
+        "Saved stack is empty",
+        "Save cards using “Save This Card”, then switch back to Saved Stack to revise them later."
+      );
     } else {
-      const start = activeSet * 10;
-      const end = start + 10;
-      viewList = p.questions.slice(start, end);
+      renderEmptyState(
+        "No cards available",
+        "Please check the Excel sheet contents."
+      );
     }
-
-    viewPos = 0;
-    firstTryEligible = new Set(viewList.map(q => q.id));
-    updateMissedTabCount();
+    return;
   }
 
-  function renderCurrent() {
-    clearOptions();
+  el.flashcardStage.innerHTML = `
+    <div class="card-wrap">
+      <div class="flashcard ${state.isFlipped ? "flipped" : ""}" id="flashcard">
+        <div class="card-face card-front">
+          <div class="card-head">
+            <div class="mini">Front Side</div>
+            <h2>Guess the meaning of this line</h2>
+          </div>
 
-    const p = getActivePodcast();
-    if (!p) {
-      qHeader.textContent = "No podcast data found.";
-      qText.style.display = "none";
-      optionsEl.style.display = "none";
-      setStatus("Could not load quiz data.", "bad");
-      return;
-    }
+          <div class="card-body">
+            <div class="devanagari-line">${escapeHtml(card.sanskritLine)}</div>
+          </div>
 
-    if (!running) {
-      qHeader.textContent = "Ready.";
-      qText.style.display = "none";
-      optionsEl.style.display = "none";
-      setStatus("Press Start.", "muted");
-      return;
-    }
+          <div class="card-foot">
+            <span class="hint">Click the card or press Flip</span>
+          </div>
+        </div>
 
-    if (!viewList.length) {
-      const msg = (activeSet === "missed")
-        ? "No missed questions yet. 🎉"
-        : "This set has no questions (unexpected).";
-      qHeader.textContent = msg;
-      qText.style.display = "none";
-      optionsEl.style.display = "none";
-      setStatus(msg, "muted");
-      return;
-    }
+        <div class="card-face card-back">
+          <div class="card-head">
+            <div class="mini">Back Side</div>
+            <h2>Answer</h2>
+          </div>
 
-    if (viewPos >= viewList.length) {
-      qHeader.textContent = "Set complete ✅";
-      qText.style.display = "none";
-      optionsEl.style.display = "none";
-      setStatus("You finished this set. Pick another set, or Finish.", "good");
-      return;
-    }
+          <div class="card-body">
+            <div class="meaning-block">
+              <div class="panchadi">Panchadi #${escapeHtml(String(card.panchadiNumber))}</div>
+              <div class="meaning">${escapeHtml(card.meaning)}</div>
+            </div>
+          </div>
 
-    const q = viewList[viewPos];
+          <div class="card-foot">
+            <span class="hint">Click the card or press Flip</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 
-    qHeader.textContent = `Question ${viewPos + 1} of ${viewList.length}` + (activeSet === "missed" ? " (Missed Review)" : "");
-    qText.textContent = q.text;
-    qText.style.display = "block";
-    optionsEl.style.display = "grid";
+  const flashcard = document.getElementById("flashcard");
+  flashcard.addEventListener("click", flipCard);
+}
 
-    setStatus("Pick an option. (Auto-check enabled)", "muted");
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
 
-    const order = ["A", "B", "C", "D"];
-    for (const letter of order) {
-      const opt = document.createElement("div");
-      opt.className = "opt";
-      opt.dataset.letter = letter;
+function flipCard() {
+  const card = document.getElementById("flashcard");
+  if (!card) return;
 
-      const badge = document.createElement("div");
-      badge.className = "optBadge";
-      badge.textContent = letter;
+  state.isFlipped = !state.isFlipped;
+  card.classList.toggle("flipped", state.isFlipped);
+}
 
-      const txt = document.createElement("div");
-      txt.className = "optText";
-      txt.textContent = q.options[letter];
+function goNext() {
+  if (!state.activeCards.length) return;
+  if (state.currentIndex < state.activeCards.length - 1) {
+    state.currentIndex += 1;
+    state.isFlipped = false;
+    updateUI();
+    renderCard();
+  } else {
+    showMessage("You are already at the last card.");
+  }
+}
 
-      opt.appendChild(badge);
-      opt.appendChild(txt);
+function goPrev() {
+  if (!state.activeCards.length) return;
+  if (state.currentIndex > 0) {
+    state.currentIndex -= 1;
+    state.isFlipped = false;
+    updateUI();
+    renderCard();
+  } else {
+    showMessage("You are already at the first card.");
+  }
+}
 
-      opt.addEventListener("click", () => onPickOption(letter, opt));
+function restartOrder() {
+  buildActiveCards();
+  showMessage(
+    state.currentMode === "random"
+      ? "Random order restarted with a fresh shuffle."
+      : "Sequential order restarted from the first card."
+  );
+}
 
-      optionsEl.appendChild(opt);
-    }
+function saveCurrentCard() {
+  const card = getCurrentCard();
+  if (!card) return;
+
+  state.savedIds.add(card.id);
+  saveSavedSetToStorage();
+  updateUI();
+  showMessage("Card saved to your Saved Stack.");
+}
+
+function removeCurrentCardFromSaved() {
+  const card = getCurrentCard();
+  if (!card) return;
+
+  if (!state.savedIds.has(card.id)) {
+    showMessage("This card is not in the Saved Stack.");
+    return;
   }
 
-  function disableOptions() {
-    optionsEl.querySelectorAll(".opt").forEach(el => {
-      el.classList.add("disabled");
-      el.style.pointerEvents = "none";
-    });
+  state.savedIds.delete(card.id);
+  saveSavedSetToStorage();
+
+  if (state.currentView === "saved") {
+    buildActiveCards();
+  } else {
+    updateUI();
+    renderCard();
   }
 
-  function onPickOption(letter, optEl) {
-    if (!running) return;
-    const q = viewList[viewPos];
-    if (!q) return;
+  showMessage("Card removed from the Saved Stack.");
+}
 
-    // Count attempted (once per question)
-    if (!attemptedIds.has(q.id)) {
-      attemptedIds.add(q.id);
-      stats.attempted += 1;
-      chipAttempted.textContent = `Attempted: ${stats.attempted}`;
+function setMode(mode) {
+  if (state.currentMode === mode) return;
+  state.currentMode = mode;
+  buildActiveCards();
+  showMessage(mode === "random" ? "Random display mode selected." : "Sequential display mode selected.");
+}
+
+function setView(view) {
+  if (state.currentView === view) return;
+  state.currentView = view;
+  buildActiveCards();
+  showMessage(view === "saved" ? "Showing your Saved Stack." : "Showing all flash cards.");
+}
+
+function updateButtonStates() {
+  el.modeSequentialBtn.classList.toggle("active", state.currentMode === "sequential");
+  el.modeRandomBtn.classList.toggle("active", state.currentMode === "random");
+
+  el.viewAllBtn.classList.toggle("active", state.currentView === "all");
+  el.viewSavedBtn.classList.toggle("active", state.currentView === "saved");
+}
+
+function updateUI() {
+  updateButtonStates();
+
+  el.statusMode.textContent = state.currentMode === "random" ? "Random" : "Sequential";
+  el.statusView.textContent = state.currentView === "saved" ? "Saved Stack" : "All Cards";
+  el.statusSavedCount.textContent = String(state.savedIds.size);
+
+  const total = state.activeCards.length;
+  const progress = total ? `${state.currentIndex + 1} / ${total}` : `0 / 0`;
+  el.statusProgress.textContent = progress;
+
+  const currentCard = getCurrentCard();
+  const isSaved = currentCard ? state.savedIds.has(currentCard.id) : false;
+
+  el.saveCardBtn.textContent = isSaved ? "Saved Already" : "Save This Card";
+  el.saveCardBtn.disabled = !currentCard || isSaved;
+  el.removeSavedBtn.disabled = !currentCard || !isSaved;
+  el.prevBtn.disabled = !currentCard || state.currentIndex === 0;
+  el.nextBtn.disabled = !currentCard || state.currentIndex >= total - 1;
+  el.flipTopBtn.disabled = !currentCard;
+  el.flipBottomBtn.disabled = !currentCard;
+}
+
+function wireEvents() {
+  el.modeSequentialBtn.addEventListener("click", () => setMode("sequential"));
+  el.modeRandomBtn.addEventListener("click", () => setMode("random"));
+
+  el.viewAllBtn.addEventListener("click", () => setView("all"));
+  el.viewSavedBtn.addEventListener("click", () => setView("saved"));
+
+  el.saveCardBtn.addEventListener("click", saveCurrentCard);
+  el.removeSavedBtn.addEventListener("click", removeCurrentCardFromSaved);
+
+  el.restartBtn.addEventListener("click", restartOrder);
+
+  el.flipTopBtn.addEventListener("click", flipCard);
+  el.flipBottomBtn.addEventListener("click", flipCard);
+
+  el.prevBtn.addEventListener("click", goPrev);
+  el.nextBtn.addEventListener("click", goNext);
+
+  document.addEventListener("keydown", (event) => {
+    const key = event.key.toLowerCase();
+
+    if (key === "arrowright") {
+      goNext();
+    } else if (key === "arrowleft") {
+      goPrev();
+    } else if (key === " " || key === "enter") {
+      event.preventDefault();
+      flipCard();
+    } else if (key === "s") {
+      saveCurrentCard();
     }
-
-    const isCorrect = (letter === q.correct);
-
-    if (isCorrect) {
-      // First-try?
-      if (firstTryEligible.has(q.id)) {
-        stats.firstTry += 1;
-        chipFirstTry.textContent = `First-try: ${stats.firstTry}`;
-      }
-      firstTryEligible.delete(q.id);
-
-      stats.correct += 1;
-      chipCorrect.textContent = `Correct: ${stats.correct}`;
-
-      optEl.classList.add("good");
-      setStatus("Correct ✅ Moving to next…", "good");
-
-      disableOptions();
-
-      // Advance after a short delay
-      setTimeout(() => {
-        viewPos += 1;
-        renderCurrent();
-      }, 450);
-
-    } else {
-      // Mark missed
-      wrongOnceIds.add(q.id);
-      missedIds.add(q.id);
-      updateMissedTabCount();
-
-      // Once wrong, it can never be first-try anymore
-      firstTryEligible.delete(q.id);
-
-      optEl.classList.add("bad");
-      setStatus("Wrong ❌ Try again (stay on same question).", "bad");
-    }
-  }
-
-  // ---------- EVENTS ----------
-  function onTabClick(setValue) {
-    activeSet = setValue;
-    markTabActive(setValue);
-    if (running) {
-      setViewToActiveSet();
-      renderCurrent();
-    } else {
-      // not running yet, just update hint
-      setStatus("Press Start to begin this set.", "muted");
-    }
-  }
-
-  async function init() {
-    debugBox.style.display = DEBUG ? "block" : "none";
-    log("Debug: init()");
-
-    qHeader.textContent = "Loading quiz file...";
-    setStatus("Loading Quiz_file.txt ...", "muted");
-
-    let raw = "";
-    try {
-      const res = await baseUrlSafeFetch(QUIZ_TXT_URL);
-      if (!res.ok) throw new Error(`HTTP ${res.status} while fetching ${QUIZ_TXT_URL}`);
-      raw = await res.text();
-    } catch (e) {
-      qHeader.textContent = "No questions loaded yet.";
-      setStatus("FAILED to load Quiz_file.txt. Check that it exists at Images/Quiz_file.txt", "bad");
-      if (DEBUG) log(String(e));
-      return;
-    }
-
-    const allQuestions = parseQuizText(raw);
-    log(`Parsed questions: ${allQuestions.length}`);
-
-    if (!allQuestions.length) {
-      qHeader.textContent = "No questions loaded yet.";
-      setStatus("Loaded text file, but parser found 0 questions. (Format mismatch)", "bad");
-      if (DEBUG) log("Parser found 0. Check text format exactly like your sample.");
-      return;
-    }
-
-    podcasts = buildPodcastsFromQuestions(allQuestions);
-    log(`Podcasts found: ${podcasts.length}`);
-
-    // Populate dropdown
-    podcastSelect.innerHTML = "";
-    podcasts.forEach((p, idx) => {
-      const opt = document.createElement("option");
-      opt.value = String(idx);
-      opt.textContent = p.label;
-      podcastSelect.appendChild(opt);
-    });
-
-    // default selection
-    podcastIndex = 0;
-    podcastSelect.value = "0";
-    resetRunStateForPodcast();
-
-    qHeader.textContent = "Loaded ✅";
-    setStatus("Select a podcast, pick a set, then press Start.", "good");
-  }
-
-  // Wiring tabs
-  setTabs.addEventListener("click", (e) => {
-    const t = e.target.closest(".tab");
-    if (!t) return;
-    const setValue = t.dataset.set;
-    if (setValue === "missed") onTabClick("missed");
-    else onTabClick(Number(setValue));
   });
+}
 
-  podcastSelect.addEventListener("change", () => {
-    const idx = Number(podcastSelect.value);
-    if (!Number.isFinite(idx)) return;
-    podcastIndex = idx;
-    resetRunStateForPodcast();
-    setStatus("Podcast changed. Pick a set and press Start.", "muted");
-  });
+async function init() {
+  try {
+    loadSavedSetFromStorage();
+    wireEvents();
+    updateUI();
 
-  startBtn.addEventListener("click", () => {
-    const p = getActivePodcast();
-    if (!p) {
-      setStatus("No podcast loaded.", "bad");
-      return;
-    }
+    const workbook = await fetchWorkbook();
+    state.allCards = parseCardsFromWorkbook(workbook);
 
-    // Enforce exactly 50 as you described (but don’t hard-fail if not exactly)
-    if (p.questions.length < 1) {
-      setStatus("This podcast has 0 questions.", "bad");
-      return;
-    }
+    buildActiveCards();
+    showMessage(`Loaded ${state.allCards.length} flash cards from the Excel sheet.`);
+  } catch (error) {
+    console.error(error);
+    el.flashcardStage.innerHTML = `
+      <div class="empty-state">
+        <h2>Could not load the flash cards</h2>
+        <p>${escapeHtml(error.message || "Unknown error.")}</p>
+        <p>Please confirm that <strong>${escapeHtml(EXCEL_FILE_PATH)}</strong> exists in your GitHub repo.</p>
+      </div>
+    `;
+    showMessage("Loading failed.");
+  }
+}
 
-    running = true;
-    setViewToActiveSet();
-    renderCurrent();
-  });
-
-  finishBtn.addEventListener("click", () => {
-    resetRunStateForPodcast();
-    setStatus("Finished. You can start again any time.", "muted");
-  });
-
-  // Start
-  document.addEventListener("DOMContentLoaded", init);
-})();
+init();
