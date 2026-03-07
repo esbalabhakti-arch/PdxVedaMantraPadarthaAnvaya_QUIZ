@@ -9,197 +9,223 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- SheetJS -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
-      --bg1: #08111f;
-      --bg2: #12213a;
-      --panel: rgba(255, 255, 255, 0.08);
-      --panel-strong: rgba(255, 255, 255, 0.12);
+      --bg1: #06101d;
+      --bg2: #0c1830;
+      --panel: rgba(255,255,255,0.06);
+      --panel-2: rgba(255,255,255,0.08);
       --gold: #e4bf7a;
       --gold-soft: #f3d8a3;
-      --text: #f5f0e6;
+      --text: #f7f1e7;
       --muted: #c8c2b8;
-      --shadow: 0 18px 55px rgba(0, 0, 0, 0.45);
-      --border: rgba(228, 191, 122, 0.35);
-      --danger: #ffb3b3;
+      --border: rgba(228,191,122,0.26);
+      --shadow: 0 14px 36px rgba(0,0,0,0.38);
       --success: #b7ffd3;
+      --danger: #ffb3b3;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
-      font-family: "Inter", sans-serif;
-      color: var(--text);
+      padding: 0;
       background:
-        radial-gradient(circle at top, rgba(63, 91, 149, 0.28), transparent 36%),
-        linear-gradient(180deg, #030811 0%, #08111f 35%, #0d1830 100%);
+        radial-gradient(circle at top, rgba(63,91,149,0.22), transparent 35%),
+        linear-gradient(180deg, #030811 0%, #08111f 45%, #0b1730 100%);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
       min-height: 100vh;
     }
 
     .page-shell {
-      width: min(1200px, calc(100% - 28px));
+      width: min(1220px, calc(100% - 20px));
       margin: 0 auto;
-      padding: 20px 0 40px;
+      padding: 10px 0 18px;
     }
 
     .banner-wrap {
       display: flex;
       justify-content: center;
-      margin: 6px 0 24px;
+      margin: 0 0 10px;
     }
 
     .banner {
-      width: min(100%, 1100px);
-      border-radius: 18px;
-      border: 1px solid rgba(228, 191, 122, 0.28);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+      width: min(100%, 1180px);
       display: block;
+      border-radius: 14px;
+      border: 1px solid rgba(228,191,122,0.22);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.34);
+      background: transparent;
     }
 
-    .control-panel {
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+    .compact-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
       border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px;
+      border-radius: 18px;
+      padding: 12px 14px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(8px);
+      margin-bottom: 12px;
     }
 
-    .top-title {
+    .title-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: 8px;
       text-align: center;
-      margin-bottom: 14px;
     }
 
-    .top-title h1 {
+    .title-row h1 {
       margin: 0;
       font-family: "Cinzel", serif;
-      font-size: clamp(1.35rem, 2vw, 2.1rem);
+      font-size: clamp(1.2rem, 1.8vw, 2rem);
       color: var(--gold-soft);
-      letter-spacing: 0.4px;
+      line-height: 1.2;
     }
 
-    .top-title p {
-      margin: 8px 0 0;
+    .title-row p {
+      margin: 0;
       color: var(--muted);
-      font-size: 0.98rem;
+      font-size: 0.93rem;
     }
 
-    .controls-grid {
+    .controls-inline {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 16px;
+      grid-template-columns: 1.15fr 1fr 1fr 0.9fr;
+      gap: 8px;
+      align-items: stretch;
     }
 
     .control-box {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(228, 191, 122, 0.2);
-      border-radius: 16px;
-      padding: 14px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(228,191,122,0.18);
+      border-radius: 14px;
+      padding: 8px 10px;
+      min-height: 74px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
     }
 
     .control-box h3 {
-      margin: 0 0 10px;
+      margin: 0;
+      font-size: 0.86rem;
       color: var(--gold-soft);
-      font-size: 0.95rem;
       font-weight: 700;
+      line-height: 1.1;
     }
 
-    .button-row,
-    .stack-row,
-    .nav-row {
+    .button-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 6px;
     }
 
     button {
-      border: 1px solid rgba(228, 191, 122, 0.35);
-      background: linear-gradient(180deg, rgba(243,216,163,0.15), rgba(228,191,122,0.08));
+      border: 1px solid rgba(228,191,122,0.34);
+      background: linear-gradient(180deg, rgba(243,216,163,0.13), rgba(228,191,122,0.07));
       color: var(--text);
-      padding: 10px 14px;
-      border-radius: 12px;
+      padding: 7px 11px;
+      border-radius: 10px;
       cursor: pointer;
+      font-size: 0.9rem;
       font-weight: 600;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.18);
+      white-space: nowrap;
     }
 
     button:hover {
       transform: translateY(-1px);
-      border-color: rgba(243,216,163,0.6);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.28);
+      border-color: rgba(243,216,163,0.58);
     }
 
     button.active {
-      background: linear-gradient(180deg, rgba(243,216,163,0.3), rgba(228,191,122,0.14));
-      border-color: rgba(243,216,163,0.8);
-      box-shadow: 0 0 18px rgba(228,191,122,0.18);
+      background: linear-gradient(180deg, rgba(243,216,163,0.25), rgba(228,191,122,0.13));
+      border-color: rgba(243,216,163,0.78);
+      box-shadow: 0 0 14px rgba(228,191,122,0.16);
     }
 
     button.secondary {
       background: rgba(255,255,255,0.05);
     }
 
-    button.warn {
-      color: var(--danger);
-    }
-
     button.good {
       color: var(--success);
     }
 
-    .status-strip {
-      margin-top: 14px;
+    button.warn {
+      color: var(--danger);
+    }
+
+    .status-row {
+      margin-top: 8px;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      gap: 8px;
     }
 
     .status-chip {
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(228, 191, 122, 0.16);
-      border-radius: 14px;
-      padding: 12px;
+      border: 1px solid rgba(228,191,122,0.15);
+      border-radius: 12px;
+      padding: 7px 10px;
       text-align: center;
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .status-chip .label {
-      display: block;
+      font-size: 0.73rem;
       color: var(--muted);
-      font-size: 0.82rem;
-      margin-bottom: 5px;
+      line-height: 1.1;
     }
 
     .status-chip .value {
-      display: block;
+      margin-top: 2px;
+      font-size: 0.92rem;
       font-weight: 700;
       color: var(--gold-soft);
-      font-size: 1rem;
+      line-height: 1.15;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 6px;
+      color: var(--muted);
+      min-height: 18px;
+      font-size: 0.88rem;
     }
 
     .flashcard-stage {
-      margin-top: 24px;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 540px;
+      min-height: 430px;
+      margin-top: 4px;
     }
 
     .card-wrap {
-      width: min(820px, 100%);
+      width: min(860px, 100%);
       perspective: 1400px;
     }
 
     .flashcard {
       width: 100%;
-      min-height: 500px;
+      min-height: 400px;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.7s ease;
@@ -214,16 +240,16 @@
       position: absolute;
       inset: 0;
       backface-visibility: hidden;
-      border-radius: 26px;
+      border-radius: 22px;
       overflow: hidden;
-      border: 1px solid rgba(228, 191, 122, 0.35);
+      border: 1px solid rgba(228,191,122,0.34);
       box-shadow: var(--shadow);
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
-        radial-gradient(circle at top left, rgba(228,191,122,0.13), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(114,167,255,0.12), transparent 28%),
-        linear-gradient(180deg, #0d1c31, #0a1424);
-      padding: 28px;
+        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04)),
+        radial-gradient(circle at top left, rgba(228,191,122,0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(114,167,255,0.10), transparent 28%),
+        linear-gradient(180deg, #0d1b31, #091423);
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -235,20 +261,22 @@
 
     .card-head {
       text-align: center;
+      margin-bottom: 6px;
     }
 
     .card-head .mini {
-      font-size: 0.9rem;
+      font-size: 0.84rem;
       color: var(--gold-soft);
       font-weight: 700;
-      letter-spacing: 0.3px;
+      line-height: 1.1;
     }
 
     .card-head h2 {
-      margin: 10px 0 0;
+      margin: 5px 0 0;
       font-family: "Cinzel", serif;
-      font-size: clamp(1.2rem, 2.1vw, 2rem);
+      font-size: clamp(1rem, 1.7vw, 1.55rem);
       color: var(--text);
+      line-height: 1.2;
     }
 
     .card-body {
@@ -256,34 +284,34 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px 6px;
       text-align: center;
+      padding: 8px 4px;
     }
 
     .devanagari-line {
       font-family: "Noto Sans Devanagari", sans-serif;
-      font-size: clamp(1.8rem, 3vw, 2.9rem);
-      line-height: 1.8;
+      font-size: clamp(1.55rem, 2.55vw, 2.45rem);
+      line-height: 1.75;
       color: #fff8ea;
-      max-width: 92%;
+      max-width: 94%;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
     .meaning-block {
-      max-width: 92%;
+      max-width: 94%;
     }
 
     .meaning-block .panchadi {
-      font-size: 1.05rem;
+      font-size: 0.98rem;
       color: var(--gold-soft);
       font-weight: 700;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     .meaning-block .meaning {
-      font-size: clamp(1rem, 1.55vw, 1.25rem);
-      line-height: 1.85;
+      font-size: clamp(0.98rem, 1.3vw, 1.14rem);
+      line-height: 1.72;
       color: #f5efe2;
       white-space: pre-wrap;
     }
@@ -292,38 +320,32 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
+      margin-top: 6px;
     }
 
     .card-foot .hint {
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.84rem;
     }
 
     .footer-nav {
-      margin-top: 18px;
+      margin-top: 8px;
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
-    }
-
-    .message {
-      text-align: center;
-      margin-top: 16px;
-      color: var(--muted);
-      min-height: 24px;
     }
 
     .loading,
     .empty-state {
-      width: min(820px, 100%);
+      width: min(860px, 100%);
       text-align: center;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(228,191,122,0.2);
-      border-radius: 24px;
-      padding: 44px 20px;
+      border-radius: 20px;
+      padding: 30px 18px;
       box-shadow: var(--shadow);
     }
 
@@ -332,63 +354,63 @@
       margin-top: 0;
       color: var(--gold-soft);
       font-family: "Cinzel", serif;
+      font-size: 1.2rem;
     }
 
     .loading p,
     .empty-state p {
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.6;
+      font-size: 0.95rem;
     }
 
-    @media (max-width: 920px) {
-      .controls-grid,
-      .status-strip {
+    @media (max-width: 980px) {
+      .controls-inline {
         grid-template-columns: 1fr 1fr;
       }
 
-      .flashcard-stage {
-        min-height: 500px;
+      .status-row {
+        grid-template-columns: 1fr 1fr;
       }
 
       .flashcard {
-        min-height: 470px;
+        min-height: 390px;
       }
     }
 
     @media (max-width: 620px) {
       .page-shell {
-        width: min(100% - 16px, 100%);
-        padding-top: 10px;
+        width: min(100% - 12px, 100%);
+        padding-top: 6px;
       }
 
-      .controls-grid,
-      .status-strip {
+      .controls-inline,
+      .status-row {
         grid-template-columns: 1fr;
       }
 
-      .control-panel {
-        padding: 14px;
+      .compact-panel {
+        padding: 10px;
+      }
+
+      .control-box {
+        min-height: auto;
       }
 
       .flashcard-stage {
-        min-height: 440px;
+        min-height: 380px;
       }
 
       .flashcard {
-        min-height: 430px;
+        min-height: 360px;
       }
 
       .card-face {
-        padding: 20px 16px;
+        padding: 16px 14px;
       }
 
       .devanagari-line {
-        font-size: clamp(1.45rem, 6vw, 2rem);
-        line-height: 1.75;
-      }
-
-      .meaning-block .meaning {
-        font-size: 1rem;
+        font-size: clamp(1.28rem, 5vw, 1.8rem);
       }
     }
   </style>
@@ -403,13 +425,13 @@
       />
     </div>
 
-    <section class="control-panel">
-      <div class="top-title">
+    <section class="compact-panel">
+      <div class="title-row">
         <h1>Veda Padārtha Anvaya Flash Cards</h1>
         <p>Study line-by-line meanings through interactive flash cards.</p>
       </div>
 
-      <div class="controls-grid">
+      <div class="controls-inline">
         <div class="control-box">
           <h3>Display Order</h3>
           <div class="button-row">
@@ -420,7 +442,7 @@
 
         <div class="control-box">
           <h3>Card Stack</h3>
-          <div class="stack-row">
+          <div class="button-row">
             <button id="viewAllBtn" class="active">All Cards</button>
             <button id="viewSavedBtn">Saved Stack</button>
           </div>
@@ -429,21 +451,21 @@
         <div class="control-box">
           <h3>Current Card</h3>
           <div class="button-row">
-            <button id="saveCardBtn" class="good">Save This Card</button>
-            <button id="removeSavedBtn" class="warn">Remove from Saved</button>
+            <button id="saveCardBtn" class="good">Save</button>
+            <button id="removeSavedBtn" class="warn">Remove</button>
           </div>
         </div>
 
         <div class="control-box">
           <h3>Actions</h3>
-          <div class="nav-row">
-            <button id="restartBtn" class="secondary">Restart Order</button>
+          <div class="button-row">
+            <button id="restartBtn" class="secondary">Restart</button>
             <button id="flipTopBtn">Flip</button>
           </div>
         </div>
       </div>
 
-      <div class="status-strip">
+      <div class="status-row">
         <div class="status-chip">
           <span class="label">Mode</span>
           <span class="value" id="statusMode">Sequential</span>
@@ -457,7 +479,7 @@
           <span class="value" id="statusProgress">0 / 0</span>
         </div>
         <div class="status-chip">
-          <span class="label">Saved Cards</span>
+          <span class="label">Saved</span>
           <span class="value" id="statusSavedCount">0</span>
         </div>
       </div>
@@ -468,7 +490,7 @@
     <section class="flashcard-stage" id="flashcardStage">
       <div class="loading" id="loadingBox">
         <h2>Loading flash cards...</h2>
-        <p>Reading the Excel file from the <strong>Images</strong> folder and building your flash card stack.</p>
+        <p>Reading the Excel file from the Images folder and building your flash card stack.</p>
       </div>
     </section>
 
