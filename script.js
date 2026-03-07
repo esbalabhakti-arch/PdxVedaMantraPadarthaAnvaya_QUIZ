@@ -361,11 +361,7 @@ function goPrev() {
 
 function restartOrder() {
   buildActiveCards();
-  showMessage(
-    state.currentMode === "random"
-      ? "Random order restarted."
-      : "Sequential order restarted."
-  );
+  showMessage(state.currentMode === "random" ? "Random order restarted." : "Sequential order restarted.");
 }
 
 function saveCurrentCard() {
