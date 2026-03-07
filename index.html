@@ -1,338 +1,484 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Veda Padārtha Anvaya Podcasts — Learning Check</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veda Padārtha Anvaya Flash Cards</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- SheetJS -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
   <style>
-    :root{
-      --bg0:#05070d;
-      --bg1:#0b1020;
-
-      --card:rgba(255,255,255,0.06);
-      --stroke:rgba(255,255,255,0.10);
-
-      --text:rgba(255,255,255,0.92);
-      --muted:rgba(255,255,255,0.72);
-      --muted2:rgba(255,255,255,0.55);
-
-      --accent:#7c5cff;
-      --accent2:rgba(124,92,255,0.18);
-
-      --good:#36d399;
-      --bad:#ff5c7a;
-
-      --shadow:0 18px 50px rgba(0,0,0,0.55);
-      --radius:22px;
+    :root {
+      --bg1: #08111f;
+      --bg2: #12213a;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.12);
+      --gold: #e4bf7a;
+      --gold-soft: #f3d8a3;
+      --text: #f5f0e6;
+      --muted: #c8c2b8;
+      --shadow: 0 18px 55px rgba(0, 0, 0, 0.45);
+      --border: rgba(228, 191, 122, 0.35);
+      --danger: #ffb3b3;
+      --success: #b7ffd3;
     }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--text);
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(900px 520px at 20% 10%, rgba(124,92,255,0.25), transparent 60%),
-        radial-gradient(900px 520px at 90% 15%, rgba(0,190,255,0.18), transparent 60%),
-        radial-gradient(900px 520px at 60% 90%, rgba(0,255,160,0.10), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      min-height:100vh;
+        radial-gradient(circle at top, rgba(63, 91, 149, 0.28), transparent 36%),
+        linear-gradient(180deg, #030811 0%, #08111f 35%, #0d1830 100%);
+      min-height: 100vh;
     }
 
-    /* FULL-WIDTH BANNER (tight height, edge-to-edge) */
-    .hero{
-      width:100%;
-      background:#000;
-      border-bottom:1px solid rgba(255,255,255,0.10);
-      overflow:hidden;
-    }
-    .hero img{
-      width:100%;
-      height:130px;            /* tight height */
-      object-fit:cover;        /* fill full width nicely */
-      object-position:center;
-      display:block;
-      filter:saturate(1.02) contrast(1.02);
-    }
-    @media (max-width:520px){
-      .hero img{height:110px;}
+    .page-shell {
+      width: min(1200px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 20px 0 40px;
     }
 
-    .wrap{
-      max-width:1050px;
-      margin:18px auto 48px;
-      padding:0 18px;
+    .banner-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 6px 0 24px;
     }
 
-    .panel{
-      background:var(--card);
-      border:1px solid var(--stroke);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:20px;
+    .banner {
+      width: min(100%, 1100px);
+      border-radius: 18px;
+      border: 1px solid rgba(228, 191, 122, 0.28);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+      display: block;
     }
 
-    .titlePill{
-      display:inline-block;
-      padding:10px 16px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,0.05);
-      font-weight:800;
-      letter-spacing:0.2px;
-      margin:0 auto 14px;
+    .control-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
     }
 
-    .row{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:center;
-    }
-    .rowLeft{justify-content:flex-start}
-
-    label{color:var(--muted); font-size:14px}
-
-    select{
-      width:min(780px, 100%);
-      padding:12px 14px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(0,0,0,0.25);
-      color:var(--text);
-      outline:none;
+    .top-title {
+      text-align: center;
+      margin-bottom: 14px;
     }
 
-    /* ONE-ROW SET TABS (compact) */
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:nowrap;            /* force single row */
-      justify-content:center;
-      align-items:center;
-      padding:10px 10px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,0.04);
-      overflow-x:auto;             /* if tiny screen, allow scroll */
-      -webkit-overflow-scrolling: touch;
-    }
-    .tab{
-      white-space:nowrap;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(0,0,0,0.20);
-      color:var(--muted);
-      cursor:pointer;
-      user-select:none;
-      transition:transform .05s ease, background .2s ease, color .2s ease, border-color .2s ease;
-      font-weight:800;
-      font-size:13px;             /* smaller */
-      letter-spacing:0.1px;
-      flex:0 0 auto;
-    }
-    .tab:hover{transform:translateY(-1px)}
-    .tab.active{
-      color:white;
-      background:var(--accent2);
-      border-color:rgba(124,92,255,0.65);
-      box-shadow:0 0 0 2px rgba(124,92,255,0.12) inset;
+    .top-title h1 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: clamp(1.35rem, 2vw, 2.1rem);
+      color: var(--gold-soft);
+      letter-spacing: 0.4px;
     }
 
-    .btnRow{
-      display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px;
-    }
-    .btn{
-      padding:11px 16px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.14);
-      background:rgba(255,255,255,0.06);
-      color:var(--text);
-      cursor:pointer;
-      font-weight:900;
-      letter-spacing:0.2px;
-    }
-    .btn.primary{
-      background:rgba(124,92,255,0.22);
-      border-color:rgba(124,92,255,0.55);
-    }
-    .btn.danger{
-      background:rgba(255,92,122,0.15);
-      border-color:rgba(255,92,122,0.45);
-    }
-    .btn:disabled{opacity:0.45; cursor:not-allowed;}
-
-    .stats{
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
-      margin-top:10px;
-    }
-    .chip{
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,0.04);
-      color:var(--muted);
-      font-weight:800;
-      font-size:13px;
+    .top-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
     }
 
-    .divider{height:1px; background:rgba(255,255,255,0.08); margin:18px 0;}
-
-    .qHeader{
-      color:var(--muted);
-      font-weight:900;
-      font-size:14px;
-      margin-bottom:10px;
-      text-align:left;
-    }
-    .question{
-      font-size:22px;
-      font-weight:950;
-      line-height:1.25;
-      margin:4px 0 14px;
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
     }
 
-    .options{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-      margin-top:12px;
-    }
-    @media (min-width: 860px){
-      .options{grid-template-columns:1fr 1fr;}
+    .control-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(228, 191, 122, 0.2);
+      border-radius: 16px;
+      padding: 14px;
     }
 
-    .opt{
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(255,255,255,0.04);
-      border-radius:16px;
-      padding:14px 14px;
-      cursor:pointer;
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-      transition:transform .05s ease, border-color .2s ease, background .2s ease;
-    }
-    .opt:hover{transform:translateY(-1px); border-color:rgba(124,92,255,0.38)}
-    .opt.disabled{opacity:0.55; cursor:not-allowed}
-
-    .optBadge{
-      flex:0 0 auto;
-      width:28px; height:28px;
-      border-radius:10px;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(124,92,255,0.18);
-      border:1px solid rgba(124,92,255,0.35);
-      font-weight:950;
-      color:white;
-      margin-top:1px;
-    }
-    .optText{color:var(--text); font-weight:800; line-height:1.25}
-
-    .opt.good{
-      border-color:rgba(54,211,153,0.70);
-      background:rgba(54,211,153,0.10);
-    }
-    .opt.bad{
-      border-color:rgba(255,92,122,0.70);
-      background:rgba(255,92,122,0.10);
+    .control-box h3 {
+      margin: 0 0 10px;
+      color: var(--gold-soft);
+      font-size: 0.95rem;
+      font-weight: 700;
     }
 
-    .statusBox{
-      margin-top:14px;
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(0,0,0,0.20);
-      color:var(--muted);
-      font-weight:750;
-      min-height:46px;
+    .button-row,
+    .stack-row,
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .debug{
-      margin-top:14px;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(0,0,0,0.18);
-      color:rgba(255,255,255,0.75);
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:12px;
-      display:none; /* keep hidden by default */
-      white-space:pre-wrap;
+    button {
+      border: 1px solid rgba(228, 191, 122, 0.35);
+      background: linear-gradient(180deg, rgba(243,216,163,0.15), rgba(228,191,122,0.08));
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.2);
     }
 
-    .footer{
-      margin-top:14px;
-      text-align:center;
-      color:var(--muted2);
-      font-size:14px;
-      line-height:1.35;
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(243,216,163,0.6);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.28);
     }
-    .footer a{color:var(--accent); text-decoration:none; font-weight:800}
+
+    button.active {
+      background: linear-gradient(180deg, rgba(243,216,163,0.3), rgba(228,191,122,0.14));
+      border-color: rgba(243,216,163,0.8);
+      box-shadow: 0 0 18px rgba(228,191,122,0.18);
+    }
+
+    button.secondary {
+      background: rgba(255,255,255,0.05);
+    }
+
+    button.warn {
+      color: var(--danger);
+    }
+
+    button.good {
+      color: var(--success);
+    }
+
+    .status-strip {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .status-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(228, 191, 122, 0.16);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .status-chip .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 5px;
+    }
+
+    .status-chip .value {
+      display: block;
+      font-weight: 700;
+      color: var(--gold-soft);
+      font-size: 1rem;
+    }
+
+    .flashcard-stage {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 540px;
+    }
+
+    .card-wrap {
+      width: min(820px, 100%);
+      perspective: 1400px;
+    }
+
+    .flashcard {
+      width: 100%;
+      min-height: 500px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.7s ease;
+      cursor: pointer;
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid rgba(228, 191, 122, 0.35);
+      box-shadow: var(--shadow);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
+        radial-gradient(circle at top left, rgba(228,191,122,0.13), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(114,167,255,0.12), transparent 28%),
+        linear-gradient(180deg, #0d1c31, #0a1424);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    .card-head {
+      text-align: center;
+    }
+
+    .card-head .mini {
+      font-size: 0.9rem;
+      color: var(--gold-soft);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .card-head h2 {
+      margin: 10px 0 0;
+      font-family: "Cinzel", serif;
+      font-size: clamp(1.2rem, 2.1vw, 2rem);
+      color: var(--text);
+    }
+
+    .card-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 6px;
+      text-align: center;
+    }
+
+    .devanagari-line {
+      font-family: "Noto Sans Devanagari", sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.9rem);
+      line-height: 1.8;
+      color: #fff8ea;
+      max-width: 92%;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .meaning-block {
+      max-width: 92%;
+    }
+
+    .meaning-block .panchadi {
+      font-size: 1.05rem;
+      color: var(--gold-soft);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .meaning-block .meaning {
+      font-size: clamp(1rem, 1.55vw, 1.25rem);
+      line-height: 1.85;
+      color: #f5efe2;
+      white-space: pre-wrap;
+    }
+
+    .card-foot {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-foot .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-nav {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 16px;
+      color: var(--muted);
+      min-height: 24px;
+    }
+
+    .loading,
+    .empty-state {
+      width: min(820px, 100%);
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(228,191,122,0.2);
+      border-radius: 24px;
+      padding: 44px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .loading h2,
+    .empty-state h2 {
+      margin-top: 0;
+      color: var(--gold-soft);
+      font-family: "Cinzel", serif;
+    }
+
+    .loading p,
+    .empty-state p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 920px) {
+      .controls-grid,
+      .status-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .flashcard-stage {
+        min-height: 500px;
+      }
+
+      .flashcard {
+        min-height: 470px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page-shell {
+        width: min(100% - 16px, 100%);
+        padding-top: 10px;
+      }
+
+      .controls-grid,
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .control-panel {
+        padding: 14px;
+      }
+
+      .flashcard-stage {
+        min-height: 440px;
+      }
+
+      .flashcard {
+        min-height: 430px;
+      }
+
+      .card-face {
+        padding: 20px 16px;
+      }
+
+      .devanagari-line {
+        font-size: clamp(1.45rem, 6vw, 2rem);
+        line-height: 1.75;
+      }
+
+      .meaning-block .meaning {
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
-
 <body>
-  <!-- Banner: change src to your real banner file in Images/ -->
-  <div class="hero">
-    <img src="./Images/banner.png" alt="Banner" />
-  </div>
+  <div class="page-shell">
+    <div class="banner-wrap">
+      <img
+        src="Images/Vedic_podcast_banner_2.png"
+        alt="Veda Padārtha Anvaya Podcasts Banner"
+        class="banner"
+      />
+    </div>
 
-  <div class="wrap">
-    <div class="panel">
-      <div class="row">
-        <div class="titlePill">LEARNING CHECK QUIZ (Multiple Choice)</div>
+    <section class="control-panel">
+      <div class="top-title">
+        <h1>Veda Padārtha Anvaya Flash Cards</h1>
+        <p>Study line-by-line meanings through interactive flash cards.</p>
       </div>
 
-      <div class="row rowLeft" style="margin-top:4px;">
-        <label for="podcastSelect" style="min-width:120px;">Select Podcast</label>
-        <select id="podcastSelect"></select>
-      </div>
+      <div class="controls-grid">
+        <div class="control-box">
+          <h3>Display Order</h3>
+          <div class="button-row">
+            <button id="modeSequentialBtn" class="active">Sequential</button>
+            <button id="modeRandomBtn">Random</button>
+          </div>
+        </div>
 
-      <div class="row" style="margin-top:12px;">
-        <div class="tabs" id="setTabs">
-          <div class="tab active" data-set="0">1–10</div>
-          <div class="tab" data-set="1">11–20</div>
-          <div class="tab" data-set="2">21–30</div>
-          <div class="tab" data-set="3">31–40</div>
-          <div class="tab" data-set="4">41–50</div>
-          <div class="tab" data-set="missed">Missed (0)</div>
+        <div class="control-box">
+          <h3>Card Stack</h3>
+          <div class="stack-row">
+            <button id="viewAllBtn" class="active">All Cards</button>
+            <button id="viewSavedBtn">Saved Stack</button>
+          </div>
+        </div>
+
+        <div class="control-box">
+          <h3>Current Card</h3>
+          <div class="button-row">
+            <button id="saveCardBtn" class="good">Save This Card</button>
+            <button id="removeSavedBtn" class="warn">Remove from Saved</button>
+          </div>
+        </div>
+
+        <div class="control-box">
+          <h3>Actions</h3>
+          <div class="nav-row">
+            <button id="restartBtn" class="secondary">Restart Order</button>
+            <button id="flipTopBtn">Flip</button>
+          </div>
         </div>
       </div>
 
-      <div class="btnRow">
-        <button class="btn primary" id="startBtn">Start</button>
-        <button class="btn danger" id="finishBtn">Finish</button>
+      <div class="status-strip">
+        <div class="status-chip">
+          <span class="label">Mode</span>
+          <span class="value" id="statusMode">Sequential</span>
+        </div>
+        <div class="status-chip">
+          <span class="label">Viewing</span>
+          <span class="value" id="statusView">All Cards</span>
+        </div>
+        <div class="status-chip">
+          <span class="label">Progress</span>
+          <span class="value" id="statusProgress">0 / 0</span>
+        </div>
+        <div class="status-chip">
+          <span class="label">Saved Cards</span>
+          <span class="value" id="statusSavedCount">0</span>
+        </div>
       </div>
 
-      <div class="stats">
-        <div class="chip" id="chipCorrect">Correct: 0</div>
-        <div class="chip" id="chipAttempted">Attempted: 0</div>
-        <div class="chip" id="chipFirstTry">First-try: 0</div>
-        <div class="chip" id="chipMissedPool">Missed pool: 0</div>
-      </div>
+      <div class="message" id="messageBox"></div>
+    </section>
 
-      <div class="divider"></div>
-
-      <div id="quizArea">
-        <div class="qHeader" id="qHeader">No questions loaded yet.</div>
-        <div class="question" id="qText" style="display:none;"></div>
-        <div class="options" id="options" style="display:none;"></div>
-        <div class="statusBox" id="statusBox">Load the quiz by pressing Start.</div>
-        <div class="debug" id="debugBox"></div>
+    <section class="flashcard-stage" id="flashcardStage">
+      <div class="loading" id="loadingBox">
+        <h2>Loading flash cards...</h2>
+        <p>Reading the Excel file from the <strong>Images</strong> folder and building your flash card stack.</p>
       </div>
+    </section>
 
-      <div class="footer">
-        Acknowledgements: Shri Ram kumar Vaidyanathan, Portland, OR, USA<br/>
-        Contact: <a href="mailto:ramk21@gmail.com">ramk21@gmail.com</a>
-      </div>
+    <div class="footer-nav">
+      <button id="prevBtn">Previous</button>
+      <button id="flipBottomBtn">Flip</button>
+      <button id="nextBtn">Next</button>
     </div>
   </div>
 
-  <script src="./script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
