@@ -5,8 +5,8 @@ const state = {
   allCards: [],
   activeCards: [],
   currentIndex: 0,
-  currentMode: "sequential", // sequential | random
-  currentView: "all",        // all | saved
+  currentMode: "sequential",
+  currentView: "all",
   isFlipped: false,
   savedIds: new Set()
 };
@@ -186,7 +186,6 @@ function parseCardsFromWorkbook(workbook) {
     const sanskritLine = normalizeText(row[sanskritCol]);
     const impliedMeaning = impliedMeaningCol !== null ? normalizeText(row[impliedMeaningCol]) : "";
     const descriptionMeaning = descriptionCol !== null ? normalizeText(row[descriptionCol]) : "";
-
     const meaningToUse = impliedMeaning || descriptionMeaning;
 
     if (!panchadi || !sanskritLine || !meaningToUse) {
@@ -205,8 +204,6 @@ function parseCardsFromWorkbook(workbook) {
     sourceRowNumber++;
   }
 
-  // Sort so that it goes from 1st Panchadi -> last Panchadi,
-  // while preserving original row order inside the same Panchadi.
   parsed.sort((a, b) => {
     if (a.panchadiNumber !== b.panchadiNumber) {
       return a.panchadiNumber - b.panchadiNumber;
@@ -226,12 +223,7 @@ function buildActiveCards() {
     baseCards = [...state.allCards];
   }
 
-  if (state.currentMode === "random") {
-    state.activeCards = shuffleArray(baseCards);
-  } else {
-    state.activeCards = baseCards;
-  }
-
+  state.activeCards = state.currentMode === "random" ? shuffleArray(baseCards) : baseCards;
   state.currentIndex = 0;
   state.isFlipped = false;
 
@@ -253,6 +245,15 @@ function renderEmptyState(title, message) {
   `;
 }
 
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function renderCard() {
   const card = getCurrentCard();
 
@@ -268,7 +269,7 @@ function renderCard() {
     if (state.currentView === "saved") {
       renderEmptyState(
         "Saved stack is empty",
-        "Save cards using “Save This Card”, then switch back to Saved Stack to revise them later."
+        "Save cards using Save, then switch to Saved Stack to revise them later."
       );
     } else {
       renderEmptyState(
@@ -293,7 +294,7 @@ function renderCard() {
           </div>
 
           <div class="card-foot">
-            <span class="hint">Click the card or press Flip</span>
+            <span class="hint">Click card or press Flip</span>
           </div>
         </div>
 
@@ -311,7 +312,7 @@ function renderCard() {
           </div>
 
           <div class="card-foot">
-            <span class="hint">Click the card or press Flip</span>
+            <span class="hint">Click card or press Flip</span>
           </div>
         </div>
       </div>
@@ -320,15 +321,6 @@ function renderCard() {
 
   const flashcard = document.getElementById("flashcard");
   flashcard.addEventListener("click", flipCard);
-}
-
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
 }
 
 function flipCard() {
@@ -341,11 +333,13 @@ function flipCard() {
 
 function goNext() {
   if (!state.activeCards.length) return;
+
   if (state.currentIndex < state.activeCards.length - 1) {
     state.currentIndex += 1;
     state.isFlipped = false;
     updateUI();
     renderCard();
+    showMessage("");
   } else {
     showMessage("You are already at the last card.");
   }
@@ -353,11 +347,13 @@ function goNext() {
 
 function goPrev() {
   if (!state.activeCards.length) return;
+
   if (state.currentIndex > 0) {
     state.currentIndex -= 1;
     state.isFlipped = false;
     updateUI();
     renderCard();
+    showMessage("");
   } else {
     showMessage("You are already at the first card.");
   }
@@ -367,8 +363,8 @@ function restartOrder() {
   buildActiveCards();
   showMessage(
     state.currentMode === "random"
-      ? "Random order restarted with a fresh shuffle."
-      : "Sequential order restarted from the first card."
+      ? "Random order restarted."
+      : "Sequential order restarted."
   );
 }
 
@@ -376,10 +372,16 @@ function saveCurrentCard() {
   const card = getCurrentCard();
   if (!card) return;
 
+  if (state.savedIds.has(card.id)) {
+    showMessage("This card is already saved.");
+    updateUI();
+    return;
+  }
+
   state.savedIds.add(card.id);
   saveSavedSetToStorage();
   updateUI();
-  showMessage("Card saved to your Saved Stack.");
+  showMessage("Card saved.");
 }
 
 function removeCurrentCardFromSaved() {
@@ -387,7 +389,7 @@ function removeCurrentCardFromSaved() {
   if (!card) return;
 
   if (!state.savedIds.has(card.id)) {
-    showMessage("This card is not in the Saved Stack.");
+    showMessage("This card is not in Saved Stack.");
     return;
   }
 
@@ -395,27 +397,34 @@ function removeCurrentCardFromSaved() {
   saveSavedSetToStorage();
 
   if (state.currentView === "saved") {
+    const removedIndex = state.currentIndex;
     buildActiveCards();
+    if (state.activeCards.length > 0) {
+      state.currentIndex = Math.min(removedIndex, state.activeCards.length - 1);
+      state.isFlipped = false;
+      updateUI();
+      renderCard();
+    }
   } else {
     updateUI();
     renderCard();
   }
 
-  showMessage("Card removed from the Saved Stack.");
+  showMessage("Card removed.");
 }
 
 function setMode(mode) {
   if (state.currentMode === mode) return;
   state.currentMode = mode;
   buildActiveCards();
-  showMessage(mode === "random" ? "Random display mode selected." : "Sequential display mode selected.");
+  showMessage(mode === "random" ? "Random mode selected." : "Sequential mode selected.");
 }
 
 function setView(view) {
   if (state.currentView === view) return;
   state.currentView = view;
   buildActiveCards();
-  showMessage(view === "saved" ? "Showing your Saved Stack." : "Showing all flash cards.");
+  showMessage(view === "saved" ? "Showing Saved Stack." : "Showing all cards.");
 }
 
 function updateButtonStates() {
@@ -434,19 +443,19 @@ function updateUI() {
   el.statusSavedCount.textContent = String(state.savedIds.size);
 
   const total = state.activeCards.length;
-  const progress = total ? `${state.currentIndex + 1} / ${total}` : `0 / 0`;
-  el.statusProgress.textContent = progress;
+  el.statusProgress.textContent = total ? `${state.currentIndex + 1} / ${total}` : "0 / 0";
 
   const currentCard = getCurrentCard();
   const isSaved = currentCard ? state.savedIds.has(currentCard.id) : false;
 
-  el.saveCardBtn.textContent = isSaved ? "Saved Already" : "Save This Card";
   el.saveCardBtn.disabled = !currentCard || isSaved;
   el.removeSavedBtn.disabled = !currentCard || !isSaved;
   el.prevBtn.disabled = !currentCard || state.currentIndex === 0;
   el.nextBtn.disabled = !currentCard || state.currentIndex >= total - 1;
   el.flipTopBtn.disabled = !currentCard;
   el.flipBottomBtn.disabled = !currentCard;
+
+  el.saveCardBtn.textContent = isSaved ? "Saved" : "Save";
 }
 
 function wireEvents() {
@@ -460,7 +469,6 @@ function wireEvents() {
   el.removeSavedBtn.addEventListener("click", removeCurrentCardFromSaved);
 
   el.restartBtn.addEventListener("click", restartOrder);
-
   el.flipTopBtn.addEventListener("click", flipCard);
   el.flipBottomBtn.addEventListener("click", flipCard);
 
@@ -493,7 +501,7 @@ async function init() {
     state.allCards = parseCardsFromWorkbook(workbook);
 
     buildActiveCards();
-    showMessage(`Loaded ${state.allCards.length} flash cards from the Excel sheet.`);
+    showMessage(`Loaded ${state.allCards.length} flash cards.`);
   } catch (error) {
     console.error(error);
     el.flashcardStage.innerHTML = `
